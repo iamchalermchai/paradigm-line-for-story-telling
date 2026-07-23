@@ -54,7 +54,7 @@ export function Board() {
   const applyNodeDrag = useProjectStore((s) => s.applyNodeDrag)
   const setViewport = useProjectStore((s) => s.setViewport)
   const addEdge = useProjectStore((s) => s.addEdge)
-  const deleteEdge = useProjectStore((s) => s.deleteEdge)
+  const deleteElements = useProjectStore((s) => s.deleteElements)
   const openSceneEditor = useUiStore((s) => s.openSceneEditor)
   const newEdgeType = useUiStore((s) => s.newEdgeType)
   const selectEdge = useUiStore((s) => s.selectEdge)
@@ -126,11 +126,17 @@ export function Board() {
     [addEdge, newEdgeType],
   )
 
-  const onEdgesDelete = useCallback(
-    (deleted: Edge[]) => {
-      for (const e of deleted) deleteEdge(e.id)
+  // Batch every canvas deletion (nodes + their edges) into a single store
+  // commit, so deleting many cards at once is one update instead of one per
+  // element — which previously thrashed the app.
+  const onDelete = useCallback(
+    ({ nodes: delNodes, edges: delEdges }: { nodes: Node[]; edges: Edge[] }) => {
+      const sceneIds = delNodes.filter((n) => n.type === 'scene').map((n) => n.id)
+      const beatIds = delNodes.filter((n) => n.type === 'beat').map((n) => n.id)
+      const edgeIds = delEdges.map((e) => e.id)
+      deleteElements({ sceneIds, beatIds, edgeIds })
     },
-    [deleteEdge],
+    [deleteElements],
   )
 
   return (
@@ -147,7 +153,7 @@ export function Board() {
         if (node.type === 'scene') openSceneEditor(node.id)
       }}
       onConnect={onConnect}
-      onEdgesDelete={onEdgesDelete}
+      onDelete={onDelete}
       onEdgeClick={(_e, edge) => selectEdge(edge.id)}
       onPaneClick={() => selectEdge(null)}
       defaultViewport={project.viewport}

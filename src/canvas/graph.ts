@@ -67,6 +67,7 @@ export function projectToNodes(project: Project): BoardNode[] {
     data: { project },
     draggable: false,
     selectable: false,
+    deletable: false,
   }
   return [...beatNodes, ...sceneNodes, outcome]
 }

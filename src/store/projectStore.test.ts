@@ -71,6 +71,49 @@ describe('projectStore', () => {
     expect(store().project.beats.some((b) => b.id === beat.id)).toBe(false)
   })
 
+  it('deleteElements removes many scenes + their edges in a single undoable step', () => {
+    const sceneCountBefore = store().project.scenes.length
+    const edgeCountBefore = store().project.edges.length
+    const pastBefore = store().past.length
+
+    // scene-want and scene-progress each have connected edges in the seed.
+    store().deleteElements({ sceneIds: ['scene-want', 'scene-progress'] })
+
+    const p = store().project
+    expect(p.scenes.some((s) => s.id === 'scene-want')).toBe(false)
+    expect(p.scenes.some((s) => s.id === 'scene-progress')).toBe(false)
+    expect(p.scenes).toHaveLength(sceneCountBefore - 2)
+    // Edges touching the removed scenes are gone too.
+    expect(
+      p.edges.some(
+        (e) =>
+          ['scene-want', 'scene-progress'].includes(e.source) ||
+          ['scene-want', 'scene-progress'].includes(e.target),
+      ),
+    ).toBe(false)
+    expect(p.edges.length).toBeLessThan(edgeCountBefore)
+
+    // Exactly one history entry pushed for the whole batch.
+    expect(store().past.length).toBe(pastBefore + 1)
+
+    // A single undo restores everything.
+    store().undo()
+    expect(store().project.scenes).toHaveLength(sceneCountBefore)
+    expect(store().project.edges).toHaveLength(edgeCountBefore)
+  })
+
+  it('deleteElements also removes beats and explicit edge ids', () => {
+    store().deleteElements({ beatIds: ['beat-midpoint'], edgeIds: ['e-arc'] })
+    expect(store().project.beats.some((b) => b.id === 'beat-midpoint')).toBe(false)
+    expect(store().project.edges.some((e) => e.id === 'e-arc')).toBe(false)
+  })
+
+  it('deleteElements is a no-op when nothing is passed', () => {
+    const pastBefore = store().past.length
+    store().deleteElements({})
+    expect(store().past.length).toBe(pastBefore)
+  })
+
   it('adds an edge and avoids duplicates', () => {
     const before = store().project.edges.length
     store().addEdge({ source: 'scene-want', target: 'scene-aha', type: 'actual_path' })

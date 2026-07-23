@@ -119,6 +119,12 @@ interface ProjectState {
   ) => void
   duplicateScene: (id: string) => StoryScene | undefined
   deleteScene: (id: string) => void
+  /** Remove scenes, beats and edges in a single commit (batched canvas delete). */
+  deleteElements: (params: {
+    sceneIds?: string[]
+    beatIds?: string[]
+    edgeIds?: string[]
+  }) => void
 
   // Beats
   addBeat: (type: StoryBeatType) => BeatMarker
@@ -278,6 +284,26 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         scenes: p.scenes.filter((s) => s.id !== id),
         edges: p.edges.filter((e) => e.source !== id && e.target !== id),
       })),
+
+    deleteElements: ({ sceneIds = [], beatIds = [], edgeIds = [] }) => {
+      if (!sceneIds.length && !beatIds.length && !edgeIds.length) return
+      const sceneSet = new Set(sceneIds)
+      const beatSet = new Set(beatIds)
+      const edgeSet = new Set(edgeIds)
+      const removedNode = (endpoint: string) =>
+        sceneSet.has(endpoint) || beatSet.has(endpoint)
+      commit((p) => ({
+        ...p,
+        scenes: p.scenes.filter((s) => !sceneSet.has(s.id)),
+        beats: p.beats.filter((b) => !beatSet.has(b.id)),
+        edges: p.edges.filter(
+          (e) =>
+            !edgeSet.has(e.id) &&
+            !removedNode(e.source) &&
+            !removedNode(e.target),
+        ),
+      }))
+    },
 
     addBeat: (type) => {
       const beat: BeatMarker = {

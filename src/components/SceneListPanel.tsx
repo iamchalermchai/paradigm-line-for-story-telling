@@ -35,11 +35,11 @@ export function SceneListPanel() {
     <div className="flex-1 overflow-y-auto p-3">
       {groups.map((group) => (
         <div key={group.label} className="mb-4">
-          <h3 className="mb-1 text-xs font-bold uppercase tracking-wide text-ink/45">
+          <h3 className="font-display mb-1 text-sm font-bold tracking-wide text-ink/55">
             {group.label}
           </h3>
           {group.scenes.length === 0 ? (
-            <p className="px-1 text-xs italic text-ink/35">— ยังไม่มีฉาก —</p>
+            <p className="px-1 text-xs italic text-ink/35">ยังไม่มีฉากในช่วงนี้</p>
           ) : (
             <ul className="space-y-0.5">
               {group.scenes.map((scene) => (

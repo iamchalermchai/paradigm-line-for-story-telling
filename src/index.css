@@ -15,12 +15,23 @@
   --color-indigo-deep: #2c3abd;
   --color-mint: #8de4b7;
   --color-mint-deep: #2f9c6c;
+
+  /* Type roles: Trirong (Thai literary serif) carries the app's voice on
+     structural / identity text; Noto Sans Thai stays the clean workhorse for
+     body, data and form controls. */
+  --font-display: 'Trirong', 'Noto Serif Thai', Georgia, serif;
+  --font-sans: 'Noto Sans Thai', 'Sarabun', system-ui, -apple-system, sans-serif;
 }
 
 :root {
-  font-family: 'Noto Sans Thai', 'Sarabun', system-ui, -apple-system, 'Segoe UI',
-    sans-serif;
+  font-family: var(--font-sans);
   color-scheme: light;
+}
+
+/* Trirong is a serif with generous ascenders; nudge line-height so display
+   text stays tight next to the sans body. */
+.font-display {
+  font-family: var(--font-display);
 }
 
 html,
@@ -29,4 +40,25 @@ body,
   height: 100%;
   margin: 0;
   background: var(--color-cream);
+}
+
+/* Consistent, on-brand keyboard focus. `:focus-visible` only shows for
+   keyboard interaction, and `!important` overrides Tailwind's focus:outline-none
+   on the form controls. */
+*:focus-visible {
+  outline: 2px solid var(--color-indigo) !important;
+  outline-offset: 2px !important;
+  border-radius: 3px;
+}
+
+/* Respect users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -37,7 +37,7 @@ export function ClimaxOutcomePanel() {
 
   return (
     <div className="px-4 py-3">
-      <h2 className="mb-2 text-sm font-bold text-ink">ผลลัพธ์ตอนจบ</h2>
+      <h2 className="font-display mb-2 text-base font-bold text-ink">ผลลัพธ์ตอนจบ</h2>
 
       <label className="mb-2 block text-[13px] text-ink/60">
         Want (Climax)

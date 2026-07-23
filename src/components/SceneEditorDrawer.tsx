@@ -111,7 +111,7 @@ export function SceneEditorDrawer() {
         className="flex items-center justify-between px-4 py-3"
         style={{ borderBottom: '1px solid rgba(20,22,25,0.15)' }}
       >
-        <h2 className="text-sm font-bold text-ink">แก้ไขฉาก</h2>
+        <h2 className="font-display text-lg font-bold text-ink">แก้ไขฉาก</h2>
         <button
           type="button"
           className="rounded p-1 text-ink/40 hover:bg-sand/30 hover:text-ink"
@@ -125,7 +125,7 @@ export function SceneEditorDrawer() {
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
         {/* Character + Action = Plot */}
         <div className="mb-4 rounded-lg bg-sand/30 p-3">
-          <p className="text-center text-xs font-bold tracking-wide text-ink/70">
+          <p className="font-display text-center text-base font-bold tracking-wide text-ink/80">
             Character + Action = Plot
           </p>
         </div>

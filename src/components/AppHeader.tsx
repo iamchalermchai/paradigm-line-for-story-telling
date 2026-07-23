@@ -62,10 +62,12 @@ export function AppHeader() {
       className="relative flex items-center gap-2 bg-cream px-3 py-2"
       style={{ borderBottom: '1px solid rgba(20,22,25,0.18)' }}
     >
-      <span className="text-base font-bold text-ink">Plotline Board</span>
+      <span className="font-display text-xl font-bold tracking-tight text-ink">
+        Plotline Board
+      </span>
       <span className="text-ink/40">·</span>
       <input
-        className="w-60 min-w-0 rounded border border-transparent bg-transparent px-1.5 py-0.5 text-base font-medium text-ink hover:border-ink/20 focus:border-ink/40 focus:bg-white focus:outline-none"
+        className="font-display w-60 min-w-0 rounded border border-transparent bg-transparent px-1.5 py-0.5 text-lg font-medium text-ink hover:border-ink/20 focus:border-ink/40 focus:bg-white focus:outline-none"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="ชื่อเรื่อง…"
@@ -83,7 +85,7 @@ export function AppHeader() {
       >
         + Scene
       </button>
-      <HeaderBtn onClick={applyAutoLayout}>Auto Layout</HeaderBtn>
+      <HeaderBtn onClick={applyAutoLayout}>จัดเรียงอัตโนมัติ</HeaderBtn>
 
       <span className="mx-1 h-5 w-px bg-ink/15" aria-hidden />
 

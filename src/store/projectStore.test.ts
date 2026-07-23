@@ -131,4 +131,12 @@ describe('projectStore', () => {
   it('exportProject returns the current project', () => {
     expect(store().exportProject().id).toBe(store().project.id)
   })
+
+  it('sets and persists the structure template', async () => {
+    expect(store().project.structureTemplateId).toBe('four-phase')
+    store().setStructureTemplate('three-act')
+    expect(store().project.structureTemplateId).toBe('three-act')
+    await new Promise((r) => setTimeout(r, 700))
+    expect(loadProject()?.structureTemplateId).toBe('three-act')
+  })
 })

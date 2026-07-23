@@ -19,6 +19,7 @@ import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
 import { EdgeEditor } from './EdgeEditor'
 import { EdgeLegend } from './EdgeLegend'
+import { StructurePicker } from './StructurePicker'
 import { StoryEdge } from './edges/StoryEdge'
 import {
   projectToEdges,
@@ -149,6 +150,12 @@ export function Board() {
       <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgba(20,22,25,0.12)" />
       <Controls showInteractive={false} />
       <MiniMap pannable zoomable className="!bg-white" />
+      <Panel position="top-left">
+        <div className="flex max-w-64 flex-col gap-2">
+          <StructurePicker />
+          <EdgeLegend />
+        </div>
+      </Panel>
       <Panel position="top-right">
         <label className="flex cursor-pointer items-center gap-2 rounded bg-white px-3 py-1.5 text-xs text-ink-soft shadow">
           <input
@@ -158,9 +165,6 @@ export function Board() {
           />
           Snap to grid
         </label>
-      </Panel>
-      <Panel position="bottom-left">
-        <EdgeLegend />
       </Panel>
       <Panel position="bottom-center">
         <EdgeEditor />

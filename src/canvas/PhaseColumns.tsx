@@ -1,6 +1,8 @@
 import { ViewportPortal } from '@xyflow/react'
 import { PHASE_WIDTH } from '../domain/seed'
-import { PARADIGM_LINE_Y, PHASE_LABELS, STORY_PHASES } from '../domain/types'
+import { getStructureTemplate } from '../domain/structure'
+import { PARADIGM_LINE_Y, STORY_PHASES } from '../domain/types'
+import { useProjectStore } from '../store/projectStore'
 
 const TOP = -1000
 const BOTTOM = 1200
@@ -12,11 +14,15 @@ const INK_MUTED = 'rgba(20,22,25,0.45)'
 
 /**
  * Static background drawn in flow coordinates (so it pans/zooms with the
- * nodes): four phase columns and the horizontal paradigm line. Kept to a
- * plain cream field with thin ink dividers so colour is reserved for scenes,
- * beats and edges.
+ * nodes): the vertical structure bands of the selected template and the
+ * horizontal paradigm line. Kept to a plain cream field with thin ink
+ * dividers so colour is reserved for scenes, beats and edges.
  */
 export function PhaseColumns() {
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const template = getStructureTemplate(structureId)
+  const bands = template.bands
+
   return (
     <ViewportPortal>
       <div
@@ -28,37 +34,39 @@ export function PhaseColumns() {
           pointerEvents: 'none',
         }}
       >
-        {STORY_PHASES.map((phase, i) => (
-          <div
-            key={phase}
-            style={{
-              position: 'absolute',
-              left: i * PHASE_WIDTH,
-              top: 0,
-              width: PHASE_WIDTH,
-              height: HEIGHT,
-              borderRight:
-                i < STORY_PHASES.length - 1
-                  ? `1px dashed ${INK_FAINT}`
-                  : undefined,
-              borderLeft: i === 0 ? `1px dashed ${INK_FAINT}` : undefined,
-            }}
-          >
+        {bands.map((band, i) => {
+          const left = band.start * BOARD_WIDTH
+          const right = (bands[i + 1]?.start ?? 1) * BOARD_WIDTH
+          return (
             <div
+              key={`${template.id}-${band.label}`}
               style={{
-                position: 'sticky',
-                top: 10,
-                padding: '6px 12px',
-                fontSize: 14,
-                fontWeight: 700,
-                color: 'var(--color-ink)',
-                textAlign: 'center',
+                position: 'absolute',
+                left,
+                top: 0,
+                width: right - left,
+                height: HEIGHT,
+                borderRight:
+                  i < bands.length - 1 ? `1px dashed ${INK_FAINT}` : undefined,
+                borderLeft: i === 0 ? `1px dashed ${INK_FAINT}` : undefined,
               }}
             >
-              {PHASE_LABELS[phase]}
+              <div
+                style={{
+                  position: 'sticky',
+                  top: 10,
+                  padding: '6px 12px',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: 'var(--color-ink)',
+                  textAlign: 'center',
+                }}
+              >
+                {band.label}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
 
         {/* Paradigm line */}
         <div

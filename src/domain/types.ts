@@ -180,6 +180,8 @@ export interface Project {
   beats: BeatMarker[]
   edges: StoryEdge[]
   climaxOutcome: ClimaxOutcome
+  /** id of the selected vertical structure overlay (see domain/structure.ts). */
+  structureTemplateId: string
   viewport: Viewport
   updatedAt: string
 }

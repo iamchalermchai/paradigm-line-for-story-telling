@@ -54,6 +54,7 @@ function emptyProject(title: string): Project {
     beats: [],
     edges: [],
     climaxOutcome: { want: 'not_got', need: 'gained' },
+    structureTemplateId: 'four-phase',
     viewport: { x: 0, y: 0, zoom: 0.7 },
     updatedAt: new Date().toISOString(),
   }
@@ -135,6 +136,7 @@ interface ProjectState {
   // Layout / viewport
   applyAutoLayout: () => void
   setViewport: (viewport: Viewport) => void
+  setStructureTemplate: (id: string) => void
 
   // History
   undo: () => void
@@ -325,6 +327,19 @@ export const useProjectStore = create<ProjectState>((set, get) => {
 
     setViewport: (viewport) =>
       set((state) => ({ project: { ...state.project, viewport } })),
+
+    // Structure overlay is a view/authoring setting: persisted, but kept out of
+    // undo history (it isn't part of the content snapshot).
+    setStructureTemplate: (id) => {
+      set((state) => ({
+        project: {
+          ...state.project,
+          structureTemplateId: id,
+          updatedAt: new Date().toISOString(),
+        },
+      }))
+      scheduleSave()
+    },
 
     undo: () =>
       set((state) => {

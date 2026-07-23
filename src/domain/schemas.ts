@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { DEFAULT_STRUCTURE_ID } from './structure'
 import type { Project } from './types'
 
-export const SCHEMA_VERSION = 1
+export const SCHEMA_VERSION = 2
 
 export const storyPhaseSchema = z.enum([
   'setup',
@@ -115,6 +116,7 @@ export const projectSchema = z.object({
   beats: z.array(beatMarkerSchema),
   edges: z.array(storyEdgeSchema),
   climaxOutcome: climaxOutcomeSchema,
+  structureTemplateId: z.string().default(DEFAULT_STRUCTURE_ID),
   viewport: viewportSchema,
   updatedAt: z.string(),
 })
@@ -134,11 +136,21 @@ function migrate(raw: unknown): unknown {
   let migrated = obj
   let v = version
 
-  // Example placeholder migration chain:
-  // while (v < SCHEMA_VERSION) { switch (v) { case 0: ... ; v = 1; break } }
   if (v < 1) {
     migrated = { ...migrated, schemaVersion: 1 }
     v = 1
+  }
+  if (v < 2) {
+    // v2 adds a selectable vertical structure overlay.
+    migrated = {
+      ...migrated,
+      structureTemplateId:
+        typeof migrated.structureTemplateId === 'string'
+          ? migrated.structureTemplateId
+          : DEFAULT_STRUCTURE_ID,
+      schemaVersion: 2,
+    }
+    v = 2
   }
 
   return migrated

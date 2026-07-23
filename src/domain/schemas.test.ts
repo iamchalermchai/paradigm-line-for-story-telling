@@ -30,4 +30,17 @@ describe('project schema', () => {
     expect(result.ok).toBe(true)
     expect(result.project?.schemaVersion).toBe(SCHEMA_VERSION)
   })
+
+  it('migrates a v1 payload without structureTemplateId, defaulting it', () => {
+    const seed = createSeedProject()
+    const v1: Record<string, unknown> = {
+      ...JSON.parse(JSON.stringify(seed)),
+      schemaVersion: 1,
+    }
+    delete v1.structureTemplateId
+    const result = parseProject(v1)
+    expect(result.ok).toBe(true)
+    expect(result.project?.structureTemplateId).toBe('four-phase')
+    expect(result.project?.schemaVersion).toBe(SCHEMA_VERSION)
+  })
 })

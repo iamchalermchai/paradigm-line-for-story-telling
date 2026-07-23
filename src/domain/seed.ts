@@ -272,6 +272,7 @@ export function createSeedProject(): Project {
     beats,
     edges,
     climaxOutcome: { want: 'not_got', need: 'gained' },
+    structureTemplateId: 'four-phase',
     viewport: { x: 40, y: 400, zoom: 0.55 },
     updatedAt: new Date('2026-07-23T00:00:00.000Z').toISOString(),
   }

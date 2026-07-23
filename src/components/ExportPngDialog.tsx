@@ -40,6 +40,7 @@ export function ExportPngDialog() {
         transparent,
         includeBackstory,
         backstory,
+        title,
       })
       downloadDataUrl(dataUrl, `${title || 'plotline-board'}.png`)
       setStatus('idle')

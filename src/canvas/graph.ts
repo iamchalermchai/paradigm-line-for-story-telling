@@ -1,5 +1,5 @@
 import { PHASE_WIDTH } from '../domain/seed'
-import { STORY_PHASES } from '../domain/types'
+import { PARADIGM_LINE_Y, STORY_PHASES } from '../domain/types'
 import type {
   BeatMarker,
   Project,
@@ -8,6 +8,9 @@ import type {
   StoryScene,
 } from '../domain/types'
 import type { Edge, Node } from '@xyflow/react'
+
+/** Beat markers ride the paradigm line: this is their fixed y. */
+export const BEAT_LINE_Y = PARADIGM_LINE_Y - 12
 
 export type SceneNodeData = { scene: StoryScene }
 export type BeatNodeData = { beat: BeatMarker }
@@ -114,7 +117,11 @@ export function reconcileDrag(
         phase: phaseForX(node.position.x),
       })
     } else if (beatIds.has(node.id)) {
-      beats.push({ id: node.id, position: node.position })
+      // Beats only move horizontally — pin them to the paradigm line.
+      beats.push({
+        id: node.id,
+        position: { x: node.position.x, y: BEAT_LINE_Y },
+      })
     }
   }
   return { scenes, beats }

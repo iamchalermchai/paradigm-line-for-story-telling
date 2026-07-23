@@ -4,61 +4,100 @@ import { getStructureTemplate } from '../domain/structure'
 import { PARADIGM_LINE_Y, STORY_PHASES } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 
-const TOP = -1000
-const BOTTOM = 1200
-const HEIGHT = BOTTOM - TOP
 const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
+
+// Rough card footprint + breathing room, used to size the frame around content.
+const CARD_W = 300
+const CARD_H = 320
+const MARGIN_X = 500
+const MARGIN_Y = 260
 
 const INK_DIVIDER = 'rgba(20,22,25,0.28)'
 const INK_MUTED = 'rgba(20,22,25,0.45)'
 
 /**
- * Static background drawn in flow coordinates (so it pans/zooms with the
- * nodes): the vertical structure bands of the selected template and the
- * horizontal paradigm line. Kept to a plain cream field with thin ink
- * dividers so colour is reserved for scenes, beats and edges.
+ * Background drawn in flow coordinates: the vertical act dividers, the act
+ * labels, and the horizontal paradigm line. The frame grows to cover whatever
+ * content exists, so the paradigm line always runs the full width of the board
+ * (and the columns the full height) no matter how far cards are dragged or how
+ * many are added — it's never a fixed short stub.
  */
 export function PhaseColumns() {
+  const scenes = useProjectStore((s) => s.project.scenes)
+  const beats = useProjectStore((s) => s.project.beats)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
   const template = getStructureTemplate(structureId)
   const bands = template.bands
+
+  // --- Content bounds (with a fixed baseline so an empty board still frames well) ---
+  const sceneX = scenes.map((s) => s.position.x)
+  const sceneY = scenes.map((s) => s.position.y)
+  const beatX = beats.map((b) => b.position.x)
+
+  const right =
+    Math.max(BOARD_WIDTH + 700, ...sceneX.map((x) => x + CARD_W), ...beatX) +
+    MARGIN_X
+  const left = Math.min(0, ...sceneX, ...beatX) - MARGIN_X
+  const top = Math.min(-600, ...sceneY) - MARGIN_Y
+  const bottom = Math.max(600, ...sceneY.map((y) => y + CARD_H)) + MARGIN_Y
+
+  const frameW = right - left
+  const frameH = bottom - top
+
+  // Act boundary x-positions (absolute) — fixed fractions of the conceptual board.
+  const boundaries = [0, ...bands.slice(1).map((b) => b.start * BOARD_WIDTH)]
 
   return (
     <ViewportPortal>
       <div
         style={{
           position: 'absolute',
-          transform: `translate(0px, ${TOP}px)`,
-          width: BOARD_WIDTH,
-          height: HEIGHT,
+          transform: `translate(${left}px, ${top}px)`,
+          width: frameW,
+          height: frameH,
           pointerEvents: 'none',
         }}
       >
+        {/* Vertical act dividers, full frame height */}
+        {boundaries.map((x, i) => (
+          <div
+            key={`divider-${i}`}
+            style={{
+              position: 'absolute',
+              left: x - left,
+              top: 0,
+              width: 0,
+              height: frameH,
+              borderLeft: `1.5px solid ${INK_DIVIDER}`,
+            }}
+          />
+        ))}
+
+        {/* Act labels, centred over each act's conceptual region and pinned to
+            the top of the viewport as you pan */}
         {bands.map((band, i) => {
-          const left = band.start * BOARD_WIDTH
-          const right = (bands[i + 1]?.start ?? 1) * BOARD_WIDTH
+          const bandLeft = band.start * BOARD_WIDTH
+          const bandRight = (bands[i + 1]?.start ?? 1) * BOARD_WIDTH
           return (
             <div
               key={`${template.id}-${band.label}`}
               style={{
                 position: 'absolute',
-                left,
+                left: bandLeft - left,
                 top: 0,
-                width: right - left,
-                height: HEIGHT,
-                borderRight:
-                  i < bands.length - 1 ? `1.5px solid ${INK_DIVIDER}` : undefined,
-                borderLeft: i === 0 ? `1.5px solid ${INK_DIVIDER}` : undefined,
+                width: bandRight - bandLeft,
+                height: frameH,
               }}
             >
               <div
+                className="font-display"
                 style={{
                   position: 'sticky',
                   top: 12,
                   padding: '4px 12px',
-                  fontSize: 22,
-                  fontWeight: 800,
-                  letterSpacing: '0.01em',
+                  fontSize: 24,
+                  fontWeight: 700,
+                  letterSpacing: '0.005em',
                   color: 'var(--color-ink)',
                   textAlign: 'center',
                 }}
@@ -69,38 +108,68 @@ export function PhaseColumns() {
           )
         })}
 
-        {/* Paradigm line */}
+        {/* Paradigm line — spans the full frame width */}
         <div
           style={{
             position: 'absolute',
             left: 0,
-            top: PARADIGM_LINE_Y - TOP,
-            width: BOARD_WIDTH,
+            top: PARADIGM_LINE_Y - top,
+            width: frameW,
             height: 0,
             borderTop: '3px solid var(--color-ink)',
           }}
         />
+
+        {/* Axis labels anchored at the visible left edge of the board */}
         <div
+          className="font-display"
           style={{
             position: 'absolute',
-            left: 8,
-            top: PARADIGM_LINE_Y - TOP - 40,
-            fontSize: 11,
+            left: 16 - left,
+            top: PARADIGM_LINE_Y - top - 108,
+            fontSize: 15,
+            fontWeight: 600,
+            fontStyle: 'italic',
             color: INK_MUTED,
           }}
         >
-          ↑ เหนือเส้น: ขับเคลื่อนด้วย Lie / Want
+          Paradigm Line
         </div>
         <div
           style={{
             position: 'absolute',
-            left: 8,
-            top: PARADIGM_LINE_Y - TOP + 12,
-            fontSize: 11,
-            color: INK_MUTED,
+            left: 16 - left,
+            top: PARADIGM_LINE_Y - top - 74,
+            width: 300,
           }}
         >
-          ↓ ใต้เส้น: Ghost / ความล้มเหลว / Need
+          <div
+            className="font-display"
+            style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-ink)' }}
+          >
+            ↑ เหนือเส้น
+          </div>
+          <div style={{ fontSize: 13, color: INK_MUTED }}>
+            สิ่งที่ตัวละครไล่ตาม — Lie · Want
+          </div>
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            left: 16 - left,
+            top: PARADIGM_LINE_Y - top + 16,
+            width: 300,
+          }}
+        >
+          <div
+            className="font-display"
+            style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-ink)' }}
+          >
+            ↓ ใต้เส้น
+          </div>
+          <div style={{ fontSize: 13, color: INK_MUTED }}>
+            ความจริงที่ต้องเรียนรู้ — Ghost · Need
+          </div>
         </div>
       </div>
     </ViewportPortal>

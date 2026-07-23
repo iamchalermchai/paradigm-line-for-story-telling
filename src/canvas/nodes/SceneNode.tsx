@@ -73,11 +73,23 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
   const { scene } = data as unknown as SceneNodeData
   const updateScene = useProjectStore((s) => s.updateScene)
 
-  const handleClass = '!h-2.5 !w-2.5 !border !border-cream !bg-ink/40'
+  // The "Character" side of Character + Action = Plot: lead with the POV actor.
+  const who =
+    scene.characters.length > 0
+      ? scene.characters
+      : scene.povCharacter
+        ? [scene.povCharacter]
+        : []
+
+  // Handles are invisible at rest (floating edges attach to the border, so a
+  // dot would be redundant clutter) and fade in on hover to signal where to
+  // start a connection.
+  const handleClass =
+    '!h-3 !w-3 !border-2 !border-cream !bg-ink/55 !opacity-0 transition-opacity duration-150 group-hover:!opacity-100'
 
   return (
     <div
-      className="w-72 rounded-md bg-white shadow-sm transition"
+      className="group w-72 rounded-md bg-white shadow-sm transition"
       style={{
         border: selected
           ? '2px solid var(--color-ink)'
@@ -86,11 +98,16 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
       role="group"
       aria-label={`ฉาก: ${scene.title}`}
     >
-      <Handle type="target" position={Position.Left} className={handleClass} />
-      <Handle type="source" position={Position.Right} className={handleClass} />
+      {/* A connect point on every side — with loose connection mode each can
+          be both start and end, so a thread can leave or arrive from any edge
+          of the card (top included). */}
+      <Handle id="top" type="source" position={Position.Top} className={handleClass} />
+      <Handle id="right" type="source" position={Position.Right} className={handleClass} />
+      <Handle id="bottom" type="source" position={Position.Bottom} className={handleClass} />
+      <Handle id="left" type="source" position={Position.Left} className={handleClass} />
 
       <div className="flex items-start justify-between gap-2 px-3 pt-2.5">
-        <h3 className="flex items-center gap-2 text-base font-semibold leading-snug text-ink">
+        <h3 className="font-display flex items-center gap-2 text-lg font-semibold leading-snug text-ink">
           <ArcSymbol relation={scene.arcRelation} />
           {scene.title || 'ฉากไม่มีชื่อ'}
         </h3>
@@ -118,28 +135,60 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
         {scene.locked && (
           <>
             <span aria-hidden>·</span>
-            <span>🔒 ล็อก</span>
+            <span>ล็อก</span>
           </>
         )}
       </div>
 
       {!scene.collapsed && (
-        <dl className="space-y-1 px-3 pb-3 pt-2 text-[13px] leading-snug text-ink-soft">
-          {scene.location && <Row label="สถานที่" value={scene.location} />}
-          {scene.action && <Row label="ทำ" value={scene.action} />}
-          {scene.obstacle && <Row label="อุปสรรค" value={scene.obstacle} />}
-          {scene.outcome && <Row label="ผลลัพธ์" value={scene.outcome} />}
-        </dl>
+        <div className="px-3 pb-3 pt-2 text-[13px] leading-snug text-ink-soft">
+          {/* Character + Action = Plot, read straight off the card */}
+          <div className="space-y-1">
+            {who.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {who.map((c) => (
+                  <span
+                    key={c}
+                    className="rounded-full bg-sand/40 px-2 py-0.5 text-[12px] font-medium text-ink"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
+            )}
+            {scene.action && (
+              <Line op="+" text={scene.action} />
+            )}
+            {scene.outcome && (
+              <Line op="=" text={scene.outcome} strong />
+            )}
+          </div>
+
+          {(scene.location || scene.obstacle) && (
+            <div className="mt-2 space-y-0.5 border-t border-ink/10 pt-1.5 text-[12px] text-ink/50">
+              {scene.location && <div>ที่: {scene.location}</div>}
+              {scene.obstacle && <div>อุปสรรค: {scene.obstacle}</div>}
+            </div>
+          )}
+        </div>
       )}
     </div>
   )
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+/** One term of the Character + Action = Plot equation, led by a serif operator. */
+function Line({ op, text, strong }: { op: string; text: string; strong?: boolean }) {
   return (
     <div className="flex gap-1.5">
-      <dt className="shrink-0 font-medium text-ink/45">{label}:</dt>
-      <dd className="line-clamp-2">{value}</dd>
+      <span
+        className="font-display shrink-0 text-base leading-tight text-ink/35"
+        aria-hidden
+      >
+        {op}
+      </span>
+      <span className={`line-clamp-2 ${strong ? 'font-medium text-ink' : ''}`}>
+        {text}
+      </span>
     </div>
   )
 }

@@ -2,10 +2,12 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   getBezierPath,
+  useInternalNode,
   type EdgeProps,
 } from '@xyflow/react'
 import { memo } from 'react'
 import type { EdgeType } from '../../domain/types'
+import { getEdgeParams } from './floating'
 
 interface EdgeStyle {
   stroke: string
@@ -22,25 +24,33 @@ export const EDGE_STYLE: Record<EdgeType, EdgeStyle> = {
 
 function StoryEdgeComponent({
   id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  sourcePosition,
-  targetPosition,
+  source,
+  target,
   data,
   label,
   selected,
 }: EdgeProps) {
+  const sourceNode = useInternalNode(source)
+  const targetNode = useInternalNode(target)
+  if (!sourceNode || !targetNode) return null
+
   const edgeType = (data?.edgeType as EdgeType) ?? 'actual_path'
   const style = EDGE_STYLE[edgeType]
+
+  // Floating anchors + a gentle curve = a thread that runs directly between the
+  // two cards instead of looping out to fixed handles.
+  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(
+    sourceNode,
+    targetNode,
+  )
   const [path, labelX, labelY] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
+    sourceX: sx,
+    sourceY: sy,
+    targetX: tx,
+    targetY: ty,
+    sourcePosition: sourcePos,
+    targetPosition: targetPos,
+    curvature: 0.3,
   })
 
   return (
@@ -50,8 +60,10 @@ function StoryEdgeComponent({
         path={path}
         style={{
           stroke: style.stroke,
-          strokeWidth: selected ? 3 : 2,
-          strokeDasharray: style.dashed ? '6 4' : undefined,
+          strokeWidth: selected ? 2.5 : 1.6,
+          strokeDasharray: style.dashed ? '5 5' : undefined,
+          strokeLinecap: 'round',
+          opacity: selected ? 1 : 0.85,
         }}
       />
       {label && (

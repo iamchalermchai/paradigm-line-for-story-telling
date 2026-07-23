@@ -19,13 +19,29 @@ const NEED_COLOR: Record<NeedOutcome, string> = {
   understood_not_yet: 'var(--color-sand-dark)',
 }
 
-function Swatch({ color }: { color: string }) {
+/** A labelled destination marker: a solid square (echoing the reference boards'
+ *  ได้/ไม่ได้/ได้สิ่งที่ดีกว่า endpoints) with the role and outcome beside it. */
+function OutcomeMarker({
+  color,
+  role,
+  label,
+}: {
+  color: string
+  role: string
+  label: string
+}) {
   return (
-    <span
-      className="inline-block shrink-0"
-      style={{ width: 14, height: 14, background: color }}
-      aria-hidden
-    />
+    <div className="flex items-start gap-3">
+      <span
+        className="mt-0.5 inline-block shrink-0 rounded-sm"
+        style={{ width: 22, height: 22, background: color }}
+        aria-hidden
+      />
+      <div className="leading-tight">
+        <div className="font-display text-base font-bold text-ink">{role}</div>
+        <div className="text-sm text-ink/70">{label}</div>
+      </div>
+    </div>
   )
 }
 
@@ -35,34 +51,25 @@ function OutcomeNodeComponent({ data }: NodeProps) {
 
   return (
     <div
-      className="w-64 rounded-md bg-white p-3"
-      style={{ border: '1px solid rgba(20,22,25,0.18)' }}
+      className="w-56"
       role="group"
       aria-label="ผลลัพธ์ตอนจบ"
     >
-      <Handle
-        type="target"
-        position={Position.Left}
-        className="!h-2.5 !w-2.5 !border !border-cream !bg-ink/40"
-      />
-      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink/50">
-        ผลลัพธ์ตอนจบ
-      </h3>
-      <div className="space-y-1.5 text-sm text-ink">
-        <div className="flex items-center gap-2">
-          <Swatch color={WANT_COLOR[want]} />
-          <span>
-            <span className="font-semibold">Want:</span>{' '}
-            {WANT_OUTCOME_LABELS[want]}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Swatch color={NEED_COLOR[need]} />
-          <span>
-            <span className="font-semibold">Need:</span>{' '}
-            {NEED_OUTCOME_LABELS[need]}
-          </span>
-        </div>
+      <Handle type="target" position={Position.Left} className="!opacity-0" />
+      <p className="font-display mb-2.5 border-b border-ink/15 pb-1.5 text-sm font-bold tracking-wide text-ink/55">
+        ปลายทาง · ผลลัพธ์ตอนจบ
+      </p>
+      <div className="space-y-3">
+        <OutcomeMarker
+          color={WANT_COLOR[want]}
+          role="Want"
+          label={WANT_OUTCOME_LABELS[want]}
+        />
+        <OutcomeMarker
+          color={NEED_COLOR[need]}
+          role="Need"
+          label={NEED_OUTCOME_LABELS[need]}
+        />
       </div>
     </div>
   )

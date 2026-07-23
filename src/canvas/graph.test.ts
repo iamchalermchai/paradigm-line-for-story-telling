@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createSeedProject } from '../domain/seed'
 import {
+  BEAT_LINE_Y,
   OUTCOME_NODE_ID,
   phaseForX,
   projectToEdges,
@@ -66,6 +67,9 @@ describe('reconcileDrag', () => {
     expect(result.scenes).toEqual([
       { id: 's1', position: { x: 1500, y: 100 }, phase: 'middle' },
     ])
-    expect(result.beats).toEqual([{ id: 'b1', position: { x: 800, y: -20 } }])
+    // Beats keep only their x; y is pinned to the paradigm line (BEAT_LINE_Y).
+    expect(result.beats).toEqual([
+      { id: 'b1', position: { x: 800, y: BEAT_LINE_Y } },
+    ])
   })
 })

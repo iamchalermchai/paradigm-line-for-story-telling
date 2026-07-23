@@ -118,6 +118,8 @@ interface ProjectState {
     beats: { id: string; position: { x: number; y: number } }[],
   ) => void
   duplicateScene: (id: string) => StoryScene | undefined
+  /** Paste copied scenes as new scenes (new ids, offset positions), one commit. */
+  pasteScenes: (scenes: StoryScene[]) => StoryScene[]
   deleteScene: (id: string) => void
   /** Remove scenes, beats and edges in a single commit (batched canvas delete). */
   deleteElements: (params: {
@@ -276,6 +278,27 @@ export const useProjectStore = create<ProjectState>((set, get) => {
       })
       commit((p) => ({ ...p, scenes: [...p.scenes, copy] }))
       return copy
+    },
+
+    pasteScenes: (scenes) => {
+      if (scenes.length === 0) return []
+      const created: StoryScene[] = []
+      commit((p) => {
+        let maxOrder = p.scenes.reduce((m, s) => Math.max(m, s.order), -1)
+        const news = scenes.map((s) => {
+          maxOrder += 1
+          return {
+            ...s,
+            id: uid('scene'),
+            position: { x: s.position.x + 40, y: s.position.y + 40 },
+            order: maxOrder,
+            locked: false,
+          }
+        })
+        created.push(...news)
+        return { ...p, scenes: [...p.scenes, ...news] }
+      })
+      return created
     },
 
     deleteScene: (id) =>

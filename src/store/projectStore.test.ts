@@ -37,6 +37,26 @@ describe('projectStore', () => {
     expect(copy?.title).toContain('สำเนา')
   })
 
+  it('pasteScenes creates new offset scenes in one undoable step', () => {
+    const source = store().project.scenes.find((s) => s.id === 'scene-want')!
+    const before = store().project.scenes.length
+    const pastBefore = store().past.length
+
+    const created = store().pasteScenes([source])
+    expect(created).toHaveLength(1)
+    expect(created[0].id).not.toBe(source.id)
+    expect(created[0].title).toBe(source.title)
+    expect(created[0].position).toEqual({
+      x: source.position.x + 40,
+      y: source.position.y + 40,
+    })
+    expect(store().project.scenes).toHaveLength(before + 1)
+    // One history entry for the whole paste; a single undo removes it.
+    expect(store().past.length).toBe(pastBefore + 1)
+    store().undo()
+    expect(store().project.scenes).toHaveLength(before)
+  })
+
   it('deletes a scene and its connected edges', () => {
     const sceneId = 'scene-want'
     const hadEdges = store().project.edges.some(

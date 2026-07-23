@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+@import '@xyflow/react/dist/style.css';
+
+/* Earth-tone palette sampled from src/example_image reference boards. */
+@theme {
+  --color-cream: #f8f6f0;
+  --color-sand: #ecc68c;
+  --color-sand-dark: #dba867;
+  --color-ink: #141619;
+  --color-ink-soft: #4b4a45;
+  --color-amber: #e49c4e;
+  --color-rust: #cd5042;
+  --color-rust-deep: #a83e33;
+  --color-indigo: #3d4dec;
+  --color-indigo-deep: #2c3abd;
+  --color-mint: #8de4b7;
+  --color-mint-deep: #2f9c6c;
+}
+
+:root {
+  font-family: 'Noto Sans Thai', 'Sarabun', system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: var(--color-cream);
+}

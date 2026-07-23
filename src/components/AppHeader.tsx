@@ -20,6 +20,7 @@ const SAVE_COLOR: Record<SaveStatus, string> = {
 /** Top application bar: primary actions, undo/redo, an overflow menu, save status. */
 export function AppHeader() {
   const title = useProjectStore((s) => s.project.title)
+  const setTitle = useProjectStore((s) => s.setTitle)
   const saveStatus = useProjectStore((s) => s.saveStatus)
   const addScene = useProjectStore((s) => s.addScene)
   const applyAutoLayout = useProjectStore((s) => s.applyAutoLayout)
@@ -62,7 +63,15 @@ export function AppHeader() {
       style={{ borderBottom: '1px solid rgba(20,22,25,0.18)' }}
     >
       <span className="text-sm font-bold text-ink">Plotline Board</span>
-      <span className="hidden text-xs text-ink/50 sm:inline">· {title}</span>
+      <span className="text-ink/40">·</span>
+      <input
+        className="w-56 min-w-0 rounded border border-transparent bg-transparent px-1.5 py-0.5 text-sm font-medium text-ink hover:border-ink/20 focus:border-ink/40 focus:bg-white focus:outline-none"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="ชื่อเรื่อง…"
+        aria-label="ชื่อเรื่อง"
+        title="คลิกเพื่อแก้ชื่อเรื่อง"
+      />
 
       <button
         type="button"

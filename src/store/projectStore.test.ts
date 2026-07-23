@@ -57,6 +57,13 @@ describe('projectStore', () => {
     expect(store().project.backstory.ghost).toBe('ผีตัวใหม่')
   })
 
+  it('sets and persists the project title', async () => {
+    store().setTitle('เรื่องของแอล ภาค 2')
+    expect(store().project.title).toBe('เรื่องของแอล ภาค 2')
+    await new Promise((r) => setTimeout(r, 700))
+    expect(loadProject()?.title).toBe('เรื่องของแอล ภาค 2')
+  })
+
   it('adds and deletes beats', () => {
     const beat = store().addBeat('midpoint')
     expect(store().project.beats.some((b) => b.id === beat.id)).toBe(true)

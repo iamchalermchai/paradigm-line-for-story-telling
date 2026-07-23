@@ -9,7 +9,7 @@ const BOTTOM = 1200
 const HEIGHT = BOTTOM - TOP
 const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
 
-const INK_FAINT = 'rgba(20,22,25,0.14)'
+const INK_DIVIDER = 'rgba(20,22,25,0.28)'
 const INK_MUTED = 'rgba(20,22,25,0.45)'
 
 /**
@@ -47,17 +47,18 @@ export function PhaseColumns() {
                 width: right - left,
                 height: HEIGHT,
                 borderRight:
-                  i < bands.length - 1 ? `1px dashed ${INK_FAINT}` : undefined,
-                borderLeft: i === 0 ? `1px dashed ${INK_FAINT}` : undefined,
+                  i < bands.length - 1 ? `1.5px solid ${INK_DIVIDER}` : undefined,
+                borderLeft: i === 0 ? `1.5px solid ${INK_DIVIDER}` : undefined,
               }}
             >
               <div
                 style={{
                   position: 'sticky',
-                  top: 10,
-                  padding: '6px 12px',
-                  fontSize: 14,
-                  fontWeight: 700,
+                  top: 12,
+                  padding: '4px 12px',
+                  fontSize: 22,
+                  fontWeight: 800,
+                  letterSpacing: '0.01em',
                   color: 'var(--color-ink)',
                   textAlign: 'center',
                 }}

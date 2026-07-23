@@ -93,6 +93,9 @@ interface ProjectState {
   future: HistorySnapshot[]
   saveStatus: SaveStatus
 
+  // Project title
+  setTitle: (title: string) => void
+
   // Backstory
   updateBackstory: (patch: Partial<Backstory>) => void
 
@@ -194,6 +197,17 @@ export const useProjectStore = create<ProjectState>((set, get) => {
     past: [],
     future: [],
     saveStatus: 'saved',
+
+    setTitle: (title) => {
+      set((state) => ({
+        project: {
+          ...state.project,
+          title,
+          updatedAt: new Date().toISOString(),
+        },
+      }))
+      scheduleSave()
+    },
 
     updateBackstory: (patch) =>
       commit((p) => ({ ...p, backstory: { ...p.backstory, ...patch } })),

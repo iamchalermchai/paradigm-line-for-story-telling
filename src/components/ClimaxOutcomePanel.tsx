@@ -39,12 +39,12 @@ export function ClimaxOutcomePanel() {
     <div className="px-4 py-3">
       <h2 className="mb-2 text-sm font-bold text-ink">ผลลัพธ์ตอนจบ</h2>
 
-      <label className="mb-2 block text-[11px] text-ink/60">
+      <label className="mb-2 block text-[13px] text-ink/60">
         Want (Climax)
         <div className="mt-1 flex items-center gap-2">
           <Swatch color={WANT_COLOR[outcome.want]} />
           <select
-            className="w-full rounded bg-white px-2 py-1 text-xs text-ink"
+            className="w-full rounded bg-white px-2 py-1 text-sm text-ink"
             style={{ border: '1px solid rgba(20,22,25,0.25)' }}
             value={outcome.want}
             onChange={(e) =>
@@ -60,12 +60,12 @@ export function ClimaxOutcomePanel() {
         </div>
       </label>
 
-      <label className="block text-[11px] text-ink/60">
+      <label className="block text-[13px] text-ink/60">
         Need (Character Arc)
         <div className="mt-1 flex items-center gap-2">
           <Swatch color={NEED_COLOR[outcome.need]} />
           <select
-            className="w-full rounded bg-white px-2 py-1 text-xs text-ink"
+            className="w-full rounded bg-white px-2 py-1 text-sm text-ink"
             style={{ border: '1px solid rgba(20,22,25,0.25)' }}
             value={outcome.need}
             onChange={(e) =>

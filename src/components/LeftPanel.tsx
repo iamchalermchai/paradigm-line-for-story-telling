@@ -58,7 +58,7 @@ function DocTab({
       aria-selected={active}
       onClick={onClick}
       className={[
-        'flex-1 rounded-t-md px-3 py-2 text-xs font-bold',
+        'flex-1 rounded-t-md px-3 py-2 text-sm font-bold',
         active ? 'bg-white text-ink' : 'bg-sand/70 text-ink/55 hover:bg-sand/90',
       ].join(' ')}
       style={{
@@ -85,12 +85,12 @@ function BackstoryTabBody() {
       <div className="space-y-3 p-3">
         {FIELD_ORDER.map((key) => (
           <label key={key} className="block">
-            <span className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold text-ink">
+            <span className="mb-1 flex items-center gap-2 text-sm font-semibold text-ink">
               <FieldIcon field={key} />
               {FIELD_LABEL[key]}
             </span>
             <textarea
-              className="w-full resize-y rounded p-2 text-[11px] text-ink focus:outline-none"
+              className="w-full resize-y rounded p-2 text-[13px] text-ink focus:outline-none"
               style={{ border: '1px solid rgba(20,22,25,0.2)' }}
               rows={3}
               value={backstory[key]}

@@ -62,10 +62,10 @@ export function AppHeader() {
       className="relative flex items-center gap-2 bg-cream px-3 py-2"
       style={{ borderBottom: '1px solid rgba(20,22,25,0.18)' }}
     >
-      <span className="text-sm font-bold text-ink">Plotline Board</span>
+      <span className="text-base font-bold text-ink">Plotline Board</span>
       <span className="text-ink/40">·</span>
       <input
-        className="w-56 min-w-0 rounded border border-transparent bg-transparent px-1.5 py-0.5 text-sm font-medium text-ink hover:border-ink/20 focus:border-ink/40 focus:bg-white focus:outline-none"
+        className="w-60 min-w-0 rounded border border-transparent bg-transparent px-1.5 py-0.5 text-base font-medium text-ink hover:border-ink/20 focus:border-ink/40 focus:bg-white focus:outline-none"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="ชื่อเรื่อง…"
@@ -75,7 +75,7 @@ export function AppHeader() {
 
       <button
         type="button"
-        className="ml-3 rounded bg-ink px-2.5 py-1 text-xs font-semibold text-cream hover:bg-ink/85"
+        className="ml-3 rounded bg-ink px-3 py-1.5 text-sm font-semibold text-cream hover:bg-ink/85"
         onClick={() => {
           const scene = addScene({ position: { x: 60, y: PARADIGM_LINE_Y + 160 } })
           openSceneEditor(scene.id)
@@ -97,7 +97,7 @@ export function AppHeader() {
       <div className="relative ml-1">
         <button
           type="button"
-          className="rounded px-2 py-1 text-xs text-ink hover:bg-sand/30"
+          className="rounded px-2.5 py-1.5 text-sm text-ink hover:bg-sand/30"
           style={{ border: '1px solid rgba(20,22,25,0.25)' }}
           aria-label="เมนูเพิ่มเติม"
           aria-haspopup="menu"
@@ -108,7 +108,7 @@ export function AppHeader() {
         </button>
         {menuOpen && (
           <div
-            className="absolute left-0 top-full z-20 mt-1 w-44 rounded bg-white py-1 shadow-lg"
+            className="absolute left-0 top-full z-20 mt-1 w-48 rounded bg-white py-1 shadow-lg"
             style={{ border: '1px solid rgba(20,22,25,0.18)' }}
             role="menu"
           >
@@ -117,7 +117,7 @@ export function AppHeader() {
                 key={label}
                 type="button"
                 role="menuitem"
-                className="block w-full px-3 py-1.5 text-left text-xs text-ink hover:bg-sand/20"
+                className="block w-full px-3 py-2 text-left text-sm text-ink hover:bg-sand/20"
                 onClick={() => {
                   action()
                   setMenuOpen(false)
@@ -142,7 +142,7 @@ export function AppHeader() {
         }}
       />
 
-      <span className={`ml-auto text-xs ${SAVE_COLOR[saveStatus]}`}>
+      <span className={`ml-auto text-sm ${SAVE_COLOR[saveStatus]}`}>
         {SAVE_LABEL[saveStatus]}
       </span>
     </header>
@@ -166,7 +166,7 @@ function HeaderBtn({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className="rounded px-2.5 py-1 text-xs text-ink hover:bg-sand/30 disabled:cursor-not-allowed disabled:opacity-40"
+      className="rounded px-2.5 py-1.5 text-sm text-ink hover:bg-sand/30 disabled:cursor-not-allowed disabled:opacity-40"
       style={{ border: '1px solid rgba(20,22,25,0.25)' }}
     >
       {children}

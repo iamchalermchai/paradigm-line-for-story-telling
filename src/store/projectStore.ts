@@ -56,7 +56,7 @@ function emptyProject(title: string): Project {
     edges: [],
     climaxOutcome: { want: 'not_got', need: 'gained' },
     structureTemplateId: 'four-phase',
-    viewport: { x: 0, y: 0, zoom: 0.7 },
+    viewport: { x: 40, y: 360, zoom: 0.8 },
     updatedAt: new Date().toISOString(),
   }
 }

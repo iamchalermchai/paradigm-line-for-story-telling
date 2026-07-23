@@ -18,9 +18,9 @@ import type {
   StoryScene,
 } from './types'
 
-const SCENE_W = 240
+const SCENE_W = 288
 const SCENE_GAP_X = 40
-const ROW_H = 220
+const ROW_H = 240
 const FIRST_ROW_OFFSET = 140 // distance of first row from the paradigm line
 
 // Fractional x position (0..1 within the whole board) for each structural beat.

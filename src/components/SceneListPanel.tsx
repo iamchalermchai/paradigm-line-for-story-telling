@@ -35,18 +35,18 @@ export function SceneListPanel() {
     <div className="flex-1 overflow-y-auto p-3">
       {groups.map((group) => (
         <div key={group.label} className="mb-4">
-          <h3 className="mb-1 text-[11px] font-bold uppercase tracking-wide text-ink/45">
+          <h3 className="mb-1 text-xs font-bold uppercase tracking-wide text-ink/45">
             {group.label}
           </h3>
           {group.scenes.length === 0 ? (
-            <p className="px-1 text-[11px] italic text-ink/35">— ยังไม่มีฉาก —</p>
+            <p className="px-1 text-xs italic text-ink/35">— ยังไม่มีฉาก —</p>
           ) : (
             <ul className="space-y-0.5">
               {group.scenes.map((scene) => (
                 <li key={scene.id}>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs text-ink hover:bg-sand/25"
+                    className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm text-ink hover:bg-sand/25"
                     onClick={() => {
                       openSceneEditor(scene.id)
                       setCenter(scene.position.x + 120, scene.position.y, {
@@ -60,7 +60,7 @@ export function SceneListPanel() {
                       {scene.title || 'ฉากไม่มีชื่อ'}
                     </span>
                     {scene.beat && (
-                      <span className="shrink-0 text-[10px] text-ink/40">
+                      <span className="shrink-0 text-[11px] text-ink/40">
                         {BEAT_LABELS[scene.beat]}
                       </span>
                     )}

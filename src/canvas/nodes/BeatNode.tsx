@@ -113,7 +113,7 @@ function BeatNodeComponent({ data, selected }: NodeProps) {
       >
         <Marker shape={marker.shape} color={marker.color} />
       </div>
-      <span className="whitespace-nowrap text-xs font-bold text-ink">
+      <span className="whitespace-nowrap text-sm font-bold text-ink">
         {BEAT_LABELS[beat.type]}
       </span>
     </div>

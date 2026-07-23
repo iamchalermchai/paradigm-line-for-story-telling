@@ -7,6 +7,7 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
+  useReactFlow,
   type Edge,
   type Node,
   type NodeTypes,
@@ -57,6 +58,18 @@ export function Board() {
   const openSceneEditor = useUiStore((s) => s.openSceneEditor)
   const newEdgeType = useUiStore((s) => s.newEdgeType)
   const selectEdge = useUiStore((s) => s.selectEdge)
+  const { setViewport: rfSetViewport } = useReactFlow()
+
+  // On first mount, open at a comfortable zoom: earlier saved projects may hold
+  // a very zoomed-out viewport that makes card text hard to read.
+  useEffect(() => {
+    if (project.viewport.zoom < 0.7) {
+      const next = { x: 40, y: 360, zoom: 0.8 }
+      rfSetViewport(next)
+      setViewport(next)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const [nodes, setNodes, onNodesChange] = useNodesState<BoardNode>(
     projectToNodes(project),

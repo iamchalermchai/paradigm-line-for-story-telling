@@ -77,7 +77,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
 
   return (
     <div
-      className="w-60 rounded-md bg-white shadow-sm transition"
+      className="w-72 rounded-md bg-white shadow-sm transition"
       style={{
         border: selected
           ? '2px solid var(--color-ink)'
@@ -89,14 +89,14 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
       <Handle type="target" position={Position.Left} className={handleClass} />
       <Handle type="source" position={Position.Right} className={handleClass} />
 
-      <div className="flex items-start justify-between gap-2 px-3 pt-2">
-        <h3 className="flex items-center gap-1.5 text-sm font-semibold leading-snug text-ink">
+      <div className="flex items-start justify-between gap-2 px-3 pt-2.5">
+        <h3 className="flex items-center gap-2 text-base font-semibold leading-snug text-ink">
           <ArcSymbol relation={scene.arcRelation} />
           {scene.title || 'ฉากไม่มีชื่อ'}
         </h3>
         <button
           type="button"
-          className="nodrag shrink-0 rounded px-1 text-xs text-ink/40 hover:bg-sand/40 hover:text-ink"
+          className="nodrag shrink-0 rounded px-1 text-sm text-ink/40 hover:bg-sand/40 hover:text-ink"
           aria-label={scene.collapsed ? 'ขยายการ์ด' : 'ย่อการ์ด'}
           onClick={(e) => {
             e.stopPropagation()
@@ -107,7 +107,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 px-3 pt-1 text-[10px] text-ink/55">
+      <div className="flex flex-wrap items-center gap-2 px-3 pt-1 text-[12px] text-ink/55">
         <span>{ARC_RELATION_LABELS[scene.arcRelation]}</span>
         {scene.beat && (
           <>
@@ -124,7 +124,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
       </div>
 
       {!scene.collapsed && (
-        <dl className="space-y-1 px-3 pb-3 pt-2 text-[11px] leading-snug text-ink-soft">
+        <dl className="space-y-1 px-3 pb-3 pt-2 text-[13px] leading-snug text-ink-soft">
           {scene.location && <Row label="สถานที่" value={scene.location} />}
           {scene.action && <Row label="ทำ" value={scene.action} />}
           {scene.obstacle && <Row label="อุปสรรค" value={scene.obstacle} />}
@@ -137,7 +137,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1.5">
       <dt className="shrink-0 font-medium text-ink/45">{label}:</dt>
       <dd className="line-clamp-2">{value}</dd>
     </div>

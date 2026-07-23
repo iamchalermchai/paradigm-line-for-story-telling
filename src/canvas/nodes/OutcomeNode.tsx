@@ -35,7 +35,7 @@ function OutcomeNodeComponent({ data }: NodeProps) {
 
   return (
     <div
-      className="w-56 rounded-md bg-white p-3"
+      className="w-64 rounded-md bg-white p-3"
       style={{ border: '1px solid rgba(20,22,25,0.18)' }}
       role="group"
       aria-label="ผลลัพธ์ตอนจบ"
@@ -45,10 +45,10 @@ function OutcomeNodeComponent({ data }: NodeProps) {
         position={Position.Left}
         className="!h-2.5 !w-2.5 !border !border-cream !bg-ink/40"
       />
-      <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-ink/50">
+      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-ink/50">
         ผลลัพธ์ตอนจบ
       </h3>
-      <div className="space-y-1.5 text-xs text-ink">
+      <div className="space-y-1.5 text-sm text-ink">
         <div className="flex items-center gap-2">
           <Swatch color={WANT_COLOR[want]} />
           <span>

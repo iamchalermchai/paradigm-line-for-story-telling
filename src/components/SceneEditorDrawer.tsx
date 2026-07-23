@@ -1,19 +1,26 @@
 import { useEffect, useMemo, useState } from 'react'
+import { PHASE_WIDTH } from '../domain/seed'
+import {
+  bandCenterFraction,
+  bandIndexForX,
+  getStructureTemplate,
+} from '../domain/structure'
 import {
   ARC_RELATION_LABELS,
   BEAT_LABELS,
-  PHASE_LABELS,
   STORY_PHASES,
 } from '../domain/types'
 import type {
   ArcRelation,
   StoryBeatType,
-  StoryPhase,
   StoryScene,
 } from '../domain/types'
 import { validateScene } from '../domain/validation'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
+
+const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
+const FOUR_PHASE = getStructureTemplate('four-phase')
 
 const ARC_RELATIONS: ArcRelation[] = [
   'neutral',
@@ -42,9 +49,12 @@ export function SceneEditorDrawer() {
   const editingSceneId = useUiStore((s) => s.editingSceneId)
   const closeSceneEditor = useUiStore((s) => s.closeSceneEditor)
   const scenes = useProjectStore((s) => s.project.scenes)
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
   const updateScene = useProjectStore((s) => s.updateScene)
   const duplicateScene = useProjectStore((s) => s.duplicateScene)
   const deleteScene = useProjectStore((s) => s.deleteScene)
+
+  const template = getStructureTemplate(structureId)
 
   const scene = scenes.find((s) => s.id === editingSceneId) ?? null
   const [draft, setDraft] = useState<StoryScene | null>(scene)
@@ -69,6 +79,19 @@ export function SceneEditorDrawer() {
   function set<K extends keyof StoryScene>(key: K, value: StoryScene[K]) {
     setDraft((d) => (d ? { ...d, [key]: value } : d))
   }
+
+  // Move the scene into the chosen band: recentre its x on that band and keep
+  // the 4-phase shadow (used by validation / beats) in sync with the new x.
+  function moveToBand(bandIndex: number) {
+    setDraft((d) => {
+      if (!d) return d
+      const x = bandCenterFraction(bandIndex, template) * BOARD_WIDTH
+      const phase = STORY_PHASES[bandIndexForX(x / BOARD_WIDTH, FOUR_PHASE)]
+      return { ...d, position: { ...d.position, x }, phase }
+    })
+  }
+
+  const currentBand = bandIndexForX(draft.position.x / BOARD_WIDTH, template)
 
   function save() {
     if (!draft) return
@@ -159,10 +182,10 @@ export function SceneEditorDrawer() {
 
         <div className="grid grid-cols-2 gap-2">
           <Select
-            label="ช่วงของเรื่อง"
-            value={draft.phase}
-            options={STORY_PHASES.map((p) => [p, PHASE_LABELS[p]])}
-            onChange={(v) => set('phase', v as StoryPhase)}
+            label={`ช่วงของเรื่อง (${template.name})`}
+            value={String(currentBand)}
+            options={template.bands.map((b, i) => [String(i), b.label])}
+            onChange={(v) => moveToBand(Number(v))}
           />
           <Select
             label="Story Beat"

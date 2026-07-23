@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { autoLayout } from './autoLayout'
 import { createSeedProject } from './seed'
-import { ABOVE_LINE_RELATIONS, PARADIGM_LINE_Y } from './types'
+import { PHASE_WIDTH } from './seed'
+import { bandIndexForX, getStructureTemplate } from './structure'
+import { ABOVE_LINE_RELATIONS, PARADIGM_LINE_Y, STORY_PHASES } from './types'
+
+const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
 
 describe('autoLayout', () => {
   it('places above-line relations above the paradigm line and others below', () => {
@@ -33,5 +37,21 @@ describe('autoLayout', () => {
     const climax = beats.find((b) => b.type === 'climax')!
     expect(catalyst.position.x).toBeLessThan(midpoint.position.x)
     expect(midpoint.position.x).toBeLessThan(climax.position.x)
+  })
+
+  it('keeps each scene inside its current band under the chosen template', () => {
+    const seed = createSeedProject()
+    const threeAct = getStructureTemplate('three-act')
+    const before = seed.scenes.map((s) => ({
+      id: s.id,
+      band: bandIndexForX(s.position.x / BOARD_WIDTH, threeAct),
+    }))
+    const { scenes } = autoLayout(seed.scenes, seed.beats, threeAct)
+    for (const scene of scenes) {
+      if (scene.locked) continue
+      const bandAfter = bandIndexForX(scene.position.x / BOARD_WIDTH, threeAct)
+      const bandBefore = before.find((b) => b.id === scene.id)!.band
+      expect(bandAfter).toBe(bandBefore)
+    }
   })
 })

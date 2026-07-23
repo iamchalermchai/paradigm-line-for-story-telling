@@ -73,3 +73,22 @@ export function bandIndexForX(
   }
   return idx
 }
+
+/** [start, end) fractions of a band by index. Last band ends at 1. */
+export function bandRange(
+  index: number,
+  template: StructureTemplate,
+): [number, number] {
+  const start = template.bands[index]?.start ?? 0
+  const end = template.bands[index + 1]?.start ?? 1
+  return [start, end]
+}
+
+/** Horizontal centre of a band as a fraction (0..1) of the board width. */
+export function bandCenterFraction(
+  index: number,
+  template: StructureTemplate,
+): number {
+  const [start, end] = bandRange(index, template)
+  return (start + end) / 2
+}

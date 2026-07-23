@@ -37,14 +37,28 @@ describe('SceneEditorDrawer', () => {
     expect(screen.getByText('ฉากนี้ยังไม่มีผลลัพธ์')).toBeInTheDocument()
   })
 
-  it('warns when phase conflicts with the beat', () => {
+  it('warns when the chosen band conflicts with the beat', () => {
     useUiStore.getState().openSceneEditor('scene-want') // beat = want (early)
     render(<SceneEditorDrawer />)
-    const phase = screen.getByLabelText('ช่วงของเรื่อง')
-    fireEvent.change(phase, { target: { value: 'ending' } })
+    // Band selector is template-aware; label carries the template name.
+    const band = screen.getByLabelText(/ช่วงของเรื่อง/)
+    // Move to band 3 (ช่วงท้าย → phase "ending"), conflicting with the want beat.
+    fireEvent.change(band, { target: { value: '3' } })
     expect(
       screen.getByText('ช่วงของเรื่องขัดกับ Story Beat ที่เลือกไว้'),
     ).toBeInTheDocument()
+  })
+
+  it('moving to a band recentres the scene x on that band', () => {
+    useUiStore.getState().openSceneEditor('scene-want')
+    render(<SceneEditorDrawer />)
+    const band = screen.getByLabelText(/ช่วงของเรื่อง/)
+    fireEvent.change(band, { target: { value: '3' } }) // ช่วงท้าย
+    fireEvent.click(screen.getByText('บันทึก'))
+    // Band 3 centre of a 2800px board is 0.875 * 2800 = 2450.
+    const moved = store().project.scenes.find((s) => s.id === 'scene-want')
+    expect(moved?.position.x).toBeCloseTo(2450, 0)
+    expect(moved?.phase).toBe('ending')
   })
 
   it('saves edits back to the store and closes', () => {

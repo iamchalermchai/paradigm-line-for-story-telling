@@ -54,3 +54,22 @@ export function getStructureTemplate(id: string): StructureTemplate {
     STRUCTURE_TEMPLATES.find((t) => t.id === id) ?? STRUCTURE_TEMPLATES[0]
   )
 }
+
+/**
+ * Index of the band that contains a given x-position, expressed as a fraction
+ * (0..1) of the board width. Positions left of the first band clamp to 0;
+ * positions past the last band clamp to the last band. This makes a scene's
+ * band a pure function of where it sits under the current template.
+ */
+export function bandIndexForX(
+  fraction: number,
+  template: StructureTemplate,
+): number {
+  const bands = template.bands
+  let idx = 0
+  for (let i = 0; i < bands.length; i++) {
+    if (fraction >= bands[i].start) idx = i
+    else break
+  }
+  return idx
+}

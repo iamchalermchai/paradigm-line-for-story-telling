@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Relative base so the build works both on a GitHub Pages project subpath
+  // (/<repo>/) and when opened directly. Safe because the app has no router.
+  base: './',
   plugins: [react(), tailwindcss()],
   test: {
     globals: true,

@@ -47,6 +47,20 @@ src/
 Auto Layout (undo ได้) · บันทึกอัตโนมัติลงเบราว์เซอร์ · Import/Export JSON · Export PNG เต็มกระดาน ·
 Import Scene Bank (mock parser — review/merge/split/select ก่อน confirm)
 
+## ความเป็นส่วนตัว (Privacy)
+
+Plotline Board เป็นแอป **client-only** — ทำงานในเบราว์เซอร์ล้วน ไม่มีเซิร์ฟเวอร์ของเรา:
+
+- **ข้อมูลโปรเจกต์ทั้งหมด** (ฉาก, ตัวละคร, backstory, เรื่องย่อ ฯลฯ) เก็บใน **localStorage ของเบราว์เซอร์คุณเท่านั้น** ไม่ถูกส่งออกไปที่ไหน
+- **ไม่มี** บัญชีผู้ใช้ · ไม่มีฐานข้อมูลออนไลน์ · ไม่มี analytics/tracking ของเรา
+- Export JSON/PNG เป็นไฟล์ที่ดาวน์โหลดลงเครื่องคุณโดยตรง
+- ข้อกำหนดภายนอกเดียว: ฟอนต์ Trirong/Noto Sans Thai โหลดจาก Google Fonts CDN (เบราว์เซอร์คุณติดต่อ Google เพื่อโหลดฟอนต์ — ไม่มีข้อมูลเรื่องของคุณถูกส่งไป)
+
+## Deploy
+
+Push ขึ้น `main` แล้ว GitHub Actions (`.github/workflows/deploy.yml`) จะรัน test + build
+แล้ว deploy `dist/` ขึ้น GitHub Pages อัตโนมัติ — เป็น static hosting ล้วน
+
 ## ยังไม่รวมในรอบนี้
 
 AI parser จริง (ตอนนี้เป็น mock หลัง `AIParserAdapter` — ต่อ Claude API ผ่าน server endpoint ภายหลัง),

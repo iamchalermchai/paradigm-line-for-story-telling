@@ -15,6 +15,7 @@ import type {
   StoryBeatType,
   StoryScene,
 } from '../domain/types'
+import { TELLING_LETTERS } from '../domain/telling'
 import { validateScene } from '../domain/validation'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
@@ -202,6 +203,15 @@ export function SceneEditorDrawer() {
           value={draft.arcRelation}
           options={ARC_RELATIONS.map((r) => [r, ARC_RELATION_LABELS[r]])}
           onChange={(v) => set('arcRelation', v as ArcRelation)}
+        />
+        <Select
+          label="บทการเล่า (ลำดับที่เล่าถึงฉากนี้ — เว้นว่างได้)"
+          value={draft.tellingChapter ?? ''}
+          options={[
+            ['', '— ไม่กำหนด —'],
+            ...TELLING_LETTERS.map((l) => [l, `บท ${l}`] as [string, string]),
+          ]}
+          onChange={(v) => set('tellingChapter', v || undefined)}
         />
         <Area
           label="โน้ต"

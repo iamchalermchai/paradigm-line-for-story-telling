@@ -125,6 +125,15 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 px-3 pt-1 text-[12px] text-ink/55">
+        {scene.tellingChapter && (
+          <span
+            className="font-display inline-flex h-5 min-w-5 items-center justify-center rounded px-1 text-[12px] font-bold text-cream"
+            style={{ background: 'var(--color-indigo)' }}
+            title={`บทการเล่า ${scene.tellingChapter}`}
+          >
+            {scene.tellingChapter}
+          </span>
+        )}
         <span>{ARC_RELATION_LABELS[scene.arcRelation]}</span>
         {scene.beat && (
           <>

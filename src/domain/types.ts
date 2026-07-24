@@ -95,6 +95,10 @@ export interface StoryScene {
   phase: StoryPhase
   beat?: StoryBeatType
   arcRelation: ArcRelation
+  /** Telling chapter (a single letter A/B/C…). Scenes that share a letter are
+   *  narrated together; chapter order (A→B→C) is the telling order, which can
+   *  differ from chronological order on the paradigm line. Undefined = unassigned. */
+  tellingChapter?: string
   position: Position
   color?: string
   order: number

@@ -255,6 +255,22 @@ function edge(
   return { id, source, target, type }
 }
 
+// A demonstrative non-linear telling: start at the crisis (A), flash back to
+// the origin (B), then move forward — telling order ≠ chronological order.
+const TELLING_MAP: Record<string, string> = {
+  'scene-midpoint': 'A',
+  'scene-ghost-bg': 'B',
+  'scene-catalyst': 'B',
+  'scene-want': 'C',
+  'scene-progress': 'C',
+  'scene-warning': 'C',
+  'scene-ghost': 'D',
+  'scene-lowpoint': 'D',
+  'scene-aha': 'D',
+  'scene-choice': 'E',
+  'scene-climax': 'E',
+}
+
 export function createSeedProject(): Project {
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -268,7 +284,7 @@ export function createSeedProject(): Project {
       want: 'เขียนระบายความคิดถึงให้ครบ 30 วันติดต่อกันเพื่อลืมคิว',
       need: 'ความเงียบไม่ได้ปกป้องใคร แต่เป็นการย้ายบาดแผลไปให้อีกคนหนึ่ง',
     },
-    scenes,
+    scenes: scenes.map((s) => ({ ...s, tellingChapter: TELLING_MAP[s.id] })),
     beats,
     edges,
     climaxOutcome: { want: 'not_got', need: 'gained' },

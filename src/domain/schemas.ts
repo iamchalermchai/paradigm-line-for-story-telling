@@ -61,6 +61,7 @@ export const storySceneSchema = z.object({
   phase: storyPhaseSchema,
   beat: storyBeatTypeSchema.optional(),
   arcRelation: arcRelationSchema,
+  tellingChapter: z.string().optional(),
   position: positionSchema,
   color: z.string().optional(),
   order: z.number(),

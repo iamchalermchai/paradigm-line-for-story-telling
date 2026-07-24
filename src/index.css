@@ -51,6 +51,13 @@ body,
   border-radius: 3px;
 }
 
+/* In telling mode the narration route is the hero; recede the chronological
+   threads so they read as context rather than competing lines. */
+.telling-mode .react-flow__edges {
+  opacity: 0.14;
+  transition: opacity 0.2s ease;
+}
+
 /* Respect users who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {
   *,

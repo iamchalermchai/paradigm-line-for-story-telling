@@ -3,6 +3,7 @@ import { useState } from 'react'
 import {
   downloadDataUrl,
   exportBoardPng,
+  exportBoardPngSlices,
   SIZE_PRESETS,
   type SizeKey,
 } from '../export/exportPng'
@@ -22,6 +23,7 @@ export function ExportPngDialog() {
   const { getNodes } = useReactFlow()
 
   const [size, setSize] = useState<SizeKey>('facebook')
+  const [layout, setLayout] = useState<'single' | 'split'>('single')
   const [transparent, setTransparent] = useState(false)
   const [includeBackstory, setIncludeBackstory] = useState(true)
   const [status, setStatus] = useState<Status>('idle')
@@ -35,14 +37,21 @@ export function ExportPngDialog() {
     try {
       // Exclude the non-content outcome node? Keep everything; bounds cover all.
       const nodes = getNodes()
-      const dataUrl = await exportBoardPng(nodes, {
-        size,
-        transparent,
-        includeBackstory,
-        backstory,
-        title,
-      })
-      downloadDataUrl(dataUrl, `${title || 'plotline-board'}.png`)
+      const opts = { size, transparent, includeBackstory, backstory, title }
+      const name = title || 'plotline-board'
+      if (layout === 'split') {
+        const urls = await exportBoardPngSlices(nodes, opts)
+        for (const [i, url] of urls.entries()) {
+          downloadDataUrl(
+            url,
+            urls.length === 1 ? `${name}.png` : `${name}-${i + 1}of${urls.length}.png`,
+          )
+          // Give the browser room to register each download before the next.
+          await new Promise((r) => setTimeout(r, 400))
+        }
+      } else {
+        downloadDataUrl(await exportBoardPng(nodes, opts), `${name}.png`)
+      }
       setStatus('idle')
       closeDialog()
     } catch (e) {
@@ -71,8 +80,39 @@ export function ExportPngDialog() {
           ))}
         </div>
         <p className="mt-1 text-[11px] text-ink/45">
-          ภาพย่อ/ขยายตามกระดานจริง คมชัดเมื่อซูม — เลือก"พอดีเฟซบุ๊ก"
-          สำหรับโพสต์หรือคอมเมนต์
+          ภาพย่อ/ขยายตามกระดานจริง คมชัดเมื่อซูม — ถ้ากระดานใหญ่มาก
+          ภาพจะขยายเกินขนาดที่เลือกโดยอัตโนมัติเพื่อให้ตัวหนังสือยังอ่านออก
+        </p>
+      </fieldset>
+
+      <fieldset className="mb-4">
+        <legend className="mb-1 text-xs font-semibold text-ink-soft">
+          การแบ่งภาพ
+        </legend>
+        <div className="flex flex-col gap-1">
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="layout"
+              checked={layout === 'single'}
+              onChange={() => setLayout('single')}
+            />
+            ภาพเดียวทั้งกระดาน
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="layout"
+              checked={layout === 'split'}
+              onChange={() => setLayout('split')}
+            />
+            แบ่งเป็นหลายภาพ — เหมาะกับโพสต์เฟซบุ๊ก
+          </label>
+        </div>
+        <p className="mt-1 text-[11px] text-ink/45">
+          เฟซบุ๊กย่อทุกภาพให้เหลือ 2048px เสมอ กระดานใหญ่ในภาพเดียวจะอ่านไม่ออก
+          — แบบแบ่งภาพจะตัดกระดานเป็นช่วงๆ ให้แต่ละภาพยังอ่านชัดหลังเฟซบุ๊กย่อ
+          แล้วอัปโหลดเป็นอัลบั้มรูปในโพสต์เดียวได้เลย
         </p>
       </fieldset>
 

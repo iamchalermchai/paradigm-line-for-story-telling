@@ -1,10 +1,5 @@
 import { PHASE_WIDTH } from './seed'
-import {
-  bandIndexForX,
-  bandRange,
-  getStructureTemplate,
-  type StructureTemplate,
-} from './structure'
+import { bandIndexForX, getStructureTemplate } from './structure'
 import {
   ABOVE_LINE_RELATIONS,
   BEAT_PHASE,
@@ -62,55 +57,55 @@ export interface LayoutResult {
 }
 
 /**
- * Pure auto-layout: tidy scenes within the bands of the given structure
- * template (split above/below the paradigm line by arc relation, stacked) and
- * place beat markers along the line. A scene's band is derived from its current
- * x, so auto-layout arranges within a band without moving scenes between them.
- * Locked nodes keep their position.
+ * Pure auto-layout: place each scene on the timeline where its beat marker sits
+ * (Catalyst → … → Ending), split above/below the paradigm line by arc relation,
+ * and greedily row-pack so cards never overlap. Scenes without a beat keep the
+ * author's x. Beat markers are re-spaced along the line. Locked nodes stay put.
  */
 export function autoLayout(
   scenes: StoryScene[],
   beats: BeatMarker[],
-  template: StructureTemplate = FOUR_PHASE,
 ): LayoutResult {
   // --- Scenes ---
-  // Group by (band index, above/below) so we can stack without overlap.
-  const buckets = new Map<string, StoryScene[]>()
-  for (const scene of scenes) {
-    const band = bandIndexForX(scene.position.x / BOARD_WIDTH, template)
-    const key = `${band}:${isAboveLine(scene) ? 'above' : 'below'}`
-    const arr = buckets.get(key) ?? []
-    arr.push(scene)
-    buckets.set(key, arr)
-  }
-
   const laidOutScenes = scenes.map((s) => ({ ...s }))
   const byId = new Map(laidOutScenes.map((s) => [s.id, s]))
 
-  // Story order, not creation order ("causation over sequence"): a scene with
-  // a beat sorts at its beat's position along the line (Catalyst → … → Ending);
-  // a scene without one keeps the author's own x as its intent.
-  const storyX = (s: StoryScene): number =>
-    s.beat !== undefined && BEAT_X_FRACTION[s.beat] !== undefined
-      ? BEAT_X_FRACTION[s.beat]! * BOARD_WIDTH
-      : s.position.x
+  // Anchor a scene on the timeline ("position = meaning"): a scene with a beat
+  // sits directly under/over its beat marker; a scene without one keeps the
+  // author's own x. The card is centred on that anchor.
+  const anchorX = (s: StoryScene): number => {
+    const at =
+      s.beat !== undefined && BEAT_X_FRACTION[s.beat] !== undefined
+        ? BEAT_X_FRACTION[s.beat]! * BOARD_WIDTH
+        : s.position.x
+    return at - SCENE_W / 2
+  }
 
-  for (const [key, bucketScenes] of buckets) {
-    const [bandStr, side] = key.split(':') as [string, 'above' | 'below']
-    const [start] = bandRange(Number(bandStr), template)
-    const colX = start * BOARD_WIDTH
-    const ordered = [...bucketScenes].sort((a, b) => storyX(a) - storyX(b))
+  // Place each side (above / below the line) by greedy row-packing along the
+  // timeline: keep the x anchor, and push a card to a deeper row only when it
+  // would overlap one already placed at that x — so beats stay aligned and
+  // cards never collide.
+  for (const side of ['above', 'below'] as const) {
+    const sideScenes = laidOutScenes
+      .filter((s) => !s.locked && isAboveLine(s) === (side === 'above'))
+      .sort((a, b) => anchorX(a) - anchorX(b))
 
-    ordered.forEach((scene, i) => {
+    const rowEnds: number[] = [] // right edge (x) currently occupied per row
+
+    for (const scene of sideScenes) {
       const target = byId.get(scene.id)
-      if (!target || target.locked) return
+      if (!target) continue
+      const x = Math.max(0, anchorX(scene))
 
-      // Alternate horizontal offset so stacked cards don't perfectly overlap.
-      const colInner = i % 2 === 0 ? 40 : 40 + SCENE_W + SCENE_GAP_X
-      const rowIndex = Math.floor(i / 2)
-      const distance = FIRST_ROW_OFFSET + rowIndex * ROW_H
-      const x = colX + colInner
+      // First row whose last card ends before this card's left edge (with gap).
+      let row = rowEnds.findIndex((end) => x >= end + SCENE_GAP_X)
+      if (row === -1) {
+        row = rowEnds.length
+        rowEnds.push(0)
+      }
+      rowEnds[row] = x + SCENE_W
 
+      const distance = FIRST_ROW_OFFSET + row * ROW_H
       target.position = {
         x,
         y:
@@ -119,8 +114,8 @@ export function autoLayout(
             : PARADIGM_LINE_Y + distance,
       }
       // Keep the 4-phase shadow consistent with the new x.
-      target.phase = fourPhaseForX(x)
-    })
+      target.phase = fourPhaseForX(x + SCENE_W / 2)
+    }
   }
 
   // --- Beats ---

@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { autoLayout } from './autoLayout'
 import { createSeedProject } from './seed'
-import { PHASE_WIDTH } from './seed'
-import { bandIndexForX, getStructureTemplate } from './structure'
-import { ABOVE_LINE_RELATIONS, PARADIGM_LINE_Y, STORY_PHASES } from './types'
+import { ABOVE_LINE_RELATIONS, PARADIGM_LINE_Y } from './types'
 
-const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
+// Mirror of the SCENE_W constant in autoLayout.ts (card width used for centring).
+const SCENE_W_TEST = 288
 
 describe('autoLayout', () => {
   it('places above-line relations above the paradigm line and others below', () => {
@@ -79,19 +78,25 @@ describe('autoLayout', () => {
     expect(l.position.x).toBeLessThan(r.position.x)
   })
 
-  it('keeps each scene inside its current band under the chosen template', () => {
+  it('places a scene under its own beat marker', () => {
     const seed = createSeedProject()
-    const threeAct = getStructureTemplate('three-act')
-    const before = seed.scenes.map((s) => ({
-      id: s.id,
-      band: bandIndexForX(s.position.x / BOARD_WIDTH, threeAct),
-    }))
-    const { scenes } = autoLayout(seed.scenes, seed.beats, threeAct)
-    for (const scene of scenes) {
-      if (scene.locked) continue
-      const bandAfter = bandIndexForX(scene.position.x / BOARD_WIDTH, threeAct)
-      const bandBefore = before.find((b) => b.id === scene.id)!.band
-      expect(bandAfter).toBe(bandBefore)
-    }
+    const { scenes, beats } = autoLayout(seed.scenes, seed.beats)
+    // A beat scene's centre should sit at its beat marker's x (card centred on it).
+    const wantScene = scenes.find((s) => s.beat === 'want')!
+    const wantBeat = beats.find((b) => b.type === 'want')!
+    const cardCentre = wantScene.position.x + SCENE_W_TEST / 2
+    expect(Math.abs(cardCentre - wantBeat.position.x)).toBeLessThan(4)
+  })
+
+  it('row-packs overlapping beat scenes into separate rows (no collision)', () => {
+    const seed = createSeedProject()
+    // Two above-line scenes on the same beat must not share the same y row.
+    const base = { ...seed.scenes[0], arcRelation: 'want' as const, locked: false }
+    const a = { ...base, id: 'a', beat: 'midpoint' as const, position: { x: 0, y: 0 } }
+    const b = { ...base, id: 'b', beat: 'midpoint' as const, position: { x: 0, y: 0 } }
+    const { scenes } = autoLayout([a, b], seed.beats)
+    const ya = scenes.find((s) => s.id === 'a')!.position.y
+    const yb = scenes.find((s) => s.id === 'b')!.position.y
+    expect(ya).not.toBe(yb)
   })
 })

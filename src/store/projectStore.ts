@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { autoLayout } from '../domain/autoLayout'
 import { SCHEMA_VERSION } from '../domain/schemas'
 import { createSeedProject } from '../domain/seed'
-import { getStructureTemplate } from '../domain/structure'
 import {
   BEAT_LABELS,
   PARADIGM_LINE_Y,
@@ -437,8 +436,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
 
     applyAutoLayout: () =>
       commit((p) => {
-        const template = getStructureTemplate(p.structureTemplateId)
-        const { scenes, beats } = autoLayout(p.scenes, p.beats, template)
+        const { scenes, beats } = autoLayout(p.scenes, p.beats)
         return { ...p, scenes, beats }
       }),
 

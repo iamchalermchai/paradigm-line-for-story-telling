@@ -15,7 +15,7 @@ import type {
   StoryBeatType,
   StoryScene,
 } from '../domain/types'
-import { TELLING_LETTERS } from '../domain/telling'
+import { tellingChapters } from '../domain/telling'
 import { validateScene } from '../domain/validation'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
@@ -51,11 +51,13 @@ export function SceneEditorDrawer() {
   const closeSceneEditor = useUiStore((s) => s.closeSceneEditor)
   const scenes = useProjectStore((s) => s.project.scenes)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const chapterOrder = useProjectStore((s) => s.project.tellingChapterOrder)
   const updateScene = useProjectStore((s) => s.updateScene)
   const duplicateScene = useProjectStore((s) => s.duplicateScene)
   const deleteScene = useProjectStore((s) => s.deleteScene)
 
   const template = getStructureTemplate(structureId)
+  const chapters = tellingChapters(scenes, chapterOrder)
 
   const scene = scenes.find((s) => s.id === editingSceneId) ?? null
   const [draft, setDraft] = useState<StoryScene | null>(scene)
@@ -205,11 +207,11 @@ export function SceneEditorDrawer() {
           onChange={(v) => set('arcRelation', v as ArcRelation)}
         />
         <Select
-          label="บทการเล่า (ลำดับที่เล่าถึงฉากนี้ — เว้นว่างได้)"
+          label="บทการเล่า (จัดลำดับด้วยการลากในแผงซ้าย โหมด “ลำดับเล่า”)"
           value={draft.tellingChapter ?? ''}
           options={[
             ['', '— ไม่กำหนด —'],
-            ...TELLING_LETTERS.map((l) => [l, `บท ${l}`] as [string, string]),
+            ...chapters.map((c) => [c.key, `บท ${c.letter}`] as [string, string]),
           ]}
           onChange={(v) => set('tellingChapter', v || undefined)}
         />

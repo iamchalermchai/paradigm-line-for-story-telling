@@ -24,7 +24,8 @@ interface Stop {
  */
 export function TellingOverlay() {
   const scenes = useProjectStore((s) => s.project.scenes)
-  const chapters = tellingChapters(scenes)
+  const order = useProjectStore((s) => s.project.tellingChapterOrder)
+  const chapters = tellingChapters(scenes, order).filter((ch) => ch.scenes.length > 0)
   if (chapters.length === 0) return null
 
   const stops: Stop[] = chapters.map((ch) => {

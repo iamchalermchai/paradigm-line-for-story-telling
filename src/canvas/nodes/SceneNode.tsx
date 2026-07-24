@@ -1,5 +1,6 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react'
 import { memo } from 'react'
+import { chapterLetterForScene } from '../../domain/telling'
 import { ARC_RELATION_LABELS, BEAT_LABELS } from '../../domain/types'
 import type { ArcRelation } from '../../domain/types'
 import { useProjectStore } from '../../store/projectStore'
@@ -72,6 +73,9 @@ export function ArcSymbol({ relation }: { relation: ArcRelation }) {
 function SceneNodeComponent({ data, selected }: NodeProps) {
   const { scene } = data as unknown as SceneNodeData
   const updateScene = useProjectStore((s) => s.updateScene)
+  const chapterLetter = useProjectStore((s) =>
+    chapterLetterForScene(scene, s.project.scenes, s.project.tellingChapterOrder),
+  )
 
   // The "Character" side of Character + Action = Plot: lead with the POV actor.
   const who =
@@ -125,13 +129,13 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
       </div>
 
       <div className="flex flex-wrap items-center gap-2 px-3 pt-1 text-[12px] text-ink/55">
-        {scene.tellingChapter && (
+        {chapterLetter && (
           <span
             className="font-display inline-flex h-5 min-w-5 items-center justify-center rounded px-1 text-[12px] font-bold text-cream"
             style={{ background: 'var(--color-indigo)' }}
-            title={`บทการเล่า ${scene.tellingChapter}`}
+            title={`บทการเล่า ${chapterLetter}`}
           >
-            {scene.tellingChapter}
+            {chapterLetter}
           </span>
         )}
         <span>{ARC_RELATION_LABELS[scene.arcRelation]}</span>

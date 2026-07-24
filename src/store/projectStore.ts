@@ -56,6 +56,7 @@ function emptyProject(title: string): Project {
     edges: [],
     climaxOutcome: { want: 'not_got', need: 'gained' },
     structureTemplateId: 'four-phase',
+    tellingChapterOrder: [],
     viewport: { x: 40, y: 360, zoom: 0.8 },
     updatedAt: new Date().toISOString(),
   }
@@ -149,6 +150,10 @@ interface ProjectState {
   applyAutoLayout: () => void
   setViewport: (viewport: Viewport) => void
   setStructureTemplate: (id: string) => void
+
+  // Telling chapters
+  addTellingChapter: () => string
+  reorderTellingChapters: (order: string[]) => void
 
   // History
   undo: () => void
@@ -400,6 +405,30 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         project: {
           ...state.project,
           structureTemplateId: id,
+          updatedAt: new Date().toISOString(),
+        },
+      }))
+      scheduleSave()
+    },
+
+    addTellingChapter: () => {
+      const key = uid('tc')
+      set((state) => ({
+        project: {
+          ...state.project,
+          tellingChapterOrder: [...state.project.tellingChapterOrder, key],
+          updatedAt: new Date().toISOString(),
+        },
+      }))
+      scheduleSave()
+      return key
+    },
+
+    reorderTellingChapters: (order) => {
+      set((state) => ({
+        project: {
+          ...state.project,
+          tellingChapterOrder: order,
           updatedAt: new Date().toISOString(),
         },
       }))

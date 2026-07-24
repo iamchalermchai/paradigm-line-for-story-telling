@@ -202,6 +202,37 @@ describe('projectStore', () => {
     expect(store().exportProject().id).toBe(store().project.id)
   })
 
+  it('addTellingChapter appends an empty chapter key and persists', async () => {
+    const before = store().project.tellingChapterOrder.length
+    const key = store().addTellingChapter()
+    expect(store().project.tellingChapterOrder).toContain(key)
+    expect(store().project.tellingChapterOrder).toHaveLength(before + 1)
+    await new Promise((r) => setTimeout(r, 700))
+    expect(loadProject()?.tellingChapterOrder).toContain(key)
+  })
+
+  it('reordering chapters relabels the derived letters (drag outcome)', async () => {
+    const { chapterLetterForScene } = await import('../domain/telling')
+    // Seed order is [A..E]; scene-midpoint is in chapter key 'A' = letter A.
+    const midpoint = () =>
+      store().project.scenes.find((s) => s.id === 'scene-midpoint')!
+    expect(
+      chapterLetterForScene(midpoint(), store().project.scenes, store().project.tellingChapterOrder),
+    ).toBe('A')
+    // Drag chapter 'A' to third position → its scenes now read as letter C.
+    store().reorderTellingChapters(['B', 'C', 'A', 'D', 'E'])
+    expect(
+      chapterLetterForScene(midpoint(), store().project.scenes, store().project.tellingChapterOrder),
+    ).toBe('C')
+  })
+
+  it('moving a scene to a chapter is an undoable content edit', () => {
+    store().updateScene('scene-want', { tellingChapter: 'A' })
+    expect(store().project.scenes.find((s) => s.id === 'scene-want')?.tellingChapter).toBe('A')
+    store().undo()
+    expect(store().project.scenes.find((s) => s.id === 'scene-want')?.tellingChapter).toBe('C')
+  })
+
   it('sets and persists the structure template', async () => {
     expect(store().project.structureTemplateId).toBe('four-phase')
     store().setStructureTemplate('three-act')

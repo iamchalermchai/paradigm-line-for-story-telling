@@ -118,6 +118,7 @@ export const projectSchema = z.object({
   edges: z.array(storyEdgeSchema),
   climaxOutcome: climaxOutcomeSchema,
   structureTemplateId: z.string().default(DEFAULT_STRUCTURE_ID),
+  tellingChapterOrder: z.array(z.string()).default([]),
   viewport: viewportSchema,
   updatedAt: z.string(),
 })

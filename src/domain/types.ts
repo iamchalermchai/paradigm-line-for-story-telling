@@ -186,6 +186,9 @@ export interface Project {
   climaxOutcome: ClimaxOutcome
   /** id of the selected vertical structure overlay (see domain/structure.ts). */
   structureTemplateId: string
+  /** Ordered telling-chapter keys; display letters (A/B/C…) derive from position.
+   *  Empty = derive order from scene keys (see domain/telling.ts). */
+  tellingChapterOrder: string[]
   viewport: Viewport
   updatedAt: string
 }

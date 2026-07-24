@@ -2,13 +2,20 @@ import { getNodesBounds, getViewportForBounds, type Node } from '@xyflow/react'
 import { toPng } from 'html-to-image'
 import type { Backstory } from '../domain/types'
 
-export const RESOLUTIONS = {
-  '1920x1080': [1920, 1080],
-  '2560x1440': [2560, 1440],
-  '3840x2160': [3840, 2160],
+// Export size presets keyed by the target long-edge pixel length. The canvas
+// follows the board's own aspect ratio (no forced 16:9 letterboxing), so every
+// pixel is content — the board stays crisp when zoomed. Facebook keeps images
+// sharp up to ~2048px on the long edge, so that's the "post to Facebook" pick.
+export const SIZE_PRESETS = {
+  facebook: { longEdge: 2048, label: 'พอดีเฟซบุ๊ก (2048px)' },
+  sharp: { longEdge: 3200, label: 'คมชัด (3200px)' },
+  xlarge: { longEdge: 4600, label: 'ใหญ่พิเศษ (4600px)' },
 } as const
 
-export type ResolutionKey = keyof typeof RESOLUTIONS
+export type SizeKey = keyof typeof SIZE_PRESETS
+
+// Guard against browser canvas limits (~16k px / ~256MP area).
+const MAX_EDGE = 12000
 
 const LIGHT_BG = '#f8fafc'
 const CREAM = '#f8f6f0'
@@ -18,29 +25,42 @@ const SAND_PANEL = '#f6e6cb'
 const SAND_BORDER = '#dba867'
 
 export interface PngOptions {
-  resolution: ResolutionKey
+  size: SizeKey
   transparent: boolean
   includeBackstory: boolean
   backstory: Backstory
   title: string
-  padding?: number
 }
+
+// Breathing room around the board content, in flow (unscaled) pixels.
+const CONTENT_PAD = 90
 
 /**
  * Render the whole board (including off-screen nodes) to a PNG data URL. The
- * toolbar / drawers live outside `.react-flow__viewport`, so they are never
- * captured.
+ * canvas matches the board's aspect ratio and is scaled so its long edge hits
+ * the chosen preset — so the result is full-bleed content at high resolution
+ * rather than a low-res board letterboxed inside a 16:9 frame.
  */
 export async function exportBoardPng(
   nodes: Node[],
   opts: PngOptions,
 ): Promise<string> {
-  const [width, height] = RESOLUTIONS[opts.resolution]
   if (nodes.length === 0) throw new Error('ไม่มีโหนดให้ส่งออก')
 
   const bounds = getNodesBounds(nodes)
-  const padding = opts.padding ?? 0.12
-  const transform = getViewportForBounds(bounds, width, height, 0.05, 4, padding)
+  const contentW = bounds.width + CONTENT_PAD * 2
+  const contentH = bounds.height + CONTENT_PAD * 2
+
+  // Scale so the long edge reaches the target; clamp to the canvas limit.
+  const target = SIZE_PRESETS[opts.size].longEdge
+  let scale = target / Math.max(contentW, contentH)
+  scale = Math.min(scale, MAX_EDGE / Math.max(contentW, contentH))
+
+  const width = Math.round(contentW * scale)
+  const height = Math.round(contentH * scale)
+
+  // Canvas matches board aspect → getViewportForBounds gives ~1:1 fit, no bars.
+  const transform = getViewportForBounds(bounds, width, height, 0.02, 10, 0.04)
 
   const viewport = document.querySelector<HTMLElement>('.react-flow__viewport')
   if (!viewport) throw new Error('ไม่พบพื้นที่กระดาน (viewport)')

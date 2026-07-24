@@ -3,14 +3,14 @@ import { useState } from 'react'
 import {
   downloadDataUrl,
   exportBoardPng,
-  RESOLUTIONS,
-  type ResolutionKey,
+  SIZE_PRESETS,
+  type SizeKey,
 } from '../export/exportPng'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
 import { Modal } from './Modal'
 
-const RESOLUTION_KEYS = Object.keys(RESOLUTIONS) as ResolutionKey[]
+const SIZE_KEYS = Object.keys(SIZE_PRESETS) as SizeKey[]
 
 type Status = 'idle' | 'working' | 'error'
 
@@ -21,7 +21,7 @@ export function ExportPngDialog() {
   const title = useProjectStore((s) => s.project.title)
   const { getNodes } = useReactFlow()
 
-  const [resolution, setResolution] = useState<ResolutionKey>('2560x1440')
+  const [size, setSize] = useState<SizeKey>('facebook')
   const [transparent, setTransparent] = useState(false)
   const [includeBackstory, setIncludeBackstory] = useState(true)
   const [status, setStatus] = useState<Status>('idle')
@@ -36,7 +36,7 @@ export function ExportPngDialog() {
       // Exclude the non-content outcome node? Keep everything; bounds cover all.
       const nodes = getNodes()
       const dataUrl = await exportBoardPng(nodes, {
-        resolution,
+        size,
         transparent,
         includeBackstory,
         backstory,
@@ -55,21 +55,25 @@ export function ExportPngDialog() {
     <Modal title="ส่งออกภาพ PNG (ทั้งกระดาน)" onClose={closeDialog}>
       <fieldset className="mb-4">
         <legend className="mb-1 text-xs font-semibold text-ink-soft">
-          ความละเอียด
+          ขนาดภาพ
         </legend>
         <div className="flex flex-col gap-1">
-          {RESOLUTION_KEYS.map((key) => (
+          {SIZE_KEYS.map((key) => (
             <label key={key} className="flex items-center gap-2 text-sm">
               <input
                 type="radio"
-                name="resolution"
-                checked={resolution === key}
-                onChange={() => setResolution(key)}
+                name="size"
+                checked={size === key}
+                onChange={() => setSize(key)}
               />
-              {key.replace('x', ' × ')}
+              {SIZE_PRESETS[key].label}
             </label>
           ))}
         </div>
+        <p className="mt-1 text-[11px] text-ink/45">
+          ภาพย่อ/ขยายตามกระดานจริง คมชัดเมื่อซูม — เลือก"พอดีเฟซบุ๊ก"
+          สำหรับโพสต์หรือคอมเมนต์
+        </p>
       </fieldset>
 
       <fieldset className="mb-4">

@@ -87,11 +87,19 @@ export function autoLayout(
   const laidOutScenes = scenes.map((s) => ({ ...s }))
   const byId = new Map(laidOutScenes.map((s) => [s.id, s]))
 
+  // Story order, not creation order ("causation over sequence"): a scene with
+  // a beat sorts at its beat's position along the line (Catalyst → … → Ending);
+  // a scene without one keeps the author's own x as its intent.
+  const storyX = (s: StoryScene): number =>
+    s.beat !== undefined && BEAT_X_FRACTION[s.beat] !== undefined
+      ? BEAT_X_FRACTION[s.beat]! * BOARD_WIDTH
+      : s.position.x
+
   for (const [key, bucketScenes] of buckets) {
     const [bandStr, side] = key.split(':') as [string, 'above' | 'below']
     const [start] = bandRange(Number(bandStr), template)
     const colX = start * BOARD_WIDTH
-    const ordered = [...bucketScenes].sort((a, b) => a.order - b.order)
+    const ordered = [...bucketScenes].sort((a, b) => storyX(a) - storyX(b))
 
     ordered.forEach((scene, i) => {
       const target = byId.get(scene.id)

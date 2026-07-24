@@ -39,6 +39,46 @@ describe('autoLayout', () => {
     expect(midpoint.position.x).toBeLessThan(climax.position.x)
   })
 
+  it('orders scenes by beat progression, not creation order', () => {
+    const seed = createSeedProject()
+    // Two scenes in the same band+side: climax-beat scene created *before* a
+    // want-beat scene (order swapped). Layout must still put want left of climax.
+    const base = seed.scenes[0]
+    const want = {
+      ...base,
+      id: 'x-want',
+      beat: 'want' as const,
+      arcRelation: 'want' as const,
+      order: 99, // created last
+      position: { x: 100, y: -300 },
+      locked: false,
+    }
+    const climax = {
+      ...base,
+      id: 'x-climax',
+      beat: 'climax' as const,
+      arcRelation: 'want' as const,
+      order: 1, // created first
+      position: { x: 120, y: -300 },
+      locked: false,
+    }
+    const { scenes } = autoLayout([climax, want], seed.beats)
+    const wantOut = scenes.find((s) => s.id === 'x-want')!
+    const climaxOut = scenes.find((s) => s.id === 'x-climax')!
+    expect(wantOut.position.x).toBeLessThan(climaxOut.position.x)
+  })
+
+  it('scenes without beats keep their relative x intent', () => {
+    const seed = createSeedProject()
+    const base = { ...seed.scenes[0], beat: undefined, locked: false }
+    const left = { ...base, id: 'p-left', order: 9, position: { x: 200, y: 150 } }
+    const right = { ...base, id: 'p-right', order: 1, position: { x: 600, y: 150 } }
+    const { scenes } = autoLayout([right, left], seed.beats)
+    const l = scenes.find((s) => s.id === 'p-left')!
+    const r = scenes.find((s) => s.id === 'p-right')!
+    expect(l.position.x).toBeLessThan(r.position.x)
+  })
+
   it('keeps each scene inside its current band under the chosen template', () => {
     const seed = createSeedProject()
     const threeAct = getStructureTemplate('three-act')

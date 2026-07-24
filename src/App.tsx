@@ -2,6 +2,7 @@ import { ReactFlowProvider } from '@xyflow/react'
 import { Board } from './canvas/Board'
 import { AppHeader } from './components/AppHeader'
 import { ExportPngDialog } from './components/ExportPngDialog'
+import { HelpDialog } from './components/HelpDialog'
 import { ImportSceneBankDialog } from './components/ImportSceneBankDialog'
 import { LeftPanel } from './components/LeftPanel'
 import { SceneEditorDrawer } from './components/SceneEditorDrawer'
@@ -20,6 +21,7 @@ function App() {
         </div>
         <ExportPngDialog />
         <ImportSceneBankDialog />
+        <HelpDialog />
       </div>
     </ReactFlowProvider>
   )

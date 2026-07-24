@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { EdgeType } from '../domain/types'
 
-export type DialogKind = 'import-scene-bank' | 'export-png' | null
+export type DialogKind = 'import-scene-bank' | 'export-png' | 'help' | null
 
 /** Whether the board shows chronological (paradigm) order or telling order. */
 export type ViewMode = 'chronological' | 'telling'

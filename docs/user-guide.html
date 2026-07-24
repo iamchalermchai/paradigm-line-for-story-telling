@@ -1,0 +1,254 @@
+<!doctype html>
+<!--
+  Print source for public/user-guide.pdf — regenerate after editing:
+
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+    --headless=new --disable-gpu --no-pdf-header-footer \
+    --print-to-pdf=public/user-guide.pdf docs/user-guide.html
+
+  Fonts resolve from node_modules, so run from the repo root.
+-->
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<title>Plotline Board — คู่มือการใช้งาน</title>
+<style>
+  /* Same faces the app ships (@fontsource). Latin faces are scoped to the
+     glyphs the subset actually has, so symbols like ⋯ and ↶ fall back to
+     system fonts instead of rendering as blanks. Thai range overrides latin. */
+  @font-face { font-family: 'Trirong'; font-weight: 400; src: url('../node_modules/@fontsource/trirong/files/trirong-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2010-2027, U+2030-205F; }
+  @font-face { font-family: 'Trirong'; font-weight: 700; src: url('../node_modules/@fontsource/trirong/files/trirong-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2010-2027, U+2030-205F; }
+  @font-face { font-family: 'Trirong'; font-weight: 400; src: url('../node_modules/@fontsource/trirong/files/trirong-thai-400-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+  @font-face { font-family: 'Trirong'; font-weight: 700; src: url('../node_modules/@fontsource/trirong/files/trirong-thai-700-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+  @font-face { font-family: 'Noto Sans Thai'; font-weight: 400; src: url('../node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2010-2027, U+2030-205F; }
+  @font-face { font-family: 'Noto Sans Thai'; font-weight: 600; src: url('../node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-latin-600-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2010-2027, U+2030-205F; }
+  @font-face { font-family: 'Noto Sans Thai'; font-weight: 700; src: url('../node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-latin-700-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+2010-2027, U+2030-205F; }
+  @font-face { font-family: 'Noto Sans Thai'; font-weight: 400; src: url('../node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-thai-400-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+  @font-face { font-family: 'Noto Sans Thai'; font-weight: 600; src: url('../node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-thai-600-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+  @font-face { font-family: 'Noto Sans Thai'; font-weight: 700; src: url('../node_modules/@fontsource/noto-sans-thai/files/noto-sans-thai-thai-700-normal.woff2') format('woff2'); unicode-range: U+0E00-0E7F; }
+
+  :root {
+    --cream: #f8f6f0;
+    --sand: #ecc68c;
+    --ink: #141619;
+    --ink-soft: #4b4a45;
+    --amber: #e49c4e;
+    --rust: #cd5042;
+    --indigo: #3d4dec;
+    --mint-deep: #2f9c6c;
+  }
+
+  @page { size: A4; margin: 16mm 15mm; }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Sans Thai', sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.65;
+  }
+
+  /* ---------- Cover header: the guide opens on the paradigm line ---------- */
+  .cover { text-align: center; margin-bottom: 8mm; }
+  .brand {
+    font-family: 'Trirong', serif;
+    font-weight: 700;
+    font-size: 24pt;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .subtitle {
+    font-size: 11pt;
+    color: var(--ink-soft);
+    margin: 1mm 0 0;
+  }
+  .beat-line { margin: 7mm auto 0; display: block; }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 7mm; break-inside: avoid; }
+  h2 {
+    font-family: 'Trirong', serif;
+    font-weight: 700;
+    font-size: 14pt;
+    margin: 0 0 2mm;
+    display: flex;
+    align-items: baseline;
+    gap: 2.5mm;
+  }
+  h2 .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    position: relative; top: -1px; flex: 0 0 auto;
+  }
+  h2 .num { font-size: 12pt; }
+  section > div { padding-left: 6mm; }
+  p { margin: 0 0 2mm; }
+  ul, ol { margin: 0 0 2mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.5mm; }
+  strong { font-weight: 700; }
+
+  kbd {
+    font-family: 'Noto Sans Thai', sans-serif;
+    font-size: 8.5pt;
+    font-weight: 600;
+    background: #fff;
+    border: 1px solid rgba(20, 22, 25, 0.3);
+    box-shadow: 0 1.5px 0 rgba(20, 22, 25, 0.25);
+    border-radius: 3px;
+    padding: 0.5mm 1.5mm;
+    white-space: nowrap;
+  }
+
+  .tip {
+    border: 1px solid rgba(228, 156, 78, 0.6);
+    background: rgba(236, 198, 140, 0.18);
+    border-radius: 4px;
+    padding: 2mm 3mm;
+    font-size: 10pt;
+  }
+
+  .edge-box {
+    border: 1px solid rgba(20, 22, 25, 0.12);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    padding: 2.5mm 3.5mm;
+    margin-top: 2.5mm;
+  }
+  .edge-box .caption {
+    font-size: 8pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(20, 22, 25, 0.45);
+    margin-bottom: 1.5mm;
+  }
+  .edge-box ul { list-style: none; padding: 0; margin: 0; }
+  .edge-box li { display: flex; align-items: center; gap: 3mm; margin-bottom: 1mm; }
+  .edge-box svg { flex: 0 0 auto; }
+
+  .steps { list-style: none; padding: 0; counter-reset: step; }
+  .steps li { display: flex; gap: 3mm; margin-bottom: 2.5mm; }
+  .steps .n {
+    font-family: 'Trirong', serif;
+    font-weight: 700;
+    font-size: 13pt;
+    color: var(--rust);
+    flex: 0 0 5mm;
+    text-align: right;
+    line-height: 1.3;
+  }
+
+  footer {
+    margin-top: 9mm;
+    padding-top: 3mm;
+    border-top: 1px solid rgba(20, 22, 25, 0.15);
+    font-size: 8.5pt;
+    color: rgba(20, 22, 25, 0.5);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .mint { color: var(--mint-deep); }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <h1 class="brand">Plotline Board</h1>
+  <p class="subtitle">คู่มือการใช้งาน — วางเรื่องของคุณลงบนเส้น Paradigm</p>
+  <!-- Miniature paradigm line: the five chapters of this guide as beats. -->
+  <svg class="beat-line" width="520" height="66" viewBox="0 0 520 66" role="img" aria-label="หัวข้อทั้งห้าของคู่มือ เรียงเป็นจุดบนเส้น Paradigm">
+    <line x1="10" y1="33" x2="510" y2="33" stroke="#141619" stroke-width="1.5" opacity="0.6" />
+    <g font-family="Noto Sans Thai" font-size="11" fill="#141619">
+      <circle cx="60"  cy="33" r="5" fill="#2f9c6c" />
+      <text x="60"  y="18" text-anchor="middle">1 · การเซฟ</text>
+      <circle cx="160" cy="33" r="5" fill="#e49c4e" />
+      <text x="160" y="54" text-anchor="middle">2 · เขียนการ์ดฉาก</text>
+      <circle cx="260" cy="33" r="5" fill="#3d4dec" />
+      <text x="260" y="18" text-anchor="middle">3 · ลากเส้นเชื่อม</text>
+      <circle cx="360" cy="33" r="5" fill="#cd5042" />
+      <text x="360" y="54" text-anchor="middle">4 · วางบนไทม์ไลน์</text>
+      <circle cx="460" cy="33" r="5" fill="#141619" />
+      <text x="460" y="18" text-anchor="middle">5 · ตัวอย่างการใช้งาน</text>
+    </g>
+  </svg>
+</header>
+
+<section>
+  <h2><span class="dot" style="background:#2f9c6c"></span><span class="num" style="color:#2f9c6c">1</span> การเซฟ</h2>
+  <div>
+    <p>งานของคุณ<strong>บันทึกอัตโนมัติ</strong>ลงในเบราว์เซอร์เครื่องนี้ทุกครั้งที่แก้ไข — ไม่มีปุ่มเซฟ ดูสถานะได้ที่มุมขวาบน: <strong class="mint">บันทึกแล้ว</strong> แปลว่าเรียบร้อย</p>
+    <p>ถ้าต้องการสำรองไฟล์หรือย้ายเครื่อง ใช้เมนู <kbd>···</kbd> → <strong>Export JSON</strong> เพื่อดาวน์โหลดโปรเจกต์เป็นไฟล์ แล้วเปิดคืนด้วย <strong>Import JSON</strong> (การนำเข้าจะแทนที่งานปัจจุบันทั้งหมด)</p>
+    <p class="tip">ล้างข้อมูลเบราว์เซอร์ = งานหาย อย่าลืม Export JSON เก็บไว้เป็นระยะ</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="dot" style="background:#e49c4e"></span><span class="num" style="color:#e49c4e">2</span> เขียนการ์ดฉาก</h2>
+  <div>
+    <ul>
+      <li>กดปุ่ม <kbd>+ Scene</kbd> ที่แถบบน — การ์ดใหม่จะปรากฏบนกระดาน พร้อมเปิดแผงแก้ไขให้กรอก ชื่อฉาก สถานที่ ตัวละคร เป้าหมาย การกระทำ อุปสรรค และผลลัพธ์</li>
+      <li><kbd>ดับเบิลคลิก</kbd> การ์ดใดก็ได้เพื่อเปิดแผงแก้ไขอีกครั้ง ในแผงมีปุ่ม <strong>ทำสำเนา</strong> และ <strong>ลบฉาก</strong> ด้วย</li>
+      <li>คัดลอกการ์ดที่เลือกด้วย <kbd>⌘C</kbd> แล้ววางด้วย <kbd>⌘V</kbd> (Windows ใช้ <kbd>Ctrl</kbd>) — ลบการ์ดหรือเส้นที่เลือกด้วย <kbd>Delete</kbd></li>
+      <li>คลิกชื่อฉากในแผงรายการด้านซ้าย (แท็บ Story Action) เพื่อกระโดดไปหาการ์ดนั้นบนกระดาน</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2><span class="dot" style="background:#3d4dec"></span><span class="num" style="color:#3d4dec">3</span> ลากเส้นเชื่อม</h2>
+  <div>
+    <ol>
+      <li>เลือกชนิดเส้นก่อน จากแผง <strong>ชนิดเส้น</strong> มุมซ้ายบนของกระดาน</li>
+      <li>ชี้เมาส์ที่การ์ดต้นทาง จะเห็นจุดเชื่อมโผล่ทั้ง 4 ด้าน — ลากจากจุดนั้นไปปล่อยบนการ์ดปลายทาง</li>
+      <li>คลิกเส้นที่วาดแล้วเพื่อเปิดแผงแก้ไขด้านล่าง: เปลี่ยนชนิด ใส่ป้ายกำกับ หรือลบเส้น</li>
+    </ol>
+    <div class="edge-box">
+      <p class="caption">ชนิดเส้นทั้ง 5</p>
+      <ul>
+        <li><svg width="32" height="8"><line x1="0" y1="4" x2="32" y2="4" stroke="#3d4dec" stroke-width="2.5"/></svg>เหตุการณ์จริง</li>
+        <li><svg width="32" height="8"><line x1="0" y1="4" x2="32" y2="4" stroke="#3d4dec" stroke-width="2.5" stroke-dasharray="5 3"/></svg>เส้นทาง Want ที่คาดหวัง</li>
+        <li><svg width="32" height="8"><line x1="0" y1="4" x2="32" y2="4" stroke="#2f9c6c" stroke-width="2.5" stroke-dasharray="5 3"/></svg>เส้นทางสู่สิ่งที่ดีกว่า / Need</li>
+        <li><svg width="32" height="8"><line x1="0" y1="4" x2="32" y2="4" stroke="#cd5042" stroke-width="2.5" stroke-dasharray="5 3"/></svg>ความล้มเหลว / ไม่ได้ Want</li>
+        <li><svg width="32" height="8"><line x1="0" y1="4" x2="32" y2="4" stroke="#2f9c6c" stroke-width="2.5"/></svg>เส้นทาง Character Arc</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="dot" style="background:#cd5042"></span><span class="num" style="color:#cd5042">4</span> วางบนไทม์ไลน์</h2>
+  <div>
+    <p>กระดานคือไทม์ไลน์ของเรื่อง แบ่งเป็น 4 ช่วง (เริ่มต้น → ช่วงแรก → ช่วงกลาง → ช่วงท้าย) โดยมี<strong>เส้น Paradigm</strong> พาดแนวนอนตรงกลาง</p>
+    <ul>
+      <li><strong>ลากซ้าย–ขวา</strong> เพื่อเลื่อนฉากไปช่วงอื่นของเรื่อง — ช่วง (Phase) ของฉากเปลี่ยนตามตำแหน่งอัตโนมัติ</li>
+      <li><strong>เหนือเส้น</strong> = ฉากที่ขับด้วย Lie / Want · <strong>ใต้เส้น</strong> = ฉากที่ขับด้วย Ghost / Need</li>
+      <li>หมุด Beat (Catalyst, Midpoint, Climax …) เกาะอยู่บนเส้น ลากได้เฉพาะแนวนอน</li>
+      <li>ปุ่ม <kbd>จัดเรียงอัตโนมัติ</kbd> ที่แถบบน จัดผังทั้งกระดานให้ทันที (กดปุ่มเลิกทำ <kbd><svg width="11" height="9" viewBox="0 0 11 9" style="vertical-align:-1px"><path d="M4 1 1.5 3.5 4 6" fill="none" stroke="#141619" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 3.5H7a3 3 0 0 1 3 3V8" fill="none" stroke="#141619" stroke-width="1.3" stroke-linecap="round"/></svg></kbd> เพื่อย้อนกลับได้)</li>
+      <li>สลับมุมมอง <strong>เวลาในเรื่อง / ลำดับเล่า</strong> ที่มุมซ้ายบนของกระดาน เพื่อดูลำดับเหตุการณ์จริง เทียบกับลำดับการเล่า — และติ๊ก <strong>จับแนวกริด</strong> ที่มุมขวาบน ถ้าอยากให้การ์ดเรียงเป็นระเบียบ</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2><span class="dot" style="background:#141619"></span><span class="num">5</span> ตัวอย่างการใช้งาน</h2>
+  <div>
+    <p>เริ่มเรื่องใหม่หนึ่งเรื่อง ครบใน 5 ขั้น:</p>
+    <ol class="steps">
+      <li><span class="n">1</span><span><strong>ปูพื้นตัวละคร</strong> — กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย ให้กระดานรู้ว่าแกนเรื่องคืออะไร</span></li>
+      <li><span class="n">2</span><span><strong>สร้างฉากสำคัญ</strong> — กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก</span></li>
+      <li><span class="n">3</span><span><strong>วางลงไทม์ไลน์</strong> — ลากการ์ดไปตามช่วงเรื่อง 4 ช่วง ฉากที่ตัวละครไล่ตาม Want ไว้เหนือเส้น ฉากที่แผล Ghost ทำงานไว้ใต้เส้น</span></li>
+      <li><span class="n">4</span><span><strong>ลากเส้นเชื่อมเรื่อง</strong> — เลือกชนิดเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลว</span></li>
+      <li><span class="n">5</span><span><strong>ตรวจและแชร์</strong> — สลับไปมุมมอง "ลำดับเล่า" ตรวจลำดับการเล่า แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ</span></li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <span>Plotline Board — คู่มือการใช้งาน</span>
+  <span>ข้อมูลทั้งหมดเก็บในเครื่องของคุณ ไม่มีการส่งขึ้นเซิร์ฟเวอร์</span>
+</footer>
+
+</body>
+</html>

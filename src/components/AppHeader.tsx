@@ -147,6 +147,17 @@ export function AppHeader() {
       <span className={`ml-auto text-sm ${SAVE_COLOR[saveStatus]}`}>
         {SAVE_LABEL[saveStatus]}
       </span>
+
+      <button
+        type="button"
+        className="font-display flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-ink hover:bg-sand/40"
+        style={{ border: '1px solid rgba(20,22,25,0.35)' }}
+        aria-label="วิธีใช้งาน"
+        title="วิธีใช้งาน"
+        onClick={() => openDialog('help')}
+      >
+        ?
+      </button>
     </header>
   )
 }

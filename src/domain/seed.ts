@@ -290,6 +290,22 @@ export function createSeedProject(): Project {
     climaxOutcome: { want: 'not_got', need: 'gained' },
     structureTemplateId: 'four-phase',
     tellingChapterOrder: ['A', 'B', 'C', 'D', 'E'],
+    characters: [
+      { id: 'ch-al', name: 'แอล', color: '#e49c4e' },
+      { id: 'ch-q', name: 'คิว', color: '#cd5042' },
+      { id: 'ch-stranger', name: 'ชายปริศนา', color: '#3d4dec' },
+      { id: 'ch-senior', name: 'รุ่นพี่', color: '#8a6fb3' },
+      { id: 'ch-friend', name: 'เพื่อน', color: '#2f9c6c' },
+    ],
+    synopsis:
+      'แอลพยายามลืมคนรักเก่าด้วยการเขียนสมุด 30 วัน แต่กลับได้เรียนรู้ว่าความเงียบที่เขาใช้ปกป้องตัวเองคือสิ่งที่ทำร้ายคนอื่น — และกล้าเอ่ยปากทักคนใหม่ก่อนเป็นครั้งแรก',
+    tellingChapterNotes: {
+      A: 'เปิดเรื่องกลางวิกฤต: ชายปริศนาหายไป แอลตื่นตระหนก',
+      B: 'ย้อนปูมหลัง: รุ่นพี่ตัดขาด และคำแนะนำจาก Club Friday',
+      C: 'ช่วงชีวิตดูดีขึ้น: เขียนสมุด วาดมือชายปริศนา',
+      D: 'ดิ่งลง: อดีตย้อนกลับ ภาพซ้อนทับ จน Aha',
+      E: 'ตัดสินใจและไคลแมกซ์: โทรหาคิว แล้วทักชายปริศนาก่อน',
+    },
     viewport: { x: 40, y: 360, zoom: 0.8 },
     updatedAt: new Date('2026-07-23T00:00:00.000Z').toISOString(),
   }

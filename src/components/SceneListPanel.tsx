@@ -23,14 +23,17 @@ export function SceneListPanel() {
   const scenes = useProjectStore((s) => s.project.scenes)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
   const chapterOrder = useProjectStore((s) => s.project.tellingChapterOrder)
+  const chapterNotes = useProjectStore((s) => s.project.tellingChapterNotes)
   const updateScene = useProjectStore((s) => s.updateScene)
   const addTellingChapter = useProjectStore((s) => s.addTellingChapter)
   const reorderTellingChapters = useProjectStore((s) => s.reorderTellingChapters)
+  const setChapterNote = useProjectStore((s) => s.setChapterNote)
   const openSceneEditor = useUiStore((s) => s.openSceneEditor)
   const viewMode = useUiStore((s) => s.viewMode)
   const { setCenter } = useReactFlow()
 
   const [dragged, setDragged] = useState<Dragged>(null)
+  const [openNote, setOpenNote] = useState<string | null>(null)
 
   function selectScene(scene: StoryScene) {
     openSceneEditor(scene.id)
@@ -143,7 +146,32 @@ export function SceneListPanel() {
             </span>
             <span className="text-xs text-ink/55">บท {ch.letter}</span>
             <span className="ml-auto text-[11px] text-ink/35">{ch.scenes.length} ฉาก</span>
+            <button
+              type="button"
+              className="rounded px-1 text-xs text-ink/40 hover:bg-cream/60"
+              aria-label={openNote === ch.key ? 'ซ่อนเล่าย่อ' : 'เขียนเล่าย่อ'}
+              aria-expanded={openNote === ch.key}
+              onClick={(e) => {
+                e.stopPropagation()
+                setOpenNote(openNote === ch.key ? null : ch.key)
+              }}
+            >
+              {openNote === ch.key ? '▾' : '✎'}
+            </button>
           </div>
+          {openNote === ch.key && (
+            <div className="px-2 pt-1.5">
+              <textarea
+                className="w-full resize-y rounded bg-white p-2 text-[12px] text-ink focus:outline-none"
+                style={{ border: '1px solid rgba(20,22,25,0.2)' }}
+                rows={3}
+                value={chapterNotes[ch.key] ?? ''}
+                placeholder="เล่าย่อของบทนี้…"
+                aria-label={`เล่าย่อ บท ${ch.letter}`}
+                onChange={(e) => setChapterNote(ch.key, e.target.value)}
+              />
+            </div>
+          )}
           <ul className="min-h-8 space-y-0.5 p-1">
             {ch.scenes.length === 0 ? (
               <li className="px-2 py-2 text-[11px] italic text-ink/35">ลากฉากมาที่บทนี้</li>

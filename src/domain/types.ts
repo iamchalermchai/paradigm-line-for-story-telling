@@ -149,6 +149,26 @@ export interface Backstory {
   need: string
 }
 
+/** A named character in the story. Scenes reference characters by name
+ *  (scene.characters stays string[]), so the roster is a helper layer:
+ *  it supplies colour and quick assignment, not a hard foreign key. */
+export interface Character {
+  id: string
+  name: string
+  color: string
+}
+
+/** Roster colours drawn from the board palette (name + colour together on chips,
+ *  so colour is never the only signal). */
+export const CHARACTER_COLORS = [
+  '#e49c4e', // amber
+  '#3d4dec', // indigo
+  '#2f9c6c', // mint-deep
+  '#cd5042', // rust
+  '#8a6fb3', // soft violet
+  '#4b4a45', // ink-soft
+]
+
 export type WantOutcome = 'got' | 'not_got' | 'got_better'
 export type NeedOutcome = 'gained' | 'rejected' | 'understood_not_yet'
 
@@ -189,6 +209,12 @@ export interface Project {
   /** Ordered telling-chapter keys; display letters (A/B/C…) derive from position.
    *  Empty = derive order from scene keys (see domain/telling.ts). */
   tellingChapterOrder: string[]
+  /** Named character roster (see Character). */
+  characters: Character[]
+  /** One-paragraph synopsis / spine of the whole story. */
+  synopsis: string
+  /** Per-telling-chapter narration notes, keyed by chapter key (see telling.ts). */
+  tellingChapterNotes: Record<string, string>
   viewport: Viewport
   updatedAt: string
 }

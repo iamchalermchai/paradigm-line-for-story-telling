@@ -1,6 +1,7 @@
 import type {
   Backstory,
   BeatMarker,
+  Character,
   ClimaxOutcome,
   Project,
   StoryEdge,
@@ -15,6 +16,9 @@ export interface HistorySnapshot {
   edges: StoryEdge[]
   backstory: Backstory
   climaxOutcome: ClimaxOutcome
+  characters: Character[]
+  synopsis: string
+  tellingChapterNotes: Record<string, string>
 }
 
 export function snapshot(project: Project): HistorySnapshot {
@@ -24,6 +28,9 @@ export function snapshot(project: Project): HistorySnapshot {
     edges: project.edges,
     backstory: project.backstory,
     climaxOutcome: project.climaxOutcome,
+    characters: project.characters,
+    synopsis: project.synopsis,
+    tellingChapterNotes: project.tellingChapterNotes,
   }
 }
 
@@ -38,6 +45,9 @@ export function applySnapshot(
     edges: snap.edges,
     backstory: snap.backstory,
     climaxOutcome: snap.climaxOutcome,
+    characters: snap.characters,
+    synopsis: snap.synopsis,
+    tellingChapterNotes: snap.tellingChapterNotes,
     updatedAt: new Date().toISOString(),
   }
 }

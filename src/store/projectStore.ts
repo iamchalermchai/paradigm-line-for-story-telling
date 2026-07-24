@@ -7,9 +7,11 @@ import {
   BEAT_LABELS,
   PARADIGM_LINE_Y,
 } from '../domain/types'
+import { CHARACTER_COLORS } from '../domain/types'
 import type {
   Backstory,
   BeatMarker,
+  Character,
   ClimaxOutcome,
   Project,
   StoryBeatType,
@@ -57,6 +59,9 @@ function emptyProject(title: string): Project {
     climaxOutcome: { want: 'not_got', need: 'gained' },
     structureTemplateId: 'four-phase',
     tellingChapterOrder: [],
+    characters: [],
+    synopsis: '',
+    tellingChapterNotes: {},
     viewport: { x: 40, y: 360, zoom: 0.8 },
     updatedAt: new Date().toISOString(),
   }
@@ -99,6 +104,15 @@ interface ProjectState {
 
   // Backstory
   updateBackstory: (patch: Partial<Backstory>) => void
+
+  // Characters
+  addCharacter: (name?: string) => Character
+  updateCharacter: (id: string, patch: Partial<Omit<Character, 'id'>>) => void
+  deleteCharacter: (id: string) => void
+
+  // Narrative
+  setSynopsis: (text: string) => void
+  setChapterNote: (chapterKey: string, text: string) => void
 
   // Scenes
   addScene: (partial?: Partial<StoryScene>) => StoryScene
@@ -224,6 +238,39 @@ export const useProjectStore = create<ProjectState>((set, get) => {
 
     updateBackstory: (patch) =>
       commit((p) => ({ ...p, backstory: { ...p.backstory, ...patch } })),
+
+    addCharacter: (name = 'ตัวละครใหม่') => {
+      const existing = get().project.characters
+      const character: Character = {
+        id: uid('ch'),
+        name,
+        color: CHARACTER_COLORS[existing.length % CHARACTER_COLORS.length],
+      }
+      commit((p) => ({ ...p, characters: [...p.characters, character] }))
+      return character
+    },
+
+    updateCharacter: (id, patch) =>
+      commit((p) => ({
+        ...p,
+        characters: p.characters.map((c) =>
+          c.id === id ? { ...c, ...patch } : c,
+        ),
+      })),
+
+    deleteCharacter: (id) =>
+      commit((p) => ({
+        ...p,
+        characters: p.characters.filter((c) => c.id !== id),
+      })),
+
+    setSynopsis: (text) => commit((p) => ({ ...p, synopsis: text })),
+
+    setChapterNote: (chapterKey, text) =>
+      commit((p) => ({
+        ...p,
+        tellingChapterNotes: { ...p.tellingChapterNotes, [chapterKey]: text },
+      })),
 
     addScene: (partial = {}) => {
       const scene = newScene(get().project, partial)

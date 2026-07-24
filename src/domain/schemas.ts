@@ -89,6 +89,12 @@ export const storyEdgeSchema = z.object({
   label: z.string().optional(),
 })
 
+export const characterSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  color: z.string(),
+})
+
 export const backstorySchema = z.object({
   ghost: z.string(),
   lie: z.string(),
@@ -119,6 +125,9 @@ export const projectSchema = z.object({
   climaxOutcome: climaxOutcomeSchema,
   structureTemplateId: z.string().default(DEFAULT_STRUCTURE_ID),
   tellingChapterOrder: z.array(z.string()).default([]),
+  characters: z.array(characterSchema).default([]),
+  synopsis: z.string().default(''),
+  tellingChapterNotes: z.record(z.string(), z.string()).default({}),
   viewport: viewportSchema,
   updatedAt: z.string(),
 })

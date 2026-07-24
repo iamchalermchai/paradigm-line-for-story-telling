@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Backstory } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
+import { CharacterPanel } from './CharacterPanel'
 import { ClimaxOutcomePanel } from './ClimaxOutcomePanel'
 import { SceneListPanel } from './SceneListPanel'
 
@@ -75,14 +76,30 @@ function DocTab({
   )
 }
 
-/** Backstory tab: every arc field always editable, plus the climax outcome. */
+/** Backstory tab: synopsis, arc fields, climax outcome, and the character roster. */
 function BackstoryTabBody() {
   const backstory = useProjectStore((s) => s.project.backstory)
   const updateBackstory = useProjectStore((s) => s.updateBackstory)
+  const synopsis = useProjectStore((s) => s.project.synopsis)
+  const setSynopsis = useProjectStore((s) => s.setSynopsis)
 
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="space-y-3 p-3">
+        <label className="block">
+          <span className="font-display mb-1 block text-base font-semibold text-ink">
+            เรื่องย่อ
+          </span>
+          <textarea
+            className="w-full resize-y rounded p-2 text-[13px] text-ink focus:outline-none"
+            style={{ border: '1px solid rgba(20,22,25,0.2)' }}
+            rows={3}
+            value={synopsis}
+            placeholder="แก่นเรื่องหนึ่งย่อหน้า…"
+            aria-label="เรื่องย่อ"
+            onChange={(e) => setSynopsis(e.target.value)}
+          />
+        </label>
         {FIELD_ORDER.map((key) => (
           <label key={key} className="block">
             <span className="font-display mb-1 flex items-center gap-2 text-base font-semibold text-ink">
@@ -99,6 +116,9 @@ function BackstoryTabBody() {
             />
           </label>
         ))}
+      </div>
+      <div style={{ borderTop: '1px solid rgba(20,22,25,0.12)' }}>
+        <CharacterPanel />
       </div>
       <div style={{ borderTop: '1px solid rgba(20,22,25,0.12)' }}>
         <ClimaxOutcomePanel />

@@ -52,6 +52,7 @@ export function SceneEditorDrawer() {
   const scenes = useProjectStore((s) => s.project.scenes)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
   const chapterOrder = useProjectStore((s) => s.project.tellingChapterOrder)
+  const roster = useProjectStore((s) => s.project.characters)
   const updateScene = useProjectStore((s) => s.updateScene)
   const duplicateScene = useProjectStore((s) => s.duplicateScene)
   const deleteScene = useProjectStore((s) => s.deleteScene)
@@ -81,6 +82,19 @@ export function SceneEditorDrawer() {
 
   function set<K extends keyof StoryScene>(key: K, value: StoryScene[K]) {
     setDraft((d) => (d ? { ...d, [key]: value } : d))
+  }
+
+  function toggleCharacter(name: string) {
+    setDraft((d) => {
+      if (!d) return d
+      const has = d.characters.includes(name)
+      return {
+        ...d,
+        characters: has
+          ? d.characters.filter((c) => c !== name)
+          : [...d.characters, name],
+      }
+    })
   }
 
   // Move the scene into the chosen band: recentre its x on that band and keep
@@ -139,19 +153,55 @@ export function SceneEditorDrawer() {
           value={draft.location}
           onChange={(v) => set('location', v)}
         />
-        <Text
-          label="ตัวละคร (คั่นด้วยจุลภาค)"
-          value={draft.characters.join(', ')}
-          onChange={(v) =>
-            set(
-              'characters',
-              v
-                .split(',')
-                .map((s) => s.trim())
-                .filter(Boolean),
-            )
-          }
-        />
+        <div className="mb-3">
+          <span className="mb-1 block text-[11px] font-medium text-ink/60">
+            ตัวละครในฉาก
+          </span>
+          {roster.length > 0 && (
+            <div className="mb-1.5 flex flex-wrap gap-1.5">
+              {roster.map((c) => {
+                const on = draft.characters.includes(c.name)
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => toggleCharacter(c.name)}
+                    className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs"
+                    style={{
+                      border: `1px solid ${on ? c.color : 'rgba(20,22,25,0.2)'}`,
+                      background: on ? `${c.color}22` : 'transparent',
+                      color: 'var(--color-ink)',
+                    }}
+                  >
+                    <span
+                      className="inline-block h-2 w-2 rounded-full"
+                      style={{ background: c.color }}
+                      aria-hidden
+                    />
+                    {c.name}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+          <input
+            className="w-full rounded px-2 py-1.5 text-xs text-ink focus:outline-none"
+            style={{ border: '1px solid rgba(20,22,25,0.25)' }}
+            value={draft.characters.join(', ')}
+            aria-label="ตัวละคร (คั่นด้วยจุลภาค)"
+            placeholder="หรือพิมพ์ชื่อเอง คั่นด้วยจุลภาค"
+            onChange={(e) =>
+              set(
+                'characters',
+                e.target.value
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+              )
+            }
+          />
+        </div>
         <Text
           label="ตัวละครผู้ลงมือ (POV)"
           value={draft.povCharacter ?? ''}

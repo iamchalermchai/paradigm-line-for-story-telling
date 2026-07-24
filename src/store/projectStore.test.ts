@@ -57,6 +57,31 @@ describe('projectStore', () => {
     expect(store().project.scenes).toHaveLength(before)
   })
 
+  it('adds, updates and deletes characters (undoable)', () => {
+    const before = store().project.characters.length
+    const c = store().addCharacter('เจน')
+    expect(c.name).toBe('เจน')
+    expect(c.color).toBeTruthy()
+    expect(store().project.characters).toHaveLength(before + 1)
+    store().updateCharacter(c.id, { name: 'เจนนี่' })
+    expect(store().project.characters.find((x) => x.id === c.id)?.name).toBe('เจนนี่')
+    store().deleteCharacter(c.id)
+    expect(store().project.characters.some((x) => x.id === c.id)).toBe(false)
+    store().undo() // restore delete
+    expect(store().project.characters.some((x) => x.id === c.id)).toBe(true)
+  })
+
+  it('sets synopsis and per-chapter notes (undoable + persisted)', async () => {
+    store().setSynopsis('แก่นเรื่องใหม่')
+    expect(store().project.synopsis).toBe('แก่นเรื่องใหม่')
+    store().setChapterNote('A', 'เปิดเรื่องแบบใหม่')
+    expect(store().project.tellingChapterNotes.A).toBe('เปิดเรื่องแบบใหม่')
+    store().undo()
+    expect(store().project.tellingChapterNotes.A).not.toBe('เปิดเรื่องแบบใหม่')
+    await new Promise((r) => setTimeout(r, 700))
+    expect(loadProject()?.synopsis).toBe('แก่นเรื่องใหม่')
+  })
+
   it('deletes a scene and its connected edges', () => {
     const sceneId = 'scene-want'
     const hadEdges = store().project.edges.some(

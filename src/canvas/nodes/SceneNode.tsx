@@ -1,5 +1,6 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react'
 import { memo } from 'react'
+import { colorForName } from '../../domain/characters'
 import { chapterLetterForScene } from '../../domain/telling'
 import { ARC_RELATION_LABELS, BEAT_LABELS } from '../../domain/types'
 import type { ArcRelation } from '../../domain/types'
@@ -76,6 +77,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
   const chapterLetter = useProjectStore((s) =>
     chapterLetterForScene(scene, s.project.scenes, s.project.tellingChapterOrder),
   )
+  const characters = useProjectStore((s) => s.project.characters)
 
   // The "Character" side of Character + Action = Plot: lead with the POV actor.
   const who =
@@ -159,14 +161,24 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
           <div className="space-y-1">
             {who.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {who.map((c) => (
-                  <span
-                    key={c}
-                    className="rounded-full bg-sand/40 px-2 py-0.5 text-[12px] font-medium text-ink"
-                  >
-                    {c}
-                  </span>
-                ))}
+                {who.map((c) => {
+                  const color = colorForName(c, characters)
+                  return (
+                    <span
+                      key={c}
+                      className="inline-flex items-center gap-1 rounded-full bg-sand/40 px-2 py-0.5 text-[12px] font-medium text-ink"
+                    >
+                      {color && (
+                        <span
+                          className="inline-block h-2 w-2 shrink-0 rounded-full"
+                          style={{ background: color }}
+                          aria-hidden
+                        />
+                      )}
+                      {c}
+                    </span>
+                  )
+                })}
               </div>
             )}
             {scene.action && (

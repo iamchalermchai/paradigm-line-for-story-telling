@@ -49,11 +49,6 @@ export async function exportBoardPng(
     width,
     height,
     backgroundColor: opts.transparent ? undefined : LIGHT_BG,
-    // Google Fonts stylesheets are cross-origin, so html-to-image can't read
-    // their rules; skip web-font inlining (text falls back to the local serif
-    // stack) to avoid noisy SecurityErrors. The composed header/backstory draw
-    // Trirong directly via the canvas, which already has the font loaded.
-    skipFonts: true,
     style: {
       width: `${width}px`,
       height: `${height}px`,

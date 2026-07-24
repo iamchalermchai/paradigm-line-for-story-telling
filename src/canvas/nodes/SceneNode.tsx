@@ -112,14 +112,18 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
       <Handle id="bottom" type="source" position={Position.Bottom} className={handleClass} />
       <Handle id="left" type="source" position={Position.Left} className={handleClass} />
 
-      <div className="flex items-start justify-between gap-2 px-3 pt-2.5">
-        <h3 className="font-display flex items-center gap-2 text-lg font-semibold leading-snug text-ink">
-          <ArcSymbol relation={scene.arcRelation} />
-          {scene.title || 'ฉากไม่มีชื่อ'}
+      <div className="flex items-start justify-between gap-2 px-3 pt-2.5 pb-1">
+        <h3 className="font-display flex items-start gap-2 text-lg font-semibold leading-snug text-ink">
+          <span className="mt-[4px] shrink-0">
+            <ArcSymbol relation={scene.arcRelation} />
+          </span>
+          <span style={{ textWrap: 'balance' }}>
+            {scene.title || 'ฉากไม่มีชื่อ'}
+          </span>
         </h3>
         <button
           type="button"
-          className="nodrag shrink-0 rounded px-1 text-sm text-ink/40 hover:bg-sand/40 hover:text-ink"
+          className="nodrag mt-[2px] shrink-0 rounded px-1 text-sm text-ink/40 hover:bg-sand/40 hover:text-ink"
           aria-label={scene.collapsed ? 'ขยายการ์ด' : 'ย่อการ์ด'}
           onClick={(e) => {
             e.stopPropagation()

@@ -1,14 +1,15 @@
-# Layered Memory (2026-07-25)
+# Layered Memory → Lane mode (2026-07-25)
 
-**Verdict:** ชนะจาก prototype → พับ production
+**Verdict (refactor):** เลน = overlay ไม่ใช่โครงที่ 6
 
-| ส่วน | การตัดสิน |
-|------|-----------|
-| กระดานสี่เลน | **A** — เลนเท่ากัน + ป้ายซ้ายบน canvas |
-| ช่อง layer การ์ด | **A+C** — segmented editor · CHARACTER เงียบบนการ์ด |
-| แท็บ bookmark | **「เลน」** — mini map กดขยาย · แนะนำเลน · กรองมอง |
-| suggest | ghost tag / ข้อความ / beat+arc · ยืนยันก่อน snap |
+| ก่อน | หลัง |
+|------|------|
+| โครง `layered-memory` ใน picker | **`laneMode`** บน project (schema v6) |
+| สลับโครงเพื่อได้สี่เลน | เปิด **เลนการเล่า** ในแท็บ **โครง** — ใช้คู่กับโครงใดก็ได้ |
+| แท็บ **เลน** ผูก structure id | แท็บ **เลน** ผูก `laneMode` |
 
-โครง: `layered-memory` ใน picker · schema v5 `storyLayer` · ไม่แทน Paradigm ทั้งแอป
+Migration: `structureTemplateId: layered-memory` → `laneMode: true` + `four-phase`
+
+`storyLayer` บนการ์ด · snap Y · แท็บ **เลน** · suggest — เหมือนเดิม
 
 Prototype ยังอยู่: `src/canvas/prototype/layerRail/` · `storyLayer/` · `layeredBoard/`

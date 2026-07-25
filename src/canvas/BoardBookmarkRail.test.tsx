@@ -21,11 +21,11 @@ describe('BoardBookmarkRail', () => {
     expect(screen.getByRole('button', { name: 'ชนิดเส้น' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'คู่มือแกนเส้น' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'แผนภาพสอน' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'เลน' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'เลน META / CHARACTER / MEMORY / GHOST' })).not.toBeInTheDocument()
   })
 
-  it('shows the เลน tab when layered-memory structure is active', () => {
-    useProjectStore.getState().setStructureTemplate('layered-memory')
+  it('shows the เลน tab when lane mode is on', () => {
+    useProjectStore.getState().setLaneMode(true)
     render(<BoardBookmarkRail />)
     const laneTab = screen.getByRole('button', {
       name: 'เลน META / CHARACTER / MEMORY / GHOST',
@@ -37,18 +37,18 @@ describe('BoardBookmarkRail', () => {
     expect(screen.getByRole('button', { name: 'แนะนำเลน' })).toBeInTheDocument()
   })
 
-  it('shows Layered Memory diagram in ดูภาพ when that structure is active', () => {
-    useProjectStore.getState().setStructureTemplate('layered-memory')
-    render(<BoardBookmarkRail />)
-    fireEvent.click(screen.getByRole('button', { name: 'แผนภาพสอน' }))
-    expect(screen.getByText('แผนภาพสอน · Layered Memory')).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: 'ภาพเลนสี่ชั้น' })).toBeInTheDocument()
-  })
-
-  it('hints Layered Memory in the structure leaf when using 4 Phase', () => {
+  it('toggles lane mode from the structure leaf', () => {
     render(<BoardBookmarkRail />)
     fireEvent.click(screen.getByRole('button', { name: 'โครงสร้าง' }))
-    expect(screen.getAllByText(/Layered Memory · สี่เลน/).length).toBeGreaterThan(0)
+    fireEvent.click(
+      screen.getByRole('checkbox', {
+        name: 'เปิดเลนการเล่า META CHARACTER MEMORY GHOST',
+      }),
+    )
+    expect(useProjectStore.getState().project.laneMode).toBe(true)
+    expect(
+      screen.getByRole('button', { name: 'เลน META / CHARACTER / MEMORY / GHOST' }),
+    ).toBeInTheDocument()
   })
 
   it('opens axis leaf so line meaning is not on the canvas', () => {

@@ -17,7 +17,7 @@ import {
   type OnNodeDrag,
 } from '@xyflow/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { isLayeredMemory, snapSceneToLayer } from '../domain/layers'
+import { isLaneMode, snapSceneToLayer } from '../domain/layers'
 import type { StoryScene } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
@@ -60,8 +60,8 @@ const GRID: [number, number] = [16, 16]
 export function Board() {
   const project = useProjectStore((s) => s.project)
   const applyNodeDrag = useProjectStore((s) => s.applyNodeDrag)
-  const structureId = useProjectStore((s) => s.project.structureTemplateId)
-  const layered = isLayeredMemory(structureId)
+  const laneMode = useProjectStore((s) => s.project.laneMode)
+  const lanes = isLaneMode(laneMode)
   const setViewport = useProjectStore((s) => s.setViewport)
   const addEdge = useProjectStore((s) => s.addEdge)
   const deleteElements = useProjectStore((s) => s.deleteElements)
@@ -159,7 +159,7 @@ export function Board() {
         )
         return
       }
-      if (node.type === 'scene' && layered) {
+      if (node.type === 'scene' && lanes) {
         const snap = snapSceneToLayer(node.position)
         setNodes((nds) =>
           nds.map((n) =>
@@ -170,14 +170,14 @@ export function Board() {
         )
       }
     },
-    [setNodes, layered],
+    [setNodes, lanes],
   )
 
   const onNodeDragStop = useCallback<OnNodeDrag>(
     (_event, _node, dragged: Node[]) => {
       const updates = dragged.map((n) => ({ id: n.id, position: n.position }))
       const { scenes, beats } = reconcileDrag(updates, sceneIds, beatIds)
-      const sceneUpdates = layered
+      const sceneUpdates = lanes
         ? scenes.map((s) => {
             const snap = snapSceneToLayer(s.position)
             return {
@@ -190,7 +190,7 @@ export function Board() {
       isDragging.current = false
       applyNodeDrag(sceneUpdates, beats)
     },
-    [sceneIds, beatIds, applyNodeDrag, layered],
+    [sceneIds, beatIds, applyNodeDrag, lanes],
   )
 
   const onConnect = useCallback<OnConnect>(

@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { colorForName } from '../../domain/characters'
 import { beatLabel, getStructureTemplate } from '../../domain/structure'
 import {
-  isLayeredMemory,
+  isLaneMode,
   LAYER_COLORS,
   LAYER_LABELS,
 } from '../../domain/layers'
@@ -85,7 +85,8 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
   )
   const characters = useProjectStore((s) => s.project.characters)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
-  const layered = isLayeredMemory(structureId)
+  const laneMode = useProjectStore((s) => s.project.laneMode)
+  const lanes = isLaneMode(laneMode)
 
   // The "Character" side of Character + Action = Plot: lead with the POV actor.
   const who =
@@ -153,7 +154,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
           </span>
         )}
         <span>{ARC_RELATION_LABELS[scene.arcRelation]}</span>
-        {layered && scene.storyLayer !== 'character' && (
+        {lanes && scene.storyLayer !== 'character' && (
           <>
             <span aria-hidden>·</span>
             <span

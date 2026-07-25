@@ -22,6 +22,7 @@ export interface HistorySnapshot {
   /** Tracked because switching structures swaps the beat markers: undoing the
    *  markers without the structure would leave the picker lying about them. */
   structureTemplateId: string
+  laneMode: boolean
 }
 
 export function snapshot(project: Project): HistorySnapshot {
@@ -35,6 +36,7 @@ export function snapshot(project: Project): HistorySnapshot {
     synopsis: project.synopsis,
     tellingChapterNotes: project.tellingChapterNotes,
     structureTemplateId: project.structureTemplateId,
+    laneMode: project.laneMode,
   }
 }
 
@@ -53,6 +55,7 @@ export function applySnapshot(
     synopsis: snap.synopsis,
     tellingChapterNotes: snap.tellingChapterNotes,
     structureTemplateId: snap.structureTemplateId,
+    laneMode: snap.laneMode,
     updatedAt: new Date().toISOString(),
   }
 }

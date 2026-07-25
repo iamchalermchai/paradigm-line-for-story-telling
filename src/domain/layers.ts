@@ -1,6 +1,7 @@
 import type { Backstory, Character, StoryLayer, StoryScene } from './types'
 
-export const LAYERED_MEMORY_ID = 'layered-memory'
+/** Old structure id — migrated to laneMode + four-phase in schema v6. */
+export const LEGACY_LAYERED_STRUCTURE_ID = 'layered-memory'
 
 export const STORY_LAYERS: StoryLayer[] = [
   'meta',
@@ -30,7 +31,7 @@ export const LAYER_COLORS: Record<StoryLayer, string> = {
   ghost: '#cd5042',
 }
 
-/** Scene card top-left Y snapped to each lane (layered-memory only). */
+/** Scene card top-left Y snapped to each lane when lane mode is on. */
 export const LAYER_SNAP_Y: Record<StoryLayer, number> = {
   meta: -400,
   character: -100,
@@ -38,8 +39,8 @@ export const LAYER_SNAP_Y: Record<StoryLayer, number> = {
   ghost: 580,
 }
 
-export function isLayeredMemory(structureId: string): boolean {
-  return structureId === LAYERED_MEMORY_ID
+export function isLaneMode(laneMode: boolean): boolean {
+  return laneMode
 }
 
 export type LayerSuggestion = {

@@ -91,4 +91,17 @@ describe('project schema', () => {
       true,
     )
   })
+
+  it('migrates legacy layered-memory structure to laneMode + four-phase', () => {
+    const seed = createSeedProject()
+    const raw = JSON.parse(JSON.stringify(seed))
+    raw.schemaVersion = 5
+    raw.structureTemplateId = 'layered-memory'
+    delete raw.laneMode
+    const result = parseProject(raw)
+    expect(result.ok).toBe(true)
+    expect(result.project?.laneMode).toBe(true)
+    expect(result.project?.structureTemplateId).toBe('four-phase')
+    expect(result.project?.schemaVersion).toBe(6)
+  })
 })

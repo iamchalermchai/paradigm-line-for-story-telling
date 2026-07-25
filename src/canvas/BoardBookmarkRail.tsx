@@ -1,7 +1,7 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { LayerDiagram } from '../components/LayerDiagram'
 import {
-  isLayeredMemory,
+  isLaneMode,
   LAYER_COLORS,
   LAYER_HINTS,
   LAYER_LABELS,
@@ -57,13 +57,17 @@ export function BoardBookmarkRail({
 } = {}) {
   const viewMode = useUiStore((s) => s.viewMode)
   const setViewMode = useUiStore((s) => s.setViewMode)
-  const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const laneMode = useProjectStore((s) => s.project.laneMode)
   const scenes = useProjectStore((s) => s.project.scenes)
   const backstory = useProjectStore((s) => s.project.backstory)
   const characters = useProjectStore((s) => s.project.characters)
   const applyLayerSuggestions = useProjectStore((s) => s.applyLayerSuggestions)
-  const layered = isLayeredMemory(structureId)
+  const lanes = isLaneMode(laneMode)
   const [openTab, setOpenTab] = useState<RailTab | null>(initialOpenTab)
+
+  useEffect(() => {
+    if (!lanes && openTab === 'layers') setOpenTab(null)
+  }, [lanes, openTab])
 
   function toggle(tab: RailTab) {
     if (tab === 'chronological' || tab === 'telling') setViewMode(tab)
@@ -126,7 +130,7 @@ export function BoardBookmarkRail({
           accent="teal"
           onClick={() => toggle('diagram')}
         />
-        {layered && (
+        {lanes && (
           <BookmarkTab
             label="เลน"
             title="เลน META / CHARACTER / MEMORY / GHOST"
@@ -144,7 +148,7 @@ export function BoardBookmarkRail({
           {openTab === 'edges' && <EdgesLeafBody />}
           {openTab === 'axis' && <AxisLeafBody />}
           {openTab === 'diagram' && <DiagramLeafBody />}
-          {openTab === 'layers' && layered && (
+          {openTab === 'layers' && lanes && (
             <LayersLeafBody
               scenes={scenes}
               backstory={backstory}
@@ -259,9 +263,11 @@ function BookmarkTab({
 
 function StructureLeafBody() {
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const laneMode = useProjectStore((s) => s.project.laneMode)
   const setStructureTemplate = useProjectStore((s) => s.setStructureTemplate)
+  const setLaneMode = useProjectStore((s) => s.setLaneMode)
   const template = getStructureTemplate(structureId)
-  const layered = isLayeredMemory(structureId)
+  const lanes = isLaneMode(laneMode)
 
   return (
     <div className="space-y-2.5 text-xs text-ink">
@@ -282,24 +288,37 @@ function StructureLeafBody() {
           </option>
         ))}
       </select>
-      {layered ? (
-        <p
-          className="rounded px-2 py-1.5 text-[11px] leading-snug text-ink/80"
-          style={{
-            background: 'rgba(43,122,140,0.12)',
-            border: '1px solid rgba(43,122,140,0.35)',
-          }}
-        >
-          โครงนี้ใช้<strong className="text-ink"> สี่เลน</strong> บนกระดาน — เปิดแท็บคั่นหน้า{' '}
-          <strong className="text-ink">เลน</strong> (ถัดจาก ดูภาพ) เพื่อ mini map · แนะนำเลน
-        </p>
-      ) : (
-        <p className="text-[10px] leading-snug text-ink/45">
-          เรื่องเล่นข้ามความจริง/ความทรงจำ? เลือก{' '}
-          <strong className="text-ink/70">Layered Memory · สี่เลน</strong> ในรายการด้านบน
-          (ตัวเลือกสุดท้าย)
-        </p>
-      )}
+      <label
+        className="flex cursor-pointer items-start gap-2 rounded px-2 py-2"
+        style={{
+          border: lanes
+            ? '1px solid rgba(43,122,140,0.45)'
+            : '1px solid rgba(20,22,25,0.15)',
+          background: lanes ? 'rgba(43,122,140,0.1)' : 'rgba(20,22,25,0.03)',
+        }}
+      >
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={lanes}
+          onChange={(e) => setLaneMode(e.target.checked)}
+          aria-label="เปิดเลนการเล่า META CHARACTER MEMORY GHOST"
+        />
+        <span className="leading-snug">
+          <span className="font-display font-bold text-ink">เลนการเล่า</span>
+          <span className="text-ink/55"> — META / CHARACTER / MEMORY / GHOST</span>
+          {lanes ? (
+            <span className="mt-1 block text-[10px] text-ink/65">
+              เปิดแท็บ <strong className="text-ink">เลน</strong> (ถัดจาก ดูภาพ) เพื่อ mini
+              map · แนะนำเลน
+            </span>
+          ) : (
+            <span className="mt-1 block text-[10px] text-ink/50">
+              สำหรับเรื่องที่เล่นข้ามความจริง/ความทรงจำ — ใช้คู่กับโครงที่เลือกด้านบน
+            </span>
+          )}
+        </span>
+      </label>
       <div
         className={
           template.bands.length <= 3
@@ -432,57 +451,9 @@ function AxisLeafBody() {
 /** Teaching diagram for the active structure template. */
 function DiagramLeafBody() {
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
-  const scenes = useProjectStore((s) => s.project.scenes)
   const t = getStructureTemplate(structureId)
   const meta = structureDiagramMeta(structureId)
-  const layered = isLayeredMemory(structureId)
   const [expanded, setExpanded] = useState(false)
-
-  if (layered) {
-    return (
-      <div className="space-y-2 text-xs text-ink">
-        <h3 className="font-display text-sm font-bold">แผนภาพสอน · Layered Memory</h3>
-        <p className="text-[11px] leading-snug text-ink/60">
-          สี่เลน META / CHARACTER / MEMORY / GHOST — วง = meta/character · เพชร =
-          memory/ghost
-        </p>
-        <LayerDiagram scenes={scenes} size="mini" onExpand={() => setExpanded(true)} />
-        <p className="text-[10px] leading-snug text-ink/50">
-          แท็บ <span className="font-semibold text-ink/70">เลน</span> มีแนะนำเลน · กรองมอง ·
-          ขยายภาพเต็ม
-        </p>
-        {expanded && (
-          <div
-            className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/35 p-4"
-            role="dialog"
-            aria-modal
-            aria-label="ภาพเลนขยาย"
-            onClick={() => setExpanded(false)}
-          >
-            <div
-              className="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-md bg-cream p-4 shadow-lg"
-              style={{ border: '2px solid rgba(20,22,25,0.2)' }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mb-2 flex items-baseline justify-between gap-2">
-                <h2 className="font-display text-base font-bold text-ink">
-                  ภาพเลนบนกระดาน
-                </h2>
-                <button
-                  type="button"
-                  className="text-[11px] text-ink/50 hover:text-ink"
-                  onClick={() => setExpanded(false)}
-                >
-                  ปิด
-                </button>
-              </div>
-              <LayerDiagram scenes={scenes} size="full" />
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
 
   if (!hasStructureDiagram(structureId)) {
     return (
@@ -577,9 +548,9 @@ function LayersLeafBody({
         <h3 className="font-display text-sm font-bold">เลนบนกระดาน</h3>
         <span
           className="rounded px-1.5 py-0.5 text-[9px] font-bold text-cream"
-          style={{ background: 'var(--color-rust)' }}
+          style={{ background: '#2b7a8c' }}
         >
-          layered-memory
+          เลนการเล่า
         </span>
       </div>
       <p className="text-[10px] leading-snug text-ink/55">

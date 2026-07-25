@@ -9,7 +9,7 @@ import {
 import { ARC_RELATION_LABELS, STORY_PHASES } from '../domain/types'
 import type { ArcRelation, StoryScene } from '../domain/types'
 import {
-  isLayeredMemory,
+  isLaneMode,
   LAYER_COLORS,
   LAYER_HINTS,
   LAYER_LABELS,
@@ -38,6 +38,7 @@ export function SceneEditorDrawer() {
   const closeSceneEditor = useUiStore((s) => s.closeSceneEditor)
   const scenes = useProjectStore((s) => s.project.scenes)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const laneMode = useProjectStore((s) => s.project.laneMode)
   const chapterOrder = useProjectStore((s) => s.project.tellingChapterOrder)
   const roster = useProjectStore((s) => s.project.characters)
   const backstory = useProjectStore((s) => s.project.backstory)
@@ -46,7 +47,7 @@ export function SceneEditorDrawer() {
   const deleteScene = useProjectStore((s) => s.deleteScene)
 
   const template = getStructureTemplate(structureId)
-  const layered = isLayeredMemory(structureId)
+  const lanes = isLaneMode(laneMode)
   const chapters = tellingChapters(scenes, chapterOrder)
 
   const scene = scenes.find((s) => s.id === editingSceneId) ?? null
@@ -275,7 +276,7 @@ export function SceneEditorDrawer() {
           options={ARC_RELATIONS.map((r) => [r, ARC_RELATION_LABELS[r]])}
           onChange={(v) => set('arcRelation', v as ArcRelation)}
         />
-        {layered && (
+        {lanes && (
           <div
             className="space-y-2 rounded px-2.5 py-2"
             style={{
@@ -283,9 +284,7 @@ export function SceneEditorDrawer() {
               background: 'rgba(61,77,236,0.05)',
             }}
           >
-            <p className="font-display text-[12px] font-bold text-ink">
-              เลนบนกระดาน (layered-memory)
-            </p>
+            <p className="font-display text-[12px] font-bold text-ink">เลนการเล่า</p>
             <div className="flex flex-wrap gap-1">
               {STORY_LAYERS.map((layer) => (
                 <button

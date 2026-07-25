@@ -14,7 +14,7 @@ import {
 } from './structure'
 
 describe('structure templates', () => {
-  it('offers 4 Phase, Three Act, Save the Cat, Kishōtenketsu, Hero’s Journey and Layered Memory', () => {
+  it('offers 4 Phase, Three Act, Save the Cat, Kishōtenketsu and Hero’s Journey', () => {
     const ids = STRUCTURE_TEMPLATES.map((t) => t.id)
     expect(ids).toEqual([
       'four-phase',
@@ -22,7 +22,6 @@ describe('structure templates', () => {
       'save-the-cat',
       'kishotenketsu',
       'heros-journey',
-      'layered-memory',
     ])
   })
 

@@ -299,6 +299,7 @@ export function createSeedProject(): Project {
     edges,
     climaxOutcome: { want: 'not_got', need: 'gained' },
     structureTemplateId: 'four-phase',
+    laneMode: false,
     tellingChapterOrder: ['A', 'B', 'C', 'D', 'E'],
     characters: [
       {

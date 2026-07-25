@@ -22,7 +22,7 @@ import type {
   StoryScene,
   Viewport,
 } from '../domain/types'
-import { LAYER_SNAP_Y } from '../domain/layers'
+import { LAYER_SNAP_Y, snapSceneToLayer } from '../domain/layers'
 import {
   applySnapshot,
   HISTORY_LIMIT,
@@ -61,6 +61,7 @@ function emptyProject(title: string): Project {
     edges: [],
     climaxOutcome: { want: 'not_got', need: 'gained' },
     structureTemplateId: 'four-phase',
+    laneMode: false,
     tellingChapterOrder: [],
     characters: [],
     synopsis: '',
@@ -138,7 +139,7 @@ interface ProjectState {
     }[],
     beats: { id: string; position: { x: number; y: number } }[],
   ) => void
-  /** Apply suggested layers and snap Y (layered-memory). */
+  /** Apply suggested layers and snap Y (lane mode). */
   applyLayerSuggestions: (
     patches: { id: string; storyLayer: StoryLayer }[],
   ) => void
@@ -174,6 +175,8 @@ interface ProjectState {
   applyAutoLayout: () => void
   setViewport: (viewport: Viewport) => void
   setStructureTemplate: (id: string) => void
+  /** Toggle four Y-lanes (META/CHAR/MEM/GHOST) on the board. */
+  setLaneMode: (enabled: boolean) => void
 
   // Telling chapters
   addTellingChapter: () => string
@@ -505,6 +508,20 @@ export const useProjectStore = create<ProjectState>((set, get) => {
           (b) => !keptKeys.has(b.type),
         )
         return { ...p, structureTemplateId: id, beats: [...kept, ...fresh] }
+      }),
+
+    setLaneMode: (enabled) =>
+      commit((p) => {
+        if (p.laneMode === enabled) return p
+        const next = { ...p, laneMode: enabled }
+        if (!enabled) return next
+        return {
+          ...next,
+          scenes: p.scenes.map((s) => {
+            const snap = snapSceneToLayer(s.position, s.storyLayer)
+            return { ...s, position: { x: snap.x, y: snap.y } }
+          }),
+        }
       }),
 
     addTellingChapter: () => {

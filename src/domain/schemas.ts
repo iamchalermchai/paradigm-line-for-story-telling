@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { DEFAULT_STRUCTURE_ID } from './structure'
 import type { Project } from './types'
 
-export const SCHEMA_VERSION = 5
+export const SCHEMA_VERSION = 6
 
 export const storyPhaseSchema = z.enum([
   'setup',
@@ -132,6 +132,7 @@ export const projectSchema = z.object({
   edges: z.array(storyEdgeSchema),
   climaxOutcome: climaxOutcomeSchema,
   structureTemplateId: z.string().default(DEFAULT_STRUCTURE_ID),
+  laneMode: z.boolean().default(false),
   tellingChapterOrder: z.array(z.string()).default([]),
   characters: z.array(characterSchema).default([]),
   synopsis: z.string().default(''),
@@ -183,9 +184,25 @@ function migrate(raw: unknown): unknown {
     v = 4
   }
   if (v < 5) {
-    // v5 adds storyLayer for layered-memory structure boards.
+    // v5 adds storyLayer for lane-mode boards.
     migrated = { ...migrated, schemaVersion: 5 }
     v = 5
+  }
+  if (v < 6) {
+    // v6: lane mode is a project flag, not a structure template.
+    const rec = migrated as Record<string, unknown>
+    const wasLegacyStructure = rec.structureTemplateId === 'layered-memory'
+    migrated = {
+      ...migrated,
+      laneMode:
+        typeof rec.laneMode === 'boolean' ? rec.laneMode : wasLegacyStructure,
+      structureTemplateId:
+        wasLegacyStructure && typeof rec.structureTemplateId === 'string'
+          ? DEFAULT_STRUCTURE_ID
+          : rec.structureTemplateId,
+      schemaVersion: 6,
+    }
+    v = 6
   }
 
   return migrated

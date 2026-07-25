@@ -1,7 +1,7 @@
 import { ViewportPortal } from '@xyflow/react'
 import { BOARD_WIDTH, getStructureTemplate } from '../domain/structure'
 import {
-  isLayeredMemory,
+  isLaneMode,
   LAYER_COLORS,
   LAYER_LABELS,
   LAYER_SNAP_Y,
@@ -31,9 +31,10 @@ export function PhaseColumns() {
   const scenes = useProjectStore((s) => s.project.scenes)
   const beats = useProjectStore((s) => s.project.beats)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const laneMode = useProjectStore((s) => s.project.laneMode)
   const template = getStructureTemplate(structureId)
   const bands = template.bands
-  const layered = isLayeredMemory(structureId)
+  const lanes = isLaneMode(laneMode)
 
   // --- Content bounds (with a fixed baseline so an empty board still frames well) ---
   const sceneX = scenes.map((s) => s.position.x)
@@ -115,7 +116,7 @@ export function PhaseColumns() {
         })}
 
         {/* Paradigm / lane lines */}
-        {layered ? (
+        {lanes ? (
           STORY_LAYERS.map((layer) => (
             <div
               key={layer}
@@ -142,7 +143,7 @@ export function PhaseColumns() {
             }}
           />
         )}
-        {layered &&
+        {lanes &&
           STORY_LAYERS.map((layer) => (
             <div
               key={`label-${layer}`}

@@ -111,7 +111,7 @@ Layered board (META/CHAR/MEM/GHOST): `npm run prototype:layers` → `/?layers=A|
 Story layer field UX: `npm run prototype:layer` → `/?layerField=A|B|C|AC`  
 Layer rail study: `npm run prototype:layer-rail` → `/?layerRail=open`
 
-**Production (2026-07-25):** โครง **Layered Memory** → แท็บ **เลน** · `storyLayer` บนการ์ด · ดู `memory/2026-07-25-layered-memory.md`
+**Production (2026-07-25):** **เลนการเล่า** (`laneMode`) ในแท็บ **โครง** · แท็บ **เลน** · `storyLayer` · ดู `memory/2026-07-25-layered-memory.md`
 
 ### สิ่งที่เคยอยู่บนจอแล้วย้าย/ตัด
 - StructurePicker + EdgeLegend **ลอยมุมซ้ายบน** → ย้ายเข้า bookmark **โครง** / **ชนิด**  

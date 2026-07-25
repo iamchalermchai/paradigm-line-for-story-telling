@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { createSeedProject } from './seed'
-import { validateScene } from './validation'
+import { getStructureTemplate } from './structure'
+import { validateAllScenes, validateScene } from './validation'
 import type { StoryScene } from './types'
 
 function baseScene(overrides: Partial<StoryScene> = {}): StoryScene {
@@ -52,19 +53,38 @@ describe('validateScene', () => {
     expect(codes).toContain('no_change')
   })
 
-  it('warns when phase conflicts with beat', () => {
-    // climax belongs to the ending phase, not setup
+  it('warns when the scene sits outside its beat’s band', () => {
+    // The Climax beat belongs to the last band, but x=0 is the first one.
     const codes = validateScene(
-      baseScene({ phase: 'setup', beat: 'climax' }),
+      baseScene({ beat: 'climax', position: { x: 0, y: 0 } }),
     ).map((w) => w.code)
-    expect(codes).toContain('phase_beat_conflict')
+    expect(codes).toContain('band_beat_conflict')
   })
 
-  it('does not warn when phase matches beat', () => {
+  it('does not warn when the scene sits in its beat’s band', () => {
+    // 0.9 * 2800 = 2520, inside the last band of 4 Phase.
     const codes = validateScene(
-      baseScene({ phase: 'ending', beat: 'climax' }),
+      baseScene({ beat: 'climax', position: { x: 2520, y: 0 } }),
     ).map((w) => w.code)
-    expect(codes).not.toContain('phase_beat_conflict')
+    expect(codes).not.toContain('band_beat_conflict')
+  })
+
+  it('judges the band against the selected structure, not 4 Phase', () => {
+    const threeAct = getStructureTemplate('three-act')
+    // x=1400 is the midpoint of the board: 4 Phase calls it band 2, Three Act
+    // puts it inside Act 2, where the Three Act midpoint beat belongs.
+    const scene = baseScene({ beat: 'midpoint', position: { x: 1400, y: 0 } })
+    expect(validateScene(scene, [], threeAct).map((w) => w.code)).not.toContain(
+      'band_beat_conflict',
+    )
+  })
+
+  it('leaves a beat tag from another structure alone', () => {
+    // 'ten' means nothing in 4 Phase, so there is no band to disagree with.
+    const codes = validateScene(
+      baseScene({ beat: 'ten', position: { x: 0, y: 0 } }),
+    ).map((w) => w.code)
+    expect(codes).not.toContain('band_beat_conflict')
   })
 
   it('flags a possible duplicate scene', () => {
@@ -80,5 +100,15 @@ describe('validateScene', () => {
       expect(codes).not.toContain('no_outcome')
       expect(codes).not.toContain('no_change')
     }
+  })
+
+  it('every seed scene sits in the band its beat belongs to', () => {
+    const warnings = validateAllScenes(createSeedProject().scenes)
+    const conflicts = Object.entries(warnings).flatMap(([id, list]) =>
+      list
+        .filter((w) => w.code === 'band_beat_conflict')
+        .map((w) => `${id}: ${w.message}`),
+    )
+    expect(conflicts).toEqual([])
   })
 })

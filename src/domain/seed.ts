@@ -1,9 +1,9 @@
 import { SCHEMA_VERSION } from './schemas'
 import { PARADIGM_LINE_Y } from './types'
 import type {
+  BeatKey,
   BeatMarker,
   Project,
-  StoryBeatType,
   StoryEdge,
   StoryScene,
 } from './types'
@@ -40,7 +40,7 @@ const beats: BeatMarker[] = (
     ['choice', 'Choice', 'แอลโทรหาคิวในวันที่ 26', 2320],
     ['climax', 'Climax', 'แอลเป็นฝ่ายเอ่ยปากทักชายปริศนาก่อน', 2560],
     ['ending', 'Ending', 'กล้าเชื่อมต่อกับคนอื่นอีกครั้ง', 2760],
-  ] as [StoryBeatType, string, string, number][]
+  ] as [BeatKey, string, string, number][]
 ).map(([type, title, description, x]) => ({
   id: `beat-${type}`,
   type,

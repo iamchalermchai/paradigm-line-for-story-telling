@@ -1,52 +1,26 @@
-import { PHASE_WIDTH } from './seed'
-import { bandIndexForX, getStructureTemplate } from './structure'
 import {
-  ABOVE_LINE_RELATIONS,
-  BEAT_PHASE,
-  PARADIGM_LINE_Y,
-  STORY_PHASES,
-} from './types'
-import type {
-  BeatMarker,
-  StoryBeatType,
-  StoryPhase,
-  StoryScene,
-} from './types'
+  bandIndexForX,
+  BOARD_WIDTH,
+  findBeatAnywhere,
+  getStructureTemplate,
+  templateBeat,
+  type StructureTemplate,
+} from './structure'
+import { ABOVE_LINE_RELATIONS, PARADIGM_LINE_Y, STORY_PHASES } from './types'
+import type { BeatMarker, StoryPhase, StoryScene } from './types'
 
 const SCENE_W = 288
 const SCENE_GAP_X = 40
 const ROW_H = 240
 const FIRST_ROW_OFFSET = 140 // distance of first row from the paradigm line
 
-// Fractional x position (0..1 within the whole board) for each structural beat.
-// Beat markers render at 160px wide, so adjacent fractions must be spaced by
-// at least ~0.08 (224px on the default board width) to avoid overlapping.
-const BEAT_X_FRACTION: Partial<Record<StoryBeatType, number>> = {
-  catalyst: 0.18,
-  want: 0.26,
-  progress: 0.34,
-  warning: 0.42,
-  midpoint: 0.5,
-  ghost: 0.58,
-  low_point: 0.66,
-  aha: 0.74,
-  choice: 0.82,
-  climax: 0.9,
-  ending: 0.98,
-}
-
-const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
 const FOUR_PHASE = getStructureTemplate('four-phase')
-
-function phaseIndex(phase: StoryPhase): number {
-  return STORY_PHASES.indexOf(phase)
-}
 
 function isAboveLine(scene: StoryScene): boolean {
   return ABOVE_LINE_RELATIONS.includes(scene.arcRelation)
 }
 
-/** The 4-phase enum value for an x-position (the canonical phase shadow). */
+/** The 4-phase enum value for an x-position (the legacy phase shadow). */
 function fourPhaseForX(x: number): StoryPhase {
   return STORY_PHASES[bandIndexForX(x / BOARD_WIDTH, FOUR_PHASE)]
 }
@@ -58,14 +32,25 @@ export interface LayoutResult {
 
 /**
  * Pure auto-layout: place each scene on the timeline where its beat marker sits
- * (Catalyst → … → Ending), split above/below the paradigm line by arc relation,
+ * (first beat → … → last), split above/below the paradigm line by arc relation,
  * and greedily row-pack so cards never overlap. Scenes without a beat keep the
  * author's x. Beat markers are re-spaced along the line. Locked nodes stay put.
+ *
+ * Beat positions come from `template`, so laying out a Save the Cat board packs
+ * cards against the Save the Cat beat sheet rather than the 4-Phase one.
  */
 export function autoLayout(
   scenes: StoryScene[],
   beats: BeatMarker[],
+  template: StructureTemplate = FOUR_PHASE,
 ): LayoutResult {
+  // A beat may be tagged from another structure (the author kept the tag
+  // through a switch), so fall back to that structure's own position for it.
+  // Markers and the cards under them resolve through the same function, which
+  // is what keeps a card sitting beneath its marker either way.
+  const beatFraction = (key: string | undefined): number | undefined =>
+    (templateBeat(template, key) ?? findBeatAnywhere(key, template))?.fraction
+
   // --- Scenes ---
   const laidOutScenes = scenes.map((s) => ({ ...s }))
   const byId = new Map(laidOutScenes.map((s) => [s.id, s]))
@@ -74,10 +59,8 @@ export function autoLayout(
   // sits directly under/over its beat marker; a scene without one keeps the
   // author's own x. The card is centred on that anchor.
   const anchorX = (s: StoryScene): number => {
-    const at =
-      s.beat !== undefined && BEAT_X_FRACTION[s.beat] !== undefined
-        ? BEAT_X_FRACTION[s.beat]! * BOARD_WIDTH
-        : s.position.x
+    const fraction = beatFraction(s.beat)
+    const at = fraction !== undefined ? fraction * BOARD_WIDTH : s.position.x
     return at - SCENE_W / 2
   }
 
@@ -113,15 +96,18 @@ export function autoLayout(
             ? PARADIGM_LINE_Y - distance - 160
             : PARADIGM_LINE_Y + distance,
       }
-      // Keep the 4-phase shadow consistent with the new x.
+      // Keep the legacy 4-phase shadow consistent with the new x.
       target.phase = fourPhaseForX(x + SCENE_W / 2)
     }
   }
 
   // --- Beats ---
+  // A marker with a key no structure defines has no position to claim, so it
+  // keeps the one the author gave it.
   const laidOutBeats = beats.map((beat) => {
     if (beat.locked) return { ...beat }
-    const fraction = BEAT_X_FRACTION[beat.type] ?? phaseFallback(beat.type)
+    const fraction = beatFraction(beat.type)
+    if (fraction === undefined) return { ...beat }
     return {
       ...beat,
       position: { x: fraction * BOARD_WIDTH, y: PARADIGM_LINE_Y - 12 },
@@ -129,10 +115,4 @@ export function autoLayout(
   })
 
   return { scenes: laidOutScenes, beats: laidOutBeats }
-}
-
-// Fallback x for beat types without an explicit fraction: centre of their phase.
-function phaseFallback(type: StoryBeatType): number {
-  const idx = phaseIndex(BEAT_PHASE[type])
-  return (idx + 0.5) / STORY_PHASES.length
 }

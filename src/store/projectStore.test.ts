@@ -265,4 +265,61 @@ describe('projectStore', () => {
     await new Promise((r) => setTimeout(r, 700))
     expect(loadProject()?.structureTemplateId).toBe('three-act')
   })
+
+  it('switching structures re-scaffolds the line with the new beats', () => {
+    store().setStructureTemplate('kishotenketsu')
+    expect(store().project.beats.map((b) => b.type)).toEqual([
+      'ki',
+      'sho',
+      'ten',
+      'ketsu',
+    ])
+    // Each new marker lands on the line carrying its coaching hint.
+    expect(store().project.beats.every((b) => b.description.length > 0)).toBe(true)
+  })
+
+  it('undo restores both the old markers and the old structure', () => {
+    const before = store().project.beats.map((b) => b.type)
+    store().setStructureTemplate('kishotenketsu')
+    store().undo()
+    expect(store().project.structureTemplateId).toBe('four-phase')
+    expect(store().project.beats.map((b) => b.type)).toEqual(before)
+  })
+
+  it('switching keeps locked and hand-added markers', () => {
+    const locked = store().project.beats.find((b) => b.type === 'midpoint')!
+    store().updateBeat(locked.id, { locked: true })
+    const custom = store().addBeat('ten')
+    store().setStructureTemplate('three-act')
+
+    const types = store().project.beats.map((b) => b.type)
+    expect(types).toContain('inciting_incident') // from the new structure
+    expect(store().project.beats.find((b) => b.id === locked.id)).toBeDefined()
+    expect(store().project.beats.find((b) => b.id === custom.id)).toBeDefined()
+    // A locked marker is not duplicated by the incoming structure's own copy.
+    expect(types.filter((t) => t === 'midpoint')).toHaveLength(1)
+    expect(types).not.toContain('catalyst') // unlocked 4-Phase marker cleared
+  })
+
+  it('scene beat tags survive a round trip through another structure', () => {
+    store().setStructureTemplate('kishotenketsu')
+    expect(store().project.scenes.find((s) => s.id === 'scene-want')?.beat).toBe(
+      'want',
+    )
+    store().setStructureTemplate('four-phase')
+    expect(store().project.scenes.find((s) => s.id === 'scene-want')?.beat).toBe(
+      'want',
+    )
+  })
+
+  it('auto layout follows the selected structure', () => {
+    store().setStructureTemplate('kishotenketsu')
+    store().applyAutoLayout()
+    const beats = store().project.beats
+    const ten = beats.find((b) => b.type === 'ten')!
+    const ketsu = beats.find((b) => b.type === 'ketsu')!
+    // 0.625 and 0.875 of a 2800px board.
+    expect(ten.position.x).toBeCloseTo(1750, 0)
+    expect(ketsu.position.x).toBeCloseTo(2450, 0)
+  })
 })

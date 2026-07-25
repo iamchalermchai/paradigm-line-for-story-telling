@@ -3,17 +3,19 @@ import { autoLayout } from '../domain/autoLayout'
 import { SCHEMA_VERSION } from '../domain/schemas'
 import { createSeedProject } from '../domain/seed'
 import {
-  BEAT_LABELS,
-  PARADIGM_LINE_Y,
-} from '../domain/types'
+  beatLabel,
+  getStructureTemplate,
+  templateBeatMarkers,
+} from '../domain/structure'
+import { PARADIGM_LINE_Y } from '../domain/types'
 import { CHARACTER_COLORS } from '../domain/types'
 import type {
   Backstory,
+  BeatKey,
   BeatMarker,
   Character,
   ClimaxOutcome,
   Project,
-  StoryBeatType,
   StoryEdge,
   StoryPhase,
   StoryScene,
@@ -143,7 +145,7 @@ interface ProjectState {
   }) => void
 
   // Beats
-  addBeat: (type: StoryBeatType) => BeatMarker
+  addBeat: (type: BeatKey) => BeatMarker
   updateBeat: (
     id: string,
     patch: Partial<BeatMarker>,
@@ -383,7 +385,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
       const beat: BeatMarker = {
         id: uid('beat'),
         type,
-        title: BEAT_LABELS[type],
+        title: beatLabel(type),
         description: '',
         position: { x: 200, y: PARADIGM_LINE_Y - 12 },
         locked: false,
@@ -436,25 +438,37 @@ export const useProjectStore = create<ProjectState>((set, get) => {
 
     applyAutoLayout: () =>
       commit((p) => {
-        const { scenes, beats } = autoLayout(p.scenes, p.beats)
+        const { scenes, beats } = autoLayout(
+          p.scenes,
+          p.beats,
+          getStructureTemplate(p.structureTemplateId),
+        )
         return { ...p, scenes, beats }
       }),
 
     setViewport: (viewport) =>
       set((state) => ({ project: { ...state.project, viewport } })),
 
-    // Structure overlay is a view/authoring setting: persisted, but kept out of
-    // undo history (it isn't part of the content snapshot).
-    setStructureTemplate: (id) => {
-      set((state) => ({
-        project: {
-          ...state.project,
-          structureTemplateId: id,
-          updatedAt: new Date().toISOString(),
-        },
-      }))
-      scheduleSave()
-    },
+    /**
+     * Switching structures re-scaffolds the paradigm line with the new
+     * structure's beat markers, so it edits content and belongs in undo. Two
+     * kinds of marker survive the swap: ones the author locked, and ones that
+     * never came from the outgoing structure (added by hand). Scene beat tags
+     * are left untouched — switching back restores their meaning.
+     */
+    setStructureTemplate: (id) =>
+      commit((p) => {
+        const outgoing = getStructureTemplate(p.structureTemplateId)
+        const incoming = getStructureTemplate(id)
+        const kept = p.beats.filter(
+          (b) => b.locked || !outgoing.beats.some((tb) => tb.key === b.type),
+        )
+        const keptKeys = new Set(kept.map((b) => b.type))
+        const fresh = templateBeatMarkers(incoming).filter(
+          (b) => !keptKeys.has(b.type),
+        )
+        return { ...p, structureTemplateId: id, beats: [...kept, ...fresh] }
+      }),
 
     addTellingChapter: () => {
       const key = uid('tc')

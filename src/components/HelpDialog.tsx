@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { EDGE_STYLE } from '../canvas/edges/StoryEdge'
+import {
+  STRUCTURE_TEMPLATES,
+  type BeatShape,
+  type StructureTemplate,
+} from '../domain/structure'
 import { EDGE_LABELS, type EdgeType } from '../domain/types'
 import { useUiStore } from '../store/uiStore'
 import { Modal } from './Modal'
@@ -14,7 +19,8 @@ const SECTIONS = [
   { id: 'cards', num: '2', label: 'เขียนการ์ดฉาก', color: '#e49c4e' },
   { id: 'edges', num: '3', label: 'ลากเส้นเชื่อม', color: '#3d4dec' },
   { id: 'timeline', num: '4', label: 'วางบนไทม์ไลน์', color: '#cd5042' },
-  { id: 'example', num: '5', label: 'ตัวอย่างการใช้งาน', color: '#141619' },
+  { id: 'structure', num: '5', label: 'โครงสร้างเรื่อง', color: '#2b7a8c' },
+  { id: 'example', num: '6', label: 'ตัวอย่างการใช้งาน', color: '#141619' },
 ] as const
 
 type SectionId = (typeof SECTIONS)[number]['id']
@@ -200,9 +206,9 @@ function HelpContent() {
 
       <Section id="timeline" num="4" title="วางบนไทม์ไลน์" color="#cd5042">
         <p>
-          กระดานคือไทม์ไลน์ของเรื่อง แบ่งเป็น 4 ช่วง (เริ่มต้น → ช่วงแรก →
-          ช่วงกลาง → ช่วงท้าย) โดยมี<strong>เส้น Paradigm</strong>{' '}
-          พาดแนวนอนตรงกลาง
+          กระดานคือไทม์ไลน์ของเรื่อง แบ่งเป็นช่วงตามโครงสร้างที่เลือกไว้
+          (ค่าเริ่มต้นคือ 4 ช่วง: เริ่มต้น → ช่วงแรก → ช่วงกลาง → ช่วงท้าย)
+          โดยมี<strong>เส้น Paradigm</strong> พาดแนวนอนตรงกลาง
         </p>
         <ul className="mt-2 space-y-2">
           <li>
@@ -215,7 +221,7 @@ function HelpContent() {
           </li>
           <li>
             หมุด Beat (Catalyst, Midpoint, Climax …) เกาะอยู่บนเส้น
-            ลากได้เฉพาะแนวนอน
+            ลากได้เฉพาะแนวนอน — ชุดหมุดมาจากโครงสร้างที่เลือก (ดูหัวข้อ 5)
           </li>
           <li>
             ปุ่ม <Kbd>จัดเรียงอัตโนมัติ</Kbd> ที่แถบบน จัดผังทั้งกระดานให้ทันที
@@ -229,12 +235,42 @@ function HelpContent() {
         </ul>
       </Section>
 
-      <Section id="example" num="5" title="ตัวอย่างการใช้งาน" color="#141619">
+      <Section id="structure" num="5" title="โครงสร้างเรื่อง" color="#2b7a8c">
+        <p>
+          แผง <strong>โครงสร้าง</strong> มุมซ้ายบนของกระดาน
+          ไม่ได้เปลี่ยนแค่ป้ายหัวคอลัมน์ — เลือกโครงสร้างไหน
+          กระดานจะ<strong>วางหมุด Beat ชุดของโครงสร้างนั้นลงบนเส้น Paradigm</strong>{' '}
+          ให้ทันที ช่องแบ่งช่วงเปลี่ยนตาม และช่อง Story Beat ในแผงแก้ไขฉาก
+          ก็เปลี่ยนตัวเลือกตามไปด้วย
+        </p>
+        <p>
+          สลับได้ตลอดเวลา ไม่มีอะไรหาย: การ์ดอยู่ตำแหน่งเดิม
+          แท็ก Beat ที่เคยใส่ไว้ยังติดกับฉาก (สลับกลับมาก็เห็นเหมือนเดิม)
+          และถ้าไม่ชอบก็กดปุ่มเลิกทำ <Kbd>↶</Kbd> ได้ ส่วนหมุดที่คุณ
+          <strong>ล็อกตำแหน่ง</strong>ไว้ หรือหมุดที่เพิ่มเองจะไม่ถูกแทนที่
+        </p>
+        <div className="mt-3 space-y-3">
+          {STRUCTURE_TEMPLATES.map((t) => (
+            <StructureCard key={t.id} template={t} />
+          ))}
+        </div>
+        <Tip>
+          ยังไม่รู้จะใช้อันไหน? ถ้าเรื่องของคุณเดินด้วยความอยากของตัวละคร
+          เริ่มที่ 4 Phase — ถ้าเดินด้วยบรรยากาศหรือการค่อยๆ เข้าใจอะไรบางอย่าง
+          ลอง Kishōtenketsu ที่ไม่บังคับให้มีศัตรู
+        </Tip>
+      </Section>
+
+      <Section id="example" num="6" title="ตัวอย่างการใช้งาน" color="#141619">
         <p className="mb-3">
-          เริ่มเรื่องใหม่หนึ่งเรื่อง ครบใน 5 ขั้น:
+          เริ่มเรื่องใหม่หนึ่งเรื่อง ครบใน 6 ขั้น:
         </p>
         <ol className="space-y-2.5">
           {[
+            [
+              'เลือกโครงสร้าง',
+              'ที่แผง "โครงสร้าง" มุมซ้ายบน — หมุด Beat ของโครงสร้างนั้นจะมาวางบนเส้นให้เป็นโครงร่างว่าต้องเติมอะไร',
+            ],
             [
               'ปูพื้นตัวละคร',
               'กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย ให้กระดานรู้ว่าแกนเรื่องคืออะไร',
@@ -245,7 +281,7 @@ function HelpContent() {
             ],
             [
               'วางลงไทม์ไลน์',
-              'ลากการ์ดไปตามช่วงเรื่อง 4 ช่วง ฉากที่ตัวละครไล่ตาม Want ไว้เหนือเส้น ฉากที่แผล Ghost ทำงานไว้ใต้เส้น',
+              'ลากการ์ดไปให้อยู่ใต้หมุด Beat ที่ตรงกับมัน ฉากที่ตัวละครไล่ตาม Want ไว้เหนือเส้น ฉากที่แผล Ghost ทำงานไว้ใต้เส้น',
             ],
             [
               'ลากเส้นเชื่อมเรื่อง',
@@ -326,6 +362,85 @@ function Section({
       </h3>
       <div className="space-y-2 pl-[18px]">{children}</div>
     </section>
+  )
+}
+
+/** One structure, laid out the way it appears on the board: bands, then beats. */
+function StructureCard({ template }: { template: StructureTemplate }) {
+  return (
+    <div
+      className="rounded-md bg-white/70 px-3 py-2.5"
+      style={{ border: '1px solid rgba(20,22,25,0.12)' }}
+    >
+      <h4 className="font-display mb-1.5 text-base font-bold text-ink">
+        {template.name}
+      </h4>
+      <div className="mb-2 flex" aria-label="ช่วงของเรื่อง">
+        {template.bands.map((band, i) => {
+          const end = template.bands[i + 1]?.start ?? 1
+          return (
+            <span
+              key={band.label}
+              className="truncate px-1.5 py-1 text-[11px] text-ink/60"
+              style={{
+                flexGrow: end - band.start,
+                flexBasis: 0,
+                borderLeft:
+                  i === 0 ? undefined : '1px dashed rgba(20,22,25,0.28)',
+              }}
+            >
+              {band.label}
+            </span>
+          )
+        })}
+      </div>
+      <p className="text-[13px] leading-relaxed text-ink">
+        {template.description}
+      </p>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-ink">
+        <strong>เริ่มที่นี่ · </strong>
+        {template.startHere}
+      </p>
+      <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+        {template.beats.map((beat) => (
+          <li
+            key={beat.key}
+            className="flex items-center gap-1.5 text-[11px] text-ink/70"
+            title={beat.hint}
+          >
+            <BeatChip shape={beat.shape} color={beat.color} />
+            {beat.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/** Miniature of the marker shapes the board draws on the paradigm line. */
+function BeatChip({ shape, color }: { shape: BeatShape; color: string }) {
+  const base = { display: 'inline-block', flexShrink: 0 } as const
+  if (shape === 'tick') {
+    return <span style={{ ...base, width: 3, height: 10, background: color }} aria-hidden />
+  }
+  if (shape === 'square') {
+    return <span style={{ ...base, width: 8, height: 8, background: color }} aria-hidden />
+  }
+  if (shape === 'dotted-circle') {
+    return (
+      <span
+        className="rounded-full"
+        style={{ ...base, width: 9, height: 9, border: `1.5px dotted ${color}` }}
+        aria-hidden
+      />
+    )
+  }
+  return (
+    <span
+      className="rounded-full"
+      style={{ ...base, width: 8, height: 8, background: color }}
+      aria-hidden
+    />
   )
 }
 

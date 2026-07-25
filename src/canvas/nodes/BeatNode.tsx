@@ -1,39 +1,19 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react'
 import { memo } from 'react'
-import { BEAT_LABELS } from '../../domain/types'
-import type { StoryBeatType } from '../../domain/types'
+import {
+  findBeatAnywhere,
+  getStructureTemplate,
+  type BeatShape,
+} from '../../domain/structure'
+import { useProjectStore } from '../../store/projectStore'
 import { useUiStore } from '../../store/uiStore'
 import type { BeatNodeData } from '../graph'
 
-type MarkerShape = 'tick' | 'square' | 'dotted-circle' | 'circle'
+// Fallback for a marker no structure defines (hand-added, or a key from a
+// project saved by a newer version): a quiet amber dot.
+const UNKNOWN_MARKER = { shape: 'circle' as BeatShape, color: 'var(--color-amber)' }
 
-const BEAT_MARKER: Record<StoryBeatType, { shape: MarkerShape; color: string }> = {
-  // Structural landmarks: a plain ink tick on the line.
-  midpoint: { shape: 'tick', color: 'var(--color-ink)' },
-  climax: { shape: 'tick', color: 'var(--color-ink)' },
-  // The stated goal gets the same rust square used for "not achieved" —
-  // a want is unresolved by definition until the climax.
-  want: { shape: 'square', color: 'var(--color-rust)' },
-  // A ghost beat is the past intruding on the present.
-  ghost: { shape: 'dotted-circle', color: 'var(--color-rust)' },
-  // Regular forward-moving plot beats.
-  catalyst: { shape: 'circle', color: 'var(--color-amber)' },
-  progress: { shape: 'circle', color: 'var(--color-amber)' },
-  warning: { shape: 'circle', color: 'var(--color-amber)' },
-  low_point: { shape: 'circle', color: 'var(--color-amber)' },
-  aha: { shape: 'circle', color: 'var(--color-amber)' },
-  choice: { shape: 'circle', color: 'var(--color-amber)' },
-  ending: { shape: 'circle', color: 'var(--color-amber)' },
-}
-
-// Beats that grow together on hover — Catalyst sets Want in motion, so
-// hovering either highlights the causal pair as one gesture.
-const BEAT_GROUP: Partial<Record<StoryBeatType, string>> = {
-  catalyst: 'catalyst-want',
-  want: 'catalyst-want',
-}
-
-function Marker({ shape, color }: { shape: MarkerShape; color: string }) {
+function Marker({ shape, color }: { shape: BeatShape; color: string }) {
   if (shape === 'tick') {
     return (
       <span
@@ -72,8 +52,14 @@ function Marker({ shape, color }: { shape: MarkerShape; color: string }) {
 
 function BeatNodeComponent({ data, selected }: NodeProps) {
   const { beat } = data as unknown as BeatNodeData
-  const marker = BEAT_MARKER[beat.type]
-  const group = BEAT_GROUP[beat.type]
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const definition = findBeatAnywhere(
+    beat.type,
+    getStructureTemplate(structureId),
+  )
+  const marker = definition ?? UNKNOWN_MARKER
+  const label = definition?.label ?? beat.title
+  const group = definition?.group
   const hoveredGroup = useUiStore((s) => s.hoveredBeatGroup)
   const setHoveredBeatGroup = useUiStore((s) => s.setHoveredBeatGroup)
   const expanded = group !== undefined && hoveredGroup === group
@@ -82,7 +68,7 @@ function BeatNodeComponent({ data, selected }: NodeProps) {
     <div
       className="flex flex-col items-center gap-1 transition-transform duration-150 ease-out"
       role="group"
-      aria-label={`Story beat: ${BEAT_LABELS[beat.type]}`}
+      aria-label={`Story beat: ${label}`}
       title={beat.description}
       onMouseEnter={() => group && setHoveredBeatGroup(group)}
       onMouseLeave={() => group && setHoveredBeatGroup(null)}
@@ -113,8 +99,13 @@ function BeatNodeComponent({ data, selected }: NodeProps) {
       >
         <Marker shape={marker.shape} color={marker.color} />
       </div>
-      <span className="font-display whitespace-nowrap text-sm font-bold text-ink">
-        {BEAT_LABELS[beat.type]}
+      {/* Dense sheets (Save the Cat) stagger every other label onto a lower row
+          so neighbouring names do not collide on the line. */}
+      <span
+        className="font-display whitespace-nowrap text-sm font-bold text-ink"
+        style={definition?.tier === 1 ? { marginTop: 20 } : undefined}
+      >
+        {label}
       </span>
     </div>
   )

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { DEFAULT_STRUCTURE_ID } from './structure'
 import type { Project } from './types'
 
-export const SCHEMA_VERSION = 2
+export const SCHEMA_VERSION = 3
 
 export const storyPhaseSchema = z.enum([
   'setup',
@@ -11,19 +11,12 @@ export const storyPhaseSchema = z.enum([
   'ending',
 ])
 
-export const storyBeatTypeSchema = z.enum([
-  'catalyst',
-  'want',
-  'progress',
-  'warning',
-  'midpoint',
-  'low_point',
-  'ghost',
-  'aha',
-  'choice',
-  'climax',
-  'ending',
-])
+/**
+ * Beat keys belong to the selected structure template, so this stays an open
+ * string rather than an enum — a project authored in Save the Cat or
+ * Kishōtenketsu carries keys the 4-Phase vocabulary never had.
+ */
+export const beatKeySchema = z.string()
 
 export const arcRelationSchema = z.enum([
   'ghost',
@@ -59,7 +52,7 @@ export const storySceneSchema = z.object({
   outcome: z.string(),
   changeAfterScene: z.string(),
   phase: storyPhaseSchema,
-  beat: storyBeatTypeSchema.optional(),
+  beat: beatKeySchema.optional(),
   arcRelation: arcRelationSchema,
   tellingChapter: z.string().optional(),
   position: positionSchema,
@@ -72,7 +65,7 @@ export const storySceneSchema = z.object({
 
 export const beatMarkerSchema = z.object({
   id: z.string(),
-  type: storyBeatTypeSchema,
+  type: beatKeySchema,
   title: z.string(),
   description: z.string(),
   position: positionSchema,
@@ -162,6 +155,12 @@ function migrate(raw: unknown): unknown {
       schemaVersion: 2,
     }
     v = 2
+  }
+  if (v < 3) {
+    // v3 hands beat vocabulary to the structure template. Every v2 beat key is
+    // still a valid 4-Phase key, so the data needs no remap — only the stamp.
+    migrated = { ...migrated, schemaVersion: 3 }
+    v = 3
   }
 
   return migrated

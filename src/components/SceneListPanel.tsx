@@ -1,15 +1,16 @@
 import { useReactFlow } from '@xyflow/react'
 import { useState } from 'react'
 import { ArcSymbol } from '../canvas/nodes/SceneNode'
-import { PHASE_WIDTH } from '../domain/seed'
-import { bandIndexForX, getStructureTemplate } from '../domain/structure'
+import {
+  bandIndexForX,
+  beatLabel,
+  BOARD_WIDTH,
+  getStructureTemplate,
+} from '../domain/structure'
 import { tellingChapters, tellingOrderKeys } from '../domain/telling'
-import { BEAT_LABELS, STORY_PHASES } from '../domain/types'
 import type { StoryScene } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
-
-const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
 
 type Dragged = { kind: 'scene' | 'chapter'; id: string } | null
 
@@ -34,6 +35,7 @@ export function SceneListPanel() {
 
   const [dragged, setDragged] = useState<Dragged>(null)
   const [openNote, setOpenNote] = useState<string | null>(null)
+  const template = getStructureTemplate(structureId)
 
   function selectScene(scene: StoryScene) {
     openSceneEditor(scene.id)
@@ -54,7 +56,9 @@ export function SceneListPanel() {
         <ArcSymbol relation={scene.arcRelation} />
         <span className="flex-1 truncate">{scene.title || 'ฉากไม่มีชื่อ'}</span>
         {scene.beat && (
-          <span className="shrink-0 text-[11px] text-ink/40">{BEAT_LABELS[scene.beat]}</span>
+          <span className="shrink-0 text-[11px] text-ink/40">
+            {beatLabel(scene.beat, template)}
+          </span>
         )}
       </button>
     )
@@ -62,7 +66,6 @@ export function SceneListPanel() {
 
   // --- Chronological mode ---
   if (viewMode !== 'telling') {
-    const template = getStructureTemplate(structureId)
     const groups = template.bands.map((band, index) => ({
       label: band.label,
       scenes: scenes

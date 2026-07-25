@@ -68,6 +68,8 @@
 
   /* ---------- Sections ---------- */
   section { margin-bottom: 7mm; break-inside: avoid; }
+  /* Too tall to hold together — let it flow across pages, card by card. */
+  section.breakable { break-inside: auto; }
   h2 {
     font-family: 'Trirong', serif;
     font-weight: 700;
@@ -127,6 +129,34 @@
   .edge-box li { display: flex; align-items: center; gap: 3mm; margin-bottom: 1mm; }
   .edge-box svg { flex: 0 0 auto; }
 
+  .structure-box {
+    border: 1px solid rgba(20, 22, 25, 0.12);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    padding: 2.5mm 3.5mm;
+    margin-top: 2.5mm;
+    break-inside: avoid;
+  }
+  .structure-box h3 {
+    font-family: 'Trirong', serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    margin: 0 0 1mm;
+  }
+  .structure-box .bands {
+    font-size: 8.5pt;
+    color: rgba(20, 22, 25, 0.55);
+    border-bottom: 1px dashed rgba(20, 22, 25, 0.2);
+    padding-bottom: 1.5mm;
+    margin-bottom: 1.5mm;
+  }
+  .structure-box p { font-size: 9.5pt; }
+  .structure-box .beats {
+    font-size: 8.5pt;
+    color: rgba(20, 22, 25, 0.7);
+    margin-bottom: 0;
+  }
+
   .steps { list-style: none; padding: 0; counter-reset: step; }
   .steps li { display: flex; gap: 3mm; margin-bottom: 2.5mm; }
   .steps .n {
@@ -157,20 +187,22 @@
 <header class="cover">
   <h1 class="brand">Plotline Board</h1>
   <p class="subtitle">คู่มือการใช้งาน — วางเรื่องของคุณลงบนเส้น Paradigm</p>
-  <!-- Miniature paradigm line: the five chapters of this guide as beats. -->
-  <svg class="beat-line" width="520" height="66" viewBox="0 0 520 66" role="img" aria-label="หัวข้อทั้งห้าของคู่มือ เรียงเป็นจุดบนเส้น Paradigm">
-    <line x1="10" y1="33" x2="510" y2="33" stroke="#141619" stroke-width="1.5" opacity="0.6" />
+  <!-- Miniature paradigm line: the six chapters of this guide as beats. -->
+  <svg class="beat-line" width="600" height="66" viewBox="0 0 600 66" role="img" aria-label="หัวข้อทั้งหกของคู่มือ เรียงเป็นจุดบนเส้น Paradigm">
+    <line x1="10" y1="33" x2="590" y2="33" stroke="#141619" stroke-width="1.5" opacity="0.6" />
     <g font-family="Noto Sans Thai" font-size="11" fill="#141619">
-      <circle cx="60"  cy="33" r="5" fill="#2f9c6c" />
-      <text x="60"  y="18" text-anchor="middle">1 · การเซฟ</text>
-      <circle cx="160" cy="33" r="5" fill="#e49c4e" />
-      <text x="160" y="54" text-anchor="middle">2 · เขียนการ์ดฉาก</text>
-      <circle cx="260" cy="33" r="5" fill="#3d4dec" />
-      <text x="260" y="18" text-anchor="middle">3 · ลากเส้นเชื่อม</text>
-      <circle cx="360" cy="33" r="5" fill="#cd5042" />
-      <text x="360" y="54" text-anchor="middle">4 · วางบนไทม์ไลน์</text>
-      <circle cx="460" cy="33" r="5" fill="#141619" />
-      <text x="460" y="18" text-anchor="middle">5 · ตัวอย่างการใช้งาน</text>
+      <circle cx="55"  cy="33" r="5" fill="#2f9c6c" />
+      <text x="55"  y="18" text-anchor="middle">1 · การเซฟ</text>
+      <circle cx="150" cy="33" r="5" fill="#e49c4e" />
+      <text x="150" y="54" text-anchor="middle">2 · เขียนการ์ดฉาก</text>
+      <circle cx="245" cy="33" r="5" fill="#3d4dec" />
+      <text x="245" y="18" text-anchor="middle">3 · ลากเส้นเชื่อม</text>
+      <circle cx="340" cy="33" r="5" fill="#cd5042" />
+      <text x="340" y="54" text-anchor="middle">4 · วางบนไทม์ไลน์</text>
+      <circle cx="435" cy="33" r="5" fill="#2b7a8c" />
+      <text x="435" y="18" text-anchor="middle">5 · โครงสร้างเรื่อง</text>
+      <circle cx="530" cy="33" r="5" fill="#141619" />
+      <text x="530" y="54" text-anchor="middle">6 · ตัวอย่างการใช้งาน</text>
     </g>
   </svg>
 </header>
@@ -220,27 +252,70 @@
 <section>
   <h2><span class="dot" style="background:#cd5042"></span><span class="num" style="color:#cd5042">4</span> วางบนไทม์ไลน์</h2>
   <div>
-    <p>กระดานคือไทม์ไลน์ของเรื่อง แบ่งเป็น 4 ช่วง (เริ่มต้น → ช่วงแรก → ช่วงกลาง → ช่วงท้าย) โดยมี<strong>เส้น Paradigm</strong> พาดแนวนอนตรงกลาง</p>
+    <p>กระดานคือไทม์ไลน์ของเรื่อง แบ่งเป็นช่วงตามโครงสร้างที่เลือกไว้ (ค่าเริ่มต้นคือ 4 ช่วง: เริ่มต้น → ช่วงแรก → ช่วงกลาง → ช่วงท้าย) โดยมี<strong>เส้น Paradigm</strong> พาดแนวนอนตรงกลาง</p>
     <ul>
       <li><strong>ลากซ้าย–ขวา</strong> เพื่อเลื่อนฉากไปช่วงอื่นของเรื่อง — ช่วง (Phase) ของฉากเปลี่ยนตามตำแหน่งอัตโนมัติ</li>
       <li><strong>เหนือเส้น</strong> = ฉากที่ขับด้วย Lie / Want · <strong>ใต้เส้น</strong> = ฉากที่ขับด้วย Ghost / Need</li>
-      <li>หมุด Beat (Catalyst, Midpoint, Climax …) เกาะอยู่บนเส้น ลากได้เฉพาะแนวนอน</li>
+      <li>หมุด Beat (Catalyst, Midpoint, Climax …) เกาะอยู่บนเส้น ลากได้เฉพาะแนวนอน — ชุดหมุดมาจากโครงสร้างที่เลือก (ดูหัวข้อ 5)</li>
       <li>ปุ่ม <kbd>จัดเรียงอัตโนมัติ</kbd> ที่แถบบน จัดผังทั้งกระดานให้ทันที (กดปุ่มเลิกทำ <kbd><svg width="11" height="9" viewBox="0 0 11 9" style="vertical-align:-1px"><path d="M4 1 1.5 3.5 4 6" fill="none" stroke="#141619" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 3.5H7a3 3 0 0 1 3 3V8" fill="none" stroke="#141619" stroke-width="1.3" stroke-linecap="round"/></svg></kbd> เพื่อย้อนกลับได้)</li>
       <li>สลับมุมมอง <strong>เวลาในเรื่อง / ลำดับเล่า</strong> ที่มุมซ้ายบนของกระดาน เพื่อดูลำดับเหตุการณ์จริง เทียบกับลำดับการเล่า — และติ๊ก <strong>จับแนวกริด</strong> ที่มุมขวาบน ถ้าอยากให้การ์ดเรียงเป็นระเบียบ</li>
     </ul>
   </div>
 </section>
 
-<section>
-  <h2><span class="dot" style="background:#141619"></span><span class="num">5</span> ตัวอย่างการใช้งาน</h2>
+<section class="breakable">
+  <h2><span class="dot" style="background:#2b7a8c"></span><span class="num" style="color:#2b7a8c">5</span> โครงสร้างเรื่อง</h2>
   <div>
-    <p>เริ่มเรื่องใหม่หนึ่งเรื่อง ครบใน 5 ขั้น:</p>
+    <p>แผง <strong>โครงสร้าง</strong> มุมซ้ายบนของกระดาน ไม่ได้เปลี่ยนแค่ป้ายหัวคอลัมน์ — เลือกโครงสร้างไหน กระดานจะ<strong>วางหมุด Beat ชุดของโครงสร้างนั้นลงบนเส้น Paradigm</strong> ให้ทันที ช่องแบ่งช่วงเปลี่ยนตาม และช่อง Story Beat ในแผงแก้ไขฉากก็เปลี่ยนตัวเลือกตามไปด้วย</p>
+    <p>สลับได้ตลอดเวลา ไม่มีอะไรหาย: การ์ดอยู่ตำแหน่งเดิม แท็ก Beat ที่เคยใส่ไว้ยังติดกับฉาก (สลับกลับมาก็เห็นเหมือนเดิม) และถ้าไม่ชอบก็กดปุ่มเลิกทำได้ ส่วนหมุดที่คุณ<strong>ล็อกตำแหน่ง</strong>ไว้ หรือหมุดที่เพิ่มเองจะไม่ถูกแทนที่</p>
+
+    <div class="structure-box">
+      <h3>4 Phase</h3>
+      <p class="bands">1. เริ่มต้น · 2. ช่วงแรก · 3. ช่วงกลาง · 4. ช่วงท้าย</p>
+      <p>โครงเรื่องแบบ Paradigm ที่ผูกทุกฉากไว้กับบาดแผลของตัวละคร — เหมาะกับเรื่องที่คนอ่านต้องเปลี่ยนไปพร้อมตัวละคร</p>
+      <p><strong>เริ่มที่นี่ · </strong>ตั้งต้นที่ตัวละครก่อนเหตุการณ์: กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ให้ได้ก่อน แล้วค่อยหาว่าฉากไหนทำให้ Lie ทำงาน และฉากไหนบังคับให้เห็น Need</p>
+      <p class="beats">หมุด: Catalyst · Want · Things Go Well · Warning · Midpoint · Ghost · Low Point · Aha! · Choice · Climax · Ending</p>
+    </div>
+
+    <div class="structure-box">
+      <h3>Three Act</h3>
+      <p class="bands">Act 1 · Setup — Act 2 · Confrontation — Act 3 · Resolution</p>
+      <p>สามองก์แบบคลาสสิก โครงที่กว้างและยืดหยุ่นที่สุด — เหมาะเมื่ออยากเห็นภาพรวมก่อนลงรายละเอียด</p>
+      <p><strong>เริ่มที่นี่ · </strong>ปักสองหมุดให้ได้ก่อน: Inciting Incident ที่เปิดปัญหา และ Climax ที่ปิดมัน แล้วถามว่าอะไรทำให้ระยะกลางยาวขนาดนั้น — คำตอบคือ Midpoint</p>
+      <p class="beats">หมุด: Inciting Incident · Plot Point 1 · Midpoint · Plot Point 2 · Climax · Resolution</p>
+    </div>
+
+    <div class="structure-box">
+      <h3>Save the Cat</h3>
+      <p class="bands">Act 1 · Setup — Fun &amp; Games — Bad Guys Close In — Finale</p>
+      <p>ผังบีตละเอียด 15 จุด อ้างตำแหน่งตามสัดส่วนหน้า — เหมาะกับงานที่ต้องคุมจังหวะแน่น เช่นบทภาพยนตร์</p>
+      <p><strong>เริ่มที่นี่ · </strong>เขียน logline หนึ่งบรรทัดก่อนแตะกระดาน แล้วปักสามหมุดหลัก Catalyst · Midpoint · All Is Lost จากนั้นค่อยเติมบีตที่เหลือเข้าไปในช่องว่าง</p>
+      <p class="beats">หมุด: Opening Image · Theme Stated · Setup · Catalyst · Debate · Break into Two · B Story · Fun and Games · Midpoint · Bad Guys Close In · All Is Lost · Dark Night of the Soul · Break into Three · Finale · Final Image</p>
+    </div>
+
+    <div class="structure-box">
+      <h3>Kishōtenketsu</h3>
+      <p class="bands">起 Ki · เปิดโลก — 承 Shō · ขยายความ — 転 Ten · จุดพลิก — 結 Ketsu · คลี่คลาย</p>
+      <p>โครงสี่ขั้นแบบเอเชียตะวันออกที่ไม่ต้องมีความขัดแย้งเป็นเครื่องยนต์ — เหมาะกับเรื่องสั้น เรื่องชีวิต และงานที่เดินด้วยการเปลี่ยนมุมมอง</p>
+      <p><strong>เริ่มที่นี่ · </strong>หา 転 Ten ให้ได้ก่อนเป็นอย่างแรก: อะไรที่โผล่เข้ามาแล้วทำให้ทุกอย่างก่อนหน้ามีความหมายใหม่ เมื่อได้จุดนั้นแล้วจึงถอยกลับไปเขียน 起 กับ 承 ให้เป็นชีวิตปกติที่เงียบพอจะถูกพลิก</p>
+      <p class="beats">หมุด: 起 เปิดโลก · 承 ขยายความ · 転 จุดพลิก · 結 คลี่คลาย — สังเกตว่ามีหมุดหลักตัวเดียวคือ Ten เพราะโครงนี้เดินด้วยการพลิกมุมมอง ไม่ใช่การเอาชนะ</p>
+    </div>
+
+    <p class="tip">ยังไม่รู้จะใช้อันไหน? ถ้าเรื่องของคุณเดินด้วยความอยากของตัวละคร เริ่มที่ 4 Phase — ถ้าเดินด้วยบรรยากาศหรือการค่อยๆ เข้าใจอะไรบางอย่าง ลอง Kishōtenketsu ที่ไม่บังคับให้มีศัตรู</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="dot" style="background:#141619"></span><span class="num">6</span> ตัวอย่างการใช้งาน</h2>
+  <div>
+    <p>เริ่มเรื่องใหม่หนึ่งเรื่อง ครบใน 6 ขั้น:</p>
     <ol class="steps">
-      <li><span class="n">1</span><span><strong>ปูพื้นตัวละคร</strong> — กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย ให้กระดานรู้ว่าแกนเรื่องคืออะไร</span></li>
-      <li><span class="n">2</span><span><strong>สร้างฉากสำคัญ</strong> — กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก</span></li>
-      <li><span class="n">3</span><span><strong>วางลงไทม์ไลน์</strong> — ลากการ์ดไปตามช่วงเรื่อง 4 ช่วง ฉากที่ตัวละครไล่ตาม Want ไว้เหนือเส้น ฉากที่แผล Ghost ทำงานไว้ใต้เส้น</span></li>
-      <li><span class="n">4</span><span><strong>ลากเส้นเชื่อมเรื่อง</strong> — เลือกชนิดเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลว</span></li>
-      <li><span class="n">5</span><span><strong>ตรวจและแชร์</strong> — สลับไปมุมมอง "ลำดับเล่า" ตรวจลำดับการเล่า แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ</span></li>
+      <li><span class="n">1</span><span><strong>เลือกโครงสร้าง</strong> — ที่แผง "โครงสร้าง" มุมซ้ายบน หมุด Beat ของโครงสร้างนั้นจะมาวางบนเส้นให้เป็นโครงร่างว่าต้องเติมอะไร</span></li>
+      <li><span class="n">2</span><span><strong>ปูพื้นตัวละคร</strong> — กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย ให้กระดานรู้ว่าแกนเรื่องคืออะไร</span></li>
+      <li><span class="n">3</span><span><strong>สร้างฉากสำคัญ</strong> — กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก</span></li>
+      <li><span class="n">4</span><span><strong>วางลงไทม์ไลน์</strong> — ลากการ์ดไปให้อยู่ใต้หมุด Beat ที่ตรงกับมัน ฉากที่ตัวละครไล่ตาม Want ไว้เหนือเส้น ฉากที่แผล Ghost ทำงานไว้ใต้เส้น</span></li>
+      <li><span class="n">5</span><span><strong>ลากเส้นเชื่อมเรื่อง</strong> — เลือกชนิดเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลว</span></li>
+      <li><span class="n">6</span><span><strong>ตรวจและแชร์</strong> — สลับไปมุมมอง "ลำดับเล่า" ตรวจลำดับการเล่า แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ</span></li>
     </ol>
     <p class="tip">จะโพสต์ลงเฟซบุ๊ก? ในหน้าต่าง Export PNG เลือก <strong>แบ่งเป็นหลายภาพ</strong> — เฟซบุ๊กย่อทุกภาพเหลือ 2048px กระดานใหญ่ในภาพเดียวจะอ่านไม่ออก แบบแบ่งภาพจะตัดกระดานเป็นช่วงๆ ให้ยังอ่านชัด แล้วอัปโหลดเป็นอัลบั้มในโพสต์เดียวได้เลย</p>
   </div>

@@ -1,10 +1,7 @@
 import { ViewportPortal } from '@xyflow/react'
-import { PHASE_WIDTH } from '../domain/seed'
-import { getStructureTemplate } from '../domain/structure'
-import { PARADIGM_LINE_Y, STORY_PHASES } from '../domain/types'
+import { BOARD_WIDTH, getStructureTemplate } from '../domain/structure'
+import { PARADIGM_LINE_Y } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
-
-const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
 
 // Rough card footprint + breathing room, used to size the frame around content.
 const CARD_W = 300

@@ -38,15 +38,26 @@ describe('SceneEditorDrawer', () => {
   })
 
   it('warns when the chosen band conflicts with the beat', () => {
-    useUiStore.getState().openSceneEditor('scene-want') // beat = want (early)
+    useUiStore.getState().openSceneEditor('scene-want') // beat = want (band 1)
     render(<SceneEditorDrawer />)
     // Band selector is template-aware; label carries the template name.
     const band = screen.getByLabelText(/ช่วงของเรื่อง/)
-    // Move to band 3 (ช่วงท้าย → phase "ending"), conflicting with the want beat.
+    // Move to band 3 (ช่วงท้าย), where the Want beat does not belong.
     fireEvent.change(band, { target: { value: '3' } })
     expect(
-      screen.getByText('ช่วงของเรื่องขัดกับ Story Beat ที่เลือกไว้'),
+      screen.getByText(/ไม่ได้อยู่ในช่วงที่ Want ควรอยู่/),
     ).toBeInTheDocument()
+  })
+
+  it('offers the beats of the selected structure', () => {
+    store().setStructureTemplate('kishotenketsu')
+    useUiStore.getState().openSceneEditor('scene-want')
+    render(<SceneEditorDrawer />)
+    const beat = screen.getByLabelText(/Story Beat/)
+    expect(beat).toHaveTextContent('転 จุดพลิก')
+    expect(beat).not.toHaveTextContent('Midpoint')
+    // The scene's 4-Phase tag survives the switch and stays selectable.
+    expect(beat).toHaveTextContent('จากโครงสร้างอื่น')
   })
 
   it('moving to a band recentres the scene x on that band', () => {

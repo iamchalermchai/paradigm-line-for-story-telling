@@ -1,26 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
-import { PHASE_WIDTH } from '../domain/seed'
 import {
   bandCenterFraction,
   bandIndexForX,
+  beatLabel,
+  BOARD_WIDTH,
   getStructureTemplate,
 } from '../domain/structure'
-import {
-  ARC_RELATION_LABELS,
-  BEAT_LABELS,
-  STORY_PHASES,
-} from '../domain/types'
-import type {
-  ArcRelation,
-  StoryBeatType,
-  StoryScene,
-} from '../domain/types'
+import { ARC_RELATION_LABELS, STORY_PHASES } from '../domain/types'
+import type { ArcRelation, StoryScene } from '../domain/types'
 import { tellingChapters } from '../domain/telling'
 import { validateScene } from '../domain/validation'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
 
-const BOARD_WIDTH = PHASE_WIDTH * STORY_PHASES.length
 const FOUR_PHASE = getStructureTemplate('four-phase')
 
 const ARC_RELATIONS: ArcRelation[] = [
@@ -30,20 +22,6 @@ const ARC_RELATIONS: ArcRelation[] = [
   'lie_at_work',
   'want',
   'need',
-]
-
-const BEAT_TYPES: StoryBeatType[] = [
-  'catalyst',
-  'want',
-  'progress',
-  'warning',
-  'midpoint',
-  'low_point',
-  'ghost',
-  'aha',
-  'choice',
-  'climax',
-  'ending',
 ]
 
 export function SceneEditorDrawer() {
@@ -74,8 +52,8 @@ export function SceneEditorDrawer() {
     [scenes, editingSceneId],
   )
   const warnings = useMemo(
-    () => (draft ? validateScene(draft, others) : []),
-    [draft, others],
+    () => (draft ? validateScene(draft, others, template) : []),
+    [draft, others, template],
   )
 
   if (!editingSceneId || !draft) return null
@@ -98,7 +76,7 @@ export function SceneEditorDrawer() {
   }
 
   // Move the scene into the chosen band: recentre its x on that band and keep
-  // the 4-phase shadow (used by validation / beats) in sync with the new x.
+  // the legacy 4-phase shadow in sync with the new x.
   function moveToBand(bandIndex: number) {
     setDraft((d) => {
       if (!d) return d
@@ -241,13 +219,23 @@ export function SceneEditorDrawer() {
             onChange={(v) => moveToBand(Number(v))}
           />
           <Select
-            label="Story Beat"
+            label={`Story Beat (${template.name})`}
             value={draft.beat ?? ''}
             options={[
               ['', '— ไม่มี —'],
-              ...BEAT_TYPES.map((b) => [b, BEAT_LABELS[b]] as [string, string]),
+              ...template.beats.map((b) => [b.key, b.label] as [string, string]),
+              // A tag kept from another structure stays selectable, so opening
+              // the editor cannot silently drop it.
+              ...(draft.beat && !template.beats.some((b) => b.key === draft.beat)
+                ? [
+                    [
+                      draft.beat,
+                      `${beatLabel(draft.beat)} (จากโครงสร้างอื่น)`,
+                    ] as [string, string],
+                  ]
+                : []),
             ]}
-            onChange={(v) => set('beat', (v || undefined) as StoryBeatType | undefined)}
+            onChange={(v) => set('beat', v || undefined)}
           />
         </div>
         <Select

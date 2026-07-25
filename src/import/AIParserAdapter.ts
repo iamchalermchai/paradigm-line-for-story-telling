@@ -1,7 +1,7 @@
 import type {
   ArcRelation,
   Backstory,
-  StoryBeatType,
+  BeatKey,
   StoryPhase,
 } from '../domain/types'
 
@@ -17,7 +17,7 @@ export interface SceneSuggestion {
   outcome: string
   changeAfterScene: string
   phase: StoryPhase
-  beat?: StoryBeatType
+  beat?: BeatKey
   arcRelation: ArcRelation
   confidence: number
   /** [start, end) character offsets in the source text. */

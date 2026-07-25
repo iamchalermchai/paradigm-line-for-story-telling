@@ -1,11 +1,18 @@
-import { BEAT_PHASE } from './types'
+import {
+  bandIndexForX,
+  beatBandIndex,
+  BOARD_WIDTH,
+  getStructureTemplate,
+  templateBeat,
+  type StructureTemplate,
+} from './structure'
 import type { StoryScene } from './types'
 
 export type WarningCode =
   | 'no_action'
   | 'no_outcome'
   | 'no_change'
-  | 'phase_beat_conflict'
+  | 'band_beat_conflict'
   | 'possible_duplicate'
 
 export interface SceneWarning {
@@ -23,11 +30,15 @@ function fingerprint(scene: StoryScene): string {
 
 /**
  * Return the validation warnings for a single scene. `others` is the rest of
- * the scenes in the project, used for duplicate detection.
+ * the scenes in the project, used for duplicate detection. `template` is the
+ * structure the board is currently showing, which decides where each beat
+ * belongs; beats the template does not define (a tag left over from another
+ * structure) are left alone rather than nagged about.
  */
 export function validateScene(
   scene: StoryScene,
   others: StoryScene[] = [],
+  template: StructureTemplate = getStructureTemplate(''),
 ): SceneWarning[] {
   const warnings: SceneWarning[] = []
 
@@ -52,10 +63,15 @@ export function validateScene(
     })
   }
 
-  if (scene.beat && BEAT_PHASE[scene.beat] !== scene.phase) {
+  const beat = templateBeat(template, scene.beat)
+  if (
+    beat &&
+    beatBandIndex(beat, template) !==
+      bandIndexForX(scene.position.x / BOARD_WIDTH, template)
+  ) {
     warnings.push({
-      code: 'phase_beat_conflict',
-      message: 'ช่วงของเรื่องขัดกับ Story Beat ที่เลือกไว้',
+      code: 'band_beat_conflict',
+      message: `ฉากนี้ไม่ได้อยู่ในช่วงที่ ${beat.label} ควรอยู่ (${template.bands[beatBandIndex(beat, template)].label})`,
     })
   }
 
@@ -76,10 +92,11 @@ export function validateScene(
 /** Validate every scene, returning a map of sceneId -> warnings (non-empty only). */
 export function validateAllScenes(
   scenes: StoryScene[],
+  template: StructureTemplate = getStructureTemplate(''),
 ): Record<string, SceneWarning[]> {
   const result: Record<string, SceneWarning[]> = {}
   for (const scene of scenes) {
-    const warnings = validateScene(scene, scenes)
+    const warnings = validateScene(scene, scenes, template)
     if (warnings.length > 0) result[scene.id] = warnings
   }
   return result

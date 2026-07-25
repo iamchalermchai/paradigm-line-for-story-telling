@@ -43,4 +43,30 @@ describe('project schema', () => {
     expect(result.project?.structureTemplateId).toBe('four-phase')
     expect(result.project?.schemaVersion).toBe(SCHEMA_VERSION)
   })
+
+  it('migrates a v2 payload, keeping its 4-Phase beat tags intact', () => {
+    const seed = createSeedProject()
+    const v2 = { ...JSON.parse(JSON.stringify(seed)), schemaVersion: 2 }
+    const result = parseProject(v2)
+    expect(result.ok).toBe(true)
+    expect(result.project?.schemaVersion).toBe(SCHEMA_VERSION)
+    expect(result.project?.beats.map((b) => b.type)).toEqual(
+      seed.beats.map((b) => b.type),
+    )
+    expect(result.project?.scenes.find((s) => s.id === 'scene-want')?.beat).toBe(
+      'want',
+    )
+  })
+
+  it('accepts beat keys from a non-default structure', () => {
+    const seed = createSeedProject()
+    const raw = JSON.parse(JSON.stringify(seed))
+    raw.structureTemplateId = 'kishotenketsu'
+    raw.beats[0].type = 'ten'
+    raw.scenes[0].beat = 'ketsu'
+    const result = parseProject(raw)
+    expect(result.ok).toBe(true)
+    expect(result.project?.beats[0].type).toBe('ten')
+    expect(result.project?.scenes[0].beat).toBe('ketsu')
+  })
 })

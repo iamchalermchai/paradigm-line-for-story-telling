@@ -11,47 +11,14 @@ export const PHASE_LABELS: Record<StoryPhase, string> = {
   ending: '4. ช่วงท้าย',
 }
 
-export type StoryBeatType =
-  | 'catalyst'
-  | 'want'
-  | 'progress'
-  | 'warning'
-  | 'midpoint'
-  | 'low_point'
-  | 'ghost'
-  | 'aha'
-  | 'choice'
-  | 'climax'
-  | 'ending'
-
-export const BEAT_LABELS: Record<StoryBeatType, string> = {
-  catalyst: 'Catalyst',
-  want: 'Want',
-  progress: 'Things Go Well',
-  warning: 'Warning',
-  midpoint: 'Midpoint',
-  low_point: 'Low Point',
-  ghost: 'Ghost',
-  aha: 'Aha!',
-  choice: 'Choice',
-  climax: 'Climax',
-  ending: 'Ending',
-}
-
-// Which phase a beat conventionally belongs to (used by validation + auto-layout).
-export const BEAT_PHASE: Record<StoryBeatType, StoryPhase> = {
-  catalyst: 'setup',
-  want: 'early',
-  progress: 'early',
-  warning: 'early',
-  midpoint: 'middle',
-  low_point: 'middle',
-  ghost: 'middle',
-  aha: 'ending',
-  choice: 'ending',
-  climax: 'ending',
-  ending: 'ending',
-}
+/**
+ * A story beat is identified by the key of a beat in the selected structure
+ * template (see domain/structure.ts, which owns the labels, positions and
+ * marker styling). Kept as a plain string so each template can define its own
+ * vocabulary — Save the Cat's `all_is_lost` and Kishōtenketsu's `ten` are as
+ * valid as the 4-Phase `midpoint`.
+ */
+export type BeatKey = string
 
 export type ArcRelation =
   | 'ghost'
@@ -92,8 +59,11 @@ export interface StoryScene {
   obstacle: string
   outcome: string
   changeAfterScene: string
+  /** Legacy 4-phase shadow, kept so older saved projects keep round-tripping.
+   *  The band a scene reads as now comes from its x under the selected
+   *  structure template, not from this field. */
   phase: StoryPhase
-  beat?: StoryBeatType
+  beat?: BeatKey
   arcRelation: ArcRelation
   /** Telling chapter (a single letter A/B/C…). Scenes that share a letter are
    *  narrated together; chapter order (A→B→C) is the telling order, which can
@@ -109,7 +79,7 @@ export interface StoryScene {
 
 export interface BeatMarker {
   id: string
-  type: StoryBeatType
+  type: BeatKey
   title: string
   description: string
   position: Position

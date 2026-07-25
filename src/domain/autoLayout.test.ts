@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { autoLayout } from './autoLayout'
 import { createSeedProject } from './seed'
+import { getStructureTemplate, templateBeatMarkers } from './structure'
 import { ABOVE_LINE_RELATIONS, PARADIGM_LINE_Y } from './types'
 
 // Mirror of the SCENE_W constant in autoLayout.ts (card width used for centring).
@@ -86,6 +87,56 @@ describe('autoLayout', () => {
     const wantBeat = beats.find((b) => b.type === 'want')!
     const cardCentre = wantScene.position.x + SCENE_W_TEST / 2
     expect(Math.abs(cardCentre - wantBeat.position.x)).toBeLessThan(4)
+  })
+
+  it('spaces markers by the given structure, not always 4 Phase', () => {
+    const seed = createSeedProject()
+    const kishotenketsu = getStructureTemplate('kishotenketsu')
+    const markers = templateBeatMarkers(kishotenketsu).map((b) => ({
+      ...b,
+      position: { x: 0, y: 0 },
+    }))
+    const { beats } = autoLayout(seed.scenes, markers, kishotenketsu)
+    expect(beats.find((b) => b.type === 'ten')!.position.x).toBeCloseTo(1750, 0)
+  })
+
+  it('keeps a card under its marker even when the tag is from another structure', () => {
+    const seed = createSeedProject()
+    const stray = {
+      id: 'stray',
+      type: 'ten',
+      title: '転',
+      description: '',
+      position: { x: 1234, y: 500 },
+      locked: false,
+    }
+    const scene = {
+      ...seed.scenes[0],
+      id: 'tagged-ten',
+      beat: 'ten',
+      locked: false,
+    }
+    const { scenes, beats } = autoLayout(
+      [scene],
+      [stray],
+      getStructureTemplate('three-act'),
+    )
+    const cardCentre = scenes[0].position.x + SCENE_W_TEST / 2
+    expect(Math.abs(cardCentre - beats[0].position.x)).toBeLessThan(4)
+  })
+
+  it('leaves a marker no structure defines where the author put it', () => {
+    const seed = createSeedProject()
+    const invented = {
+      id: 'invented',
+      type: 'my_own_beat',
+      title: 'ของฉันเอง',
+      description: '',
+      position: { x: 1234, y: 500 },
+      locked: false,
+    }
+    const { beats } = autoLayout(seed.scenes, [invented])
+    expect(beats[0].position).toEqual({ x: 1234, y: 500 })
   })
 
   it('row-packs overlapping beat scenes into separate rows (no collision)', () => {

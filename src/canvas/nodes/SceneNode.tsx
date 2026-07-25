@@ -1,8 +1,9 @@
 import { Handle, Position, type NodeProps } from '@xyflow/react'
 import { memo } from 'react'
 import { colorForName } from '../../domain/characters'
+import { beatLabel, getStructureTemplate } from '../../domain/structure'
 import { chapterLetterForScene } from '../../domain/telling'
-import { ARC_RELATION_LABELS, BEAT_LABELS } from '../../domain/types'
+import { ARC_RELATION_LABELS } from '../../domain/types'
 import type { ArcRelation } from '../../domain/types'
 import { useProjectStore } from '../../store/projectStore'
 import type { SceneNodeData } from '../graph'
@@ -78,6 +79,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
     chapterLetterForScene(scene, s.project.scenes, s.project.tellingChapterOrder),
   )
   const characters = useProjectStore((s) => s.project.characters)
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
 
   // The "Character" side of Character + Action = Plot: lead with the POV actor.
   const who =
@@ -148,7 +150,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
         {scene.beat && (
           <>
             <span aria-hidden>·</span>
-            <span>{BEAT_LABELS[scene.beat]}</span>
+            <span>{beatLabel(scene.beat, getStructureTemplate(structureId))}</span>
           </>
         )}
         {scene.locked && (

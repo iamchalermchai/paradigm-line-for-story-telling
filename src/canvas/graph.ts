@@ -23,7 +23,11 @@ export type BoardNode =
 
 export const OUTCOME_NODE_ID = 'outcome-node'
 
-/** Which phase column an x-coordinate falls into (clamped to the board). */
+/**
+ * Which phase column an x-coordinate falls into (clamped to the board). Feeds
+ * the legacy `scene.phase` shadow that older saved files carry; the band a
+ * scene reads as comes from `bandIndexForX` under the selected structure.
+ */
 export function phaseForX(x: number): StoryPhase {
   const index = Math.floor(x / PHASE_WIDTH)
   const clamped = Math.max(0, Math.min(STORY_PHASES.length - 1, index))

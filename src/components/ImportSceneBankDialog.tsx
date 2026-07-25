@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { PHASE_WIDTH } from '../domain/seed'
+import { getStructureTemplate, templateBeat } from '../domain/structure'
 import {
   ABOVE_LINE_RELATIONS,
   ARC_RELATION_LABELS,
@@ -30,6 +31,7 @@ export function ImportSceneBankDialog() {
   const addScene = useProjectStore((s) => s.addScene)
   const updateBackstory = useProjectStore((s) => s.updateBackstory)
   const currentBackstory = useProjectStore((s) => s.project.backstory)
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
 
   const [step, setStep] = useState<Step>('paste')
   const [rawText, setRawText] = useState('')
@@ -131,6 +133,9 @@ export function ImportSceneBankDialog() {
   }
 
   function confirmImport() {
+    // The parser guesses beats in 4-Phase vocabulary, which means nothing under
+    // another structure — drop those guesses rather than plant foreign tags.
+    const template = getStructureTemplate(structureId)
     // Phase-aware placement: stack new cards within their phase column.
     const rowByPhase = new Map<string, number>()
     for (const s of suggestions) {
@@ -149,7 +154,7 @@ export function ImportSceneBankDialog() {
         outcome: s.outcome,
         changeAfterScene: s.changeAfterScene,
         phase: s.phase,
-        beat: s.beat,
+        beat: templateBeat(template, s.beat) ? s.beat : undefined,
         arcRelation: s.arcRelation,
         position: {
           x: phaseIndex * PHASE_WIDTH + 60,

@@ -19,6 +19,9 @@ export interface HistorySnapshot {
   characters: Character[]
   synopsis: string
   tellingChapterNotes: Record<string, string>
+  /** Tracked because switching structures swaps the beat markers: undoing the
+   *  markers without the structure would leave the picker lying about them. */
+  structureTemplateId: string
 }
 
 export function snapshot(project: Project): HistorySnapshot {
@@ -31,6 +34,7 @@ export function snapshot(project: Project): HistorySnapshot {
     characters: project.characters,
     synopsis: project.synopsis,
     tellingChapterNotes: project.tellingChapterNotes,
+    structureTemplateId: project.structureTemplateId,
   }
 }
 
@@ -48,6 +52,7 @@ export function applySnapshot(
     characters: snap.characters,
     synopsis: snap.synopsis,
     tellingChapterNotes: snap.tellingChapterNotes,
+    structureTemplateId: snap.structureTemplateId,
     updatedAt: new Date().toISOString(),
   }
 }

@@ -178,6 +178,7 @@ export function ImportSceneBankDialog() {
         characterGoal: s.characterGoal,
         action: s.action,
         obstacle: s.obstacle,
+        internalConflict: s.internalConflict,
         outcome: s.outcome,
         changeAfterScene: s.changeAfterScene,
         phase: s.phase,

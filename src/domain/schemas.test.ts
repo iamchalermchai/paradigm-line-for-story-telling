@@ -69,4 +69,15 @@ describe('project schema', () => {
     expect(result.project?.beats[0].type).toBe('ten')
     expect(result.project?.scenes[0].beat).toBe('ketsu')
   })
+
+  it('defaults missing internalConflict on older scene payloads', () => {
+    const seed = createSeedProject()
+    const raw = JSON.parse(JSON.stringify(seed))
+    for (const s of raw.scenes) delete s.internalConflict
+    const result = parseProject(raw)
+    expect(result.ok).toBe(true)
+    expect(
+      result.project?.scenes.every((s) => typeof s.internalConflict === 'string'),
+    ).toBe(true)
+  })
 })

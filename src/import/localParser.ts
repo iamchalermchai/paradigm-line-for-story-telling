@@ -61,7 +61,7 @@ const BACKSTORY_LINE =
   /^(ghost|lie at work|lie_at_work|lie|want|need|โกสต์|บาดแผล|คำโกหก|lie ที่ทำงาน|ความอยาก|สิ่งที่ต้องการ|สิ่งที่ต้องเรียนรู้)\s*[:：]\s*(.+)$/i
 
 const FIELD_LINE =
-  /^(title|ชื่อ|ชื่อฉาก|location|สถานที่|characters?|ตัวละคร|goal|เป้าหมาย|action|การกระทำ|obstacle|อุปสรรค|outcome|ผลลัพธ์|change|สิ่งที่เปลี่ยน|beat|บีต)\s*[:：]\s*(.+)$/i
+  /^(title|ชื่อ|ชื่อฉาก|location|สถานที่|characters?|ตัวละคร|goal|เป้าหมาย|action|การกระทำ|obstacle|อุปสรรค|internal|internalConflict|internal conflict|ความขัดแย้งภายใน|ใน|outcome|ผลลัพธ์|change|สิ่งที่เปลี่ยน|beat|บีต)\s*[:：]\s*(.+)$/i
 
 function extractBackstory(text: string): {
   backstory: Partial<Backstory>
@@ -122,7 +122,15 @@ function parseSceneFields(block: string): Partial<SceneSuggestion> & {
     } else if (key === 'goal' || key === 'เป้าหมาย') fields.characterGoal = value
     else if (key === 'action' || key === 'การกระทำ') fields.action = value
     else if (key === 'obstacle' || key === 'อุปสรรค') fields.obstacle = value
-    else if (key === 'outcome' || key === 'ผลลัพธ์') fields.outcome = value
+    else if (
+      key === 'internal' ||
+      key === 'internalconflict' ||
+      key === 'internal conflict' ||
+      key === 'ความขัดแย้งภายใน' ||
+      key === 'ใน'
+    ) {
+      fields.internalConflict = value
+    } else if (key === 'outcome' || key === 'ผลลัพธ์') fields.outcome = value
     else if (key === 'change' || key === 'สิ่งที่เปลี่ยน') {
       fields.changeAfterScene = value
     } else if (key === 'beat' || key === 'บีต') fields.beat = value
@@ -136,6 +144,7 @@ function parseSceneFields(block: string): Partial<SceneSuggestion> & {
     characterGoal: fields.characterGoal,
     action: fields.action,
     obstacle: fields.obstacle,
+    internalConflict: fields.internalConflict,
     outcome: fields.outcome,
     changeAfterScene: fields.changeAfterScene,
     beat: fields.beat,
@@ -193,6 +202,7 @@ export const localParser: AIParserAdapter = {
         characterGoal: fields.characterGoal ?? '',
         action,
         obstacle: fields.obstacle ?? '',
+        internalConflict: fields.internalConflict ?? '',
         outcome: fields.outcome ?? '',
         changeAfterScene: fields.changeAfterScene ?? '',
         phase: inferPhase(i, total),

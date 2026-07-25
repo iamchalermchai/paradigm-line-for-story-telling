@@ -9,6 +9,7 @@
     "prototype:panels": "vite --open '/?variant=A&panel=A'",
     "prototype:planning": "vite-node src/domain/prototype/planningTui.ts",
     "prototype:diagram": "vite --open '/?diagram=A'",
+    "prototype:conflict": "vite --open '/?conflict=A'",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

@@ -49,6 +49,8 @@ export const storySceneSchema = z.object({
   characterGoal: z.string(),
   action: z.string(),
   obstacle: z.string(),
+  /** Missing on older saves — default empty so import/localStorage still parse. */
+  internalConflict: z.string().default(''),
   outcome: z.string(),
   changeAfterScene: z.string(),
   phase: storyPhaseSchema,

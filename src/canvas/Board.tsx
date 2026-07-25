@@ -35,6 +35,7 @@ import { BeatNode } from './nodes/BeatNode'
 import { OutcomeNode } from './nodes/OutcomeNode'
 import { PhaseColumns } from './PhaseColumns'
 import { SceneNode } from './nodes/SceneNode'
+import { InternalConflictPrototypeHost } from './prototype/internalConflict/InternalConflictPrototype'
 
 const nodeTypes: NodeTypes = {
   scene: SceneNode,
@@ -195,6 +196,7 @@ export function Board() {
   return (
     <div className="relative h-full w-full">
       <BoardBookmarkRail />
+      <InternalConflictPrototypeHost />
       <ReactFlow
         nodes={nodes}
         edges={edges}

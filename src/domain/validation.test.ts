@@ -13,6 +13,7 @@ function baseScene(overrides: Partial<StoryScene> = {}): StoryScene {
     characterGoal: 'goal',
     action: 'ทำอะไรบางอย่าง',
     obstacle: '',
+    internalConflict: '',
     outcome: 'ผลลัพธ์',
     changeAfterScene: 'เปลี่ยนแปลง',
     phase: 'setup',

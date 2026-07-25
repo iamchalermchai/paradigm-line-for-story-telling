@@ -18,6 +18,7 @@ function scene(id: string, chapter?: string): StoryScene {
     characterGoal: '',
     action: '',
     obstacle: '',
+    internalConflict: '',
     outcome: '',
     changeAfterScene: '',
     phase: 'setup',

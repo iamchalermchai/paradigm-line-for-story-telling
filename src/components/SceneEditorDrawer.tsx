@@ -195,11 +195,31 @@ export function SceneEditorDrawer() {
           value={draft.action}
           onChange={(v) => set('action', v)}
         />
-        <Area
-          label="อะไรขัดขวาง (อุปสรรค)"
-          value={draft.obstacle}
-          onChange={(v) => set('obstacle', v)}
-        />
+        <div
+          className="space-y-2 rounded px-2.5 py-2"
+          style={{
+            border: '1px solid rgba(20,22,25,0.16)',
+            background: 'rgba(20,22,25,0.03)',
+          }}
+        >
+          <p className="font-display text-[12px] font-bold text-ink">
+            แรงต้านในฉาก
+          </p>
+          <p className="text-[10px] leading-snug text-ink/50">
+            นอก = คน/สถานการณ์ที่ขัดขา · ใน = ความกลัวหรือ Lie ที่ถ่วงในฉากนี้
+            (ไม่ใช่ Ghost/Want ทั้งเรื่อง — อันนั้นอยู่แท็บ Backstory)
+          </p>
+          <Area
+            label="อะไรขัดขวางภายนอก"
+            value={draft.obstacle}
+            onChange={(v) => set('obstacle', v)}
+          />
+          <Area
+            label="อะไรขัดข้างใน (internal conflict)"
+            value={draft.internalConflict}
+            onChange={(v) => set('internalConflict', v)}
+          />
+        </div>
         <Area
           label="ผลลัพธ์คืออะไร"
           value={draft.outcome}
@@ -239,7 +259,7 @@ export function SceneEditorDrawer() {
           />
         </div>
         <Select
-          label="เกี่ยวข้องกับ Ghost / Lie / Want / Need อย่างไร"
+          label="แท็กเส้น Ghost / Lie / Want / Need (ฉากนี้แตะเส้นไหน)"
           value={draft.arcRelation}
           options={ARC_RELATIONS.map((r) => [r, ARC_RELATION_LABELS[r]])}
           onChange={(v) => set('arcRelation', v as ArcRelation)}

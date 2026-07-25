@@ -13,9 +13,14 @@ export const PHASE_WIDTH = 700
 
 type SceneSeed = Omit<
   StoryScene,
-  'order' | 'collapsed' | 'locked' | 'notes'
+  'order' | 'collapsed' | 'locked' | 'notes' | 'internalConflict'
 > &
-  Partial<Pick<StoryScene, 'order' | 'collapsed' | 'locked' | 'notes'>>
+  Partial<
+    Pick<
+      StoryScene,
+      'order' | 'collapsed' | 'locked' | 'notes' | 'internalConflict'
+    >
+  >
 
 function scene(index: number, s: SceneSeed): StoryScene {
   return {
@@ -23,6 +28,7 @@ function scene(index: number, s: SceneSeed): StoryScene {
     collapsed: false,
     locked: false,
     notes: '',
+    internalConflict: '',
     ...s,
   }
 }
@@ -60,6 +66,7 @@ const scenes: StoryScene[] = [
     characterGoal: 'อยากเข้าใจว่าทำไมถูกตัดขาด',
     action: 'พยายามติดต่อรุ่นพี่ทุกช่องทาง',
     obstacle: 'รุ่นพี่เงียบและบล็อกทุกช่องทางโดยไม่อธิบาย',
+    internalConflict: 'กลัวว่าถามไปจะได้คำตอบที่เจ็บกว่าเงียบ',
     outcome: 'แอลวาดภาพไม่ได้และดร็อปเรียน',
     changeAfterScene: 'แอลเชื่อว่าการเงียบก่อนคือการป้องกันตัว',
     phase: 'setup',
@@ -91,7 +98,8 @@ const scenes: StoryScene[] = [
     povCharacter: 'แอล',
     characterGoal: 'ต้องการลืมคิว',
     action: 'เขียนถึงคิวเต็มหน้าทุกคืน',
-    obstacle: 'ยังอยากทักคิว',
+    obstacle: 'สมุดว่างและไม่มีพิธีไหนบังคับให้เขียนต่อ',
+    internalConflict: 'ยังอยากทักคิว — Lie บอกว่าเขียนแทนพูดปลอดภัยกว่า',
     outcome: 'ผ่านสิบวันแรกได้',
     changeAfterScene: 'แอลเชื่อว่าวิธีนี้อาจได้ผล',
     phase: 'early',
@@ -107,7 +115,8 @@ const scenes: StoryScene[] = [
     povCharacter: 'แอล',
     characterGoal: 'อยากรู้จักลูกค้าประจำคนนี้',
     action: 'สังเกตตะกร้าลูกค้าและวาดมือชายปริศนา',
-    obstacle: 'ไม่กล้าเอ่ยปากทัก',
+    obstacle: 'ร้านมีลูกค้าอื่นและแอลอยู่หลังเคาน์เตอร์',
+    internalConflict: 'ไม่กล้าเอ่ยปากทัก — กลัวซ้ำรอยถูกเมิน',
     outcome: 'คิดถึงคิวน้อยลง',
     changeAfterScene: 'เริ่มเปิดใจให้คนใหม่โดยไม่รู้ตัว',
     phase: 'early',

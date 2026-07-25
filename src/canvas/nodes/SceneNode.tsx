@@ -195,10 +195,21 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
             )}
           </div>
 
-          {(scene.location || scene.obstacle) && (
+          {(scene.location || scene.obstacle || scene.internalConflict) && (
             <div className="mt-2 space-y-0.5 border-t border-ink/10 pt-1.5 text-[12px] text-ink/50">
               {scene.location && <div>ที่: {scene.location}</div>}
-              {scene.obstacle && <div>อุปสรรค: {scene.obstacle}</div>}
+              {scene.obstacle && (
+                <div>
+                  <span className="font-display text-ink/35">นอก · </span>
+                  {scene.obstacle}
+                </div>
+              )}
+              {scene.internalConflict && (
+                <div>
+                  <span className="font-display text-ink/35">ใน · </span>
+                  {scene.internalConflict}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -158,6 +158,7 @@ function mapOneScene(
       characterGoal: '',
       action,
       obstacle: '',
+      internalConflict: '',
       outcome: '',
       changeAfterScene: '',
       phase: inferPhaseByIndex(index, total),
@@ -201,7 +202,19 @@ function mapOneScene(
     'goal',
     'เป้าหมาย',
   ])
-  const obstacle = pickString(obj, ['obstacle', 'conflict', 'อุปสรรค'])
+  const obstacle = pickString(obj, [
+    'obstacle',
+    'external',
+    'externalConflict',
+    'อุปสรรค',
+  ])
+  const internalConflict = pickString(obj, [
+    'internalConflict',
+    'internal',
+    'internal_conflict',
+    'ความขัดแย้งภายใน',
+    'ใน',
+  ])
   const outcome = pickString(obj, ['outcome', 'result', 'ผลลัพธ์'])
   const changeAfterScene = pickString(obj, [
     'changeAfterScene',
@@ -225,6 +238,7 @@ function mapOneScene(
     characterGoal,
     action: resolvedAction,
     obstacle,
+    internalConflict,
     outcome,
     changeAfterScene,
     phase: mapPhase(phaseRaw, index, total),

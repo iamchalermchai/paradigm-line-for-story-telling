@@ -156,7 +156,7 @@ function HelpContent() {
           <li>
             กดปุ่ม <Kbd>+ Scene</Kbd> ที่แถบบน — การ์ดใหม่จะปรากฏบนกระดาน
             พร้อมเปิดแผงแก้ไขให้กรอก ชื่อฉาก สถานที่ ตัวละคร เป้าหมาย การกระทำ
-            อุปสรรค และผลลัพธ์
+            แรงต้านนอก/ใน และผลลัพธ์
           </li>
           <li>
             <Kbd>ดับเบิลคลิก</Kbd> การ์ดใดก็ได้เพื่อเปิดแผงแก้ไขอีกครั้ง
@@ -172,6 +172,44 @@ function HelpContent() {
             เพื่อกระโดดไปหาการ์ดนั้นบนกระดาน
           </li>
         </ul>
+
+        <div
+          className="mt-3 rounded-md bg-white/70 px-3 py-2.5"
+          style={{ border: '1px solid rgba(20,22,25,0.12)' }}
+        >
+          <p className="mb-1.5 font-display text-[13px] font-bold text-ink">
+            แรงต้านในฉาก · นอก กับ ใน
+          </p>
+          <p className="mb-2 text-[13px] leading-relaxed text-ink/75">
+            <strong>Internal conflict</strong> (ช่อง «อะไรขัดข้างใน») คือแรงกดจากข้างในตัวละคร
+            ในจังหวะของฉากนั้น — ความกลัว ความยึด Lie หรือสิ่งที่ยังไม่กล้ารับ — ไม่ใช่คนอื่นหรือเหตุการณ์ภายนอก
+          </p>
+          <ul className="space-y-1.5 text-[13px] leading-snug text-ink/75">
+            <li>
+              <strong className="font-display text-ink/45">นอก · </strong>
+              อุปสรรคภายนอก — คน สถานการณ์ โลกที่ขัดขา (เช่น คิวบล็อกแชท)
+            </li>
+            <li>
+              <strong className="font-display text-ink/45">ใน · </strong>
+              ความขัดแย้งภายใน — สิ่งที่ตัวละครทำร้ายตัวเองหรือถ่วงตัวเองในฉากนี้
+              (เช่น อยากทักแต่กลัวถูกเมินอีก)
+            </li>
+          </ul>
+          <p className="mt-2 text-[13px] leading-relaxed text-ink/75">
+            <strong>ต่างจาก Backstory ยังไง:</strong> Ghost / Lie / Want / Need ในแท็บ Backstory
+            คือเครื่องยนต์ทั้งเรื่อง กรอกครั้งเดียว · นอก/ใน บนฉากคือแรงต้านเฉพาะจังหวะนั้น
+            เขียนใหม่ได้ทุกฉาก · แท็กเส้น (Ghost/Lie/Want/Need บนการ์ด) บอกแค่ว่าฉากนี้แตะเส้นไหน
+            ไม่ใช่ข้อความ conflict
+          </p>
+          <p className="mt-2 text-[12px] leading-snug text-ink/55">
+            บนการ์ดจะเห็นท้ายการ์ดเป็นบรรทัด <strong>นอก ·</strong> / <strong>ใน ·</strong>{' '}
+            — ภาษาเดียวกับแกนเหนือ/ใต้เส้น
+          </p>
+        </div>
+        <Tip>
+          ถ้าเขียนนอกกับในได้ประโยคเดียวกัน มักหมายความว่ายังปนชั้น —
+          แยกให้ «ใคร/อะไรข้างนอก» กับ «กลัว/ยึดอะไรข้างใน» คนละบรรทัด
+        </Tip>
       </Section>
 
       <Section id="edges" num="3" title="ลากเส้นเชื่อม" color="#3d4dec">
@@ -306,7 +344,7 @@ function HelpContent() {
             ],
             [
               'สร้างฉากสำคัญ',
-              'กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก — ฉากจบให้แท็ก Story Beat เป็น climax / finale / resurrection / ordeal เพื่อให้หลักฐานบนกระดานจับได้',
+              'กด + Scene สัก 5–6 ฉาก กรอกชื่อฉาก การกระทำ และแรงต้านนอก/ใน (ใครขัดขวางข้างนอก · กลัวหรือยึดอะไรข้างใน) — ฉากจบให้แท็ก Story Beat เป็น climax / finale / resurrection / ordeal เพื่อให้หลักฐานบนกระดานจับได้',
             ],
             [
               'วางลงไทม์ไลน์',

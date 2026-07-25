@@ -79,6 +79,7 @@ function newScene(project: Project, partial: Partial<StoryScene>): StoryScene {
     characterGoal: '',
     action: '',
     obstacle: '',
+    internalConflict: '',
     outcome: '',
     changeAfterScene: '',
     phase: 'setup',

@@ -56,7 +56,10 @@ export interface StoryScene {
   povCharacter?: string
   characterGoal: string
   action: string
+  /** External pressure in this scene (คน / สถานการณ์ / โลก). */
   obstacle: string
+  /** Internal pressure in this scene (กลัว / ยึด Lie / ไม่กล้ารับ Need). */
+  internalConflict: string
   outcome: string
   changeAfterScene: string
   /** Legacy 4-phase shadow, kept so older saved projects keep round-tripping.

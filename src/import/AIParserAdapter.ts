@@ -14,6 +14,7 @@ export interface SceneSuggestion {
   characterGoal: string
   action: string
   obstacle: string
+  internalConflict: string
   outcome: string
   changeAfterScene: string
   phase: StoryPhase

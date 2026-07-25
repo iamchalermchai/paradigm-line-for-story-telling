@@ -48,6 +48,7 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 | คู่มือช่วงโครง (job / ควรใส่ / เป้า) ใน Help + ใบโครง | ✅ |
 | Offline Scene Bank parser (`localParser`) | ✅ logic · ผ่าน dialog |
 | **ส่งออก JSON / นำเข้าข้อความ·JSON แมปกระดาน** | ✅ เมนู ⋯ · `mapToBoard` (โปรเจกต์เต็มหรือฉาก) |
+| **แรงต้านฉาก นอก·/ใน·** (`internalConflict`) | ✅ editor + การ์ด + Help/PDF สอนแล้ว |
 | **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) | ✅ ทั้ง 5 โครง · ภาษาภาพเดียวกับบอร์ด |
 
 ### ยังไม่พับเข้า UI / ยังไม่ทำ
@@ -78,9 +79,10 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 13. **โครงขับกระดานจริง** — สลับโครง = ชุดหมุดใหม่ · ไม่ทำลายการ์ด  
 14. **Hero’s Journey + axis ต่อโครง + StructureChooser กระดานว่าง**  
 15. **Bookmark chrome + climax evidence + Help/PDF sync**
-16. **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) + ภาษาภาพบอร์ด + แก้ truncate ใบโครง ← ปัจจุบัน
+16. **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) + ภาษาภาพบอร์ด + แก้ truncate ใบโครง
+17. **Import mapToBoard** + **internal conflict นอก·/ใน·** + Help/PDF ← ปัจจุบัน
 
-รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md) · [2026-07-25-import-export-map.md](./2026-07-25-import-export-map.md)
+รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md) · [2026-07-25-import-export-map.md](./2026-07-25-import-export-map.md) · [2026-07-25-internal-conflict.md](./2026-07-25-internal-conflict.md)
 
 ---
 

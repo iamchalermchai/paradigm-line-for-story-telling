@@ -8,6 +8,7 @@ import {
 import { EDGE_LABELS, type EdgeType } from '../domain/types'
 import { useUiStore } from '../store/uiStore'
 import { Modal } from './Modal'
+import { StructureBandGuide } from './StructureBandGuide'
 
 /**
  * The guide's table of contents is itself a miniature paradigm line: each
@@ -175,7 +176,7 @@ function HelpContent() {
       <Section id="edges" num="3" title="ลากเส้นเชื่อม" color="#3d4dec">
         <ol className="list-decimal space-y-2 pl-5">
           <li>
-            เลือกชนิดเส้นก่อน จากแผง <strong>ชนิดเส้น</strong> มุมซ้ายบนของกระดาน
+            เลือกชนิดเส้นก่อน — เปิดแท็บคั่นหน้า <strong>ชนิด</strong> ที่ขอบซ้ายของกระดาน
           </li>
           <li>
             ชี้เมาส์ที่การ์ดต้นทาง จะเห็นจุดเชื่อมโผล่ทั้ง 4 ด้าน —
@@ -230,9 +231,28 @@ function HelpContent() {
             (กดปุ่มเลิกทำ <Kbd>↶</Kbd> เพื่อย้อนกลับได้)
           </li>
           <li>
-            สลับมุมมอง <strong>เวลาในเรื่อง / ลำดับเล่า</strong> ที่มุมซ้ายบนของกระดาน
-            เพื่อดูลำดับเหตุการณ์จริง เทียบกับลำดับการเล่า — และติ๊ก{' '}
-            <strong>จับแนวกริด</strong> ที่มุมขวาบน ถ้าอยากให้การ์ดเรียงเป็นระเบียบ
+            เครื่องมือกระดานอยู่ที่<strong>แท็บคั่นหน้าขอบซ้าย</strong> (เปิดใบเมื่อกด
+            พับเข้าได้):
+            <ul className="mt-1.5 list-disc space-y-1 pl-5">
+              <li>
+                <strong>เวลา</strong> — มุมมองลำดับเหตุการณ์จริง
+              </li>
+              <li>
+                <strong>เล่า</strong> — มุมมองลำดับการเล่า (เส้น A→B→C…)
+              </li>
+              <li>
+                <strong>โครง</strong> — เลือกโครงสร้างเรื่องและอ่านคู่มือช่วง
+              </li>
+              <li>
+                <strong>ชนิด</strong> — เลือกชนิดเส้นก่อนลากเชื่อมการ์ด
+              </li>
+              <li>
+                <strong>เส้น</strong> — ความหมายเหนือ/ใต้เส้นของโครงปัจจุบัน
+              </li>
+            </ul>
+          </li>
+          <li>
+            ติ๊ก <strong>จับแนวกริด</strong> ที่มุมขวาบน ถ้าอยากให้การ์ดเรียงเป็นระเบียบ
           </li>
         </ul>
       </Section>
@@ -240,8 +260,8 @@ function HelpContent() {
       <Section id="structure" num="5" title="โครงสร้างเรื่อง" color="#2b7a8c">
         <p>
           เมื่อเปิดกระดานว่าง แอปจะถามให้เลือกโครงก่อนครั้งหนึ่ง
-          (ข้ามได้ — ค่าเริ่มต้นคือ 4 Phase) หลังจากนั้นใช้แผง{' '}
-          <strong>โครงสร้าง</strong> มุมซ้ายบนได้ตลอด
+          (ข้ามได้ — ค่าเริ่มต้นคือ 4 Phase) หลังจากนั้นเปิดแท็บคั่นหน้า{' '}
+          <strong>โครง</strong> ที่ขอบซ้ายได้ตลอด
           การเลือกไม่ได้เปลี่ยนแค่ป้ายหัวคอลัมน์ — เลือกโครงสร้างไหน
           กระดานจะ<strong>วางหมุด Beat ชุดของโครงสร้างนั้นลงบนเส้น</strong>{' '}
           ให้ทันที ช่องแบ่งช่วงและป้ายเหนือ/ใต้เส้นเปลี่ยนตาม
@@ -273,15 +293,15 @@ function HelpContent() {
           {[
             [
               'เลือกโครงสร้าง',
-              'ตอบหน้าต่างเลือกโครงตอนกระดานว่าง (หรือใช้แผง "โครงสร้าง" มุมซ้ายบนทีหลัง) — หมุด Beat จะมาวางบนเส้นให้เป็นโครงร่างว่าต้องเติมอะไร',
+              'ตอบหน้าต่างเลือกโครงตอนกระดานว่าง (หรือเปิดแท็บคั่นหน้า "โครง" ที่ขอบซ้ายทีหลัง) — หมุด Beat จะมาวางบนเส้นให้เป็นโครงร่างว่าต้องเติมอะไร',
             ],
             [
               'ปูพื้นตัวละคร',
-              'กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย ให้กระดานรู้ว่าแกนเรื่องคืออะไร',
+              'กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย แล้วตั้งผลลัพธ์ตอนจบ (Want / Need) — ด้านล่างจะมี "หลักฐานบนกระดาน" สรุปฉาก climax และเส้น Want→ · Need→ · Fail→ ที่ชี้เข้าฉากนั้น',
             ],
             [
               'สร้างฉากสำคัญ',
-              'กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก',
+              'กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก — ฉากจบให้แท็ก Story Beat เป็น climax / finale / resurrection / ordeal เพื่อให้หลักฐานบนกระดานจับได้',
             ],
             [
               'วางลงไทม์ไลน์',
@@ -289,11 +309,11 @@ function HelpContent() {
             ],
             [
               'ลากเส้นเชื่อมเรื่อง',
-              'เลือกชนิดเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลว',
+              'เปิดแท็บ "ชนิด" เลือกเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลวเข้าฉาก climax',
             ],
             [
               'ตรวจและแชร์',
-              'สลับไปมุมมอง "ลำดับเล่า" ตรวจลำดับการเล่า แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ',
+              'เปิดแท็บ "เล่า" ตรวจลำดับการเล่า เทียบหลักฐานบนกระดานกับผลลัพธ์ตอนจบที่เลือก แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ',
             ],
           ].map(([head, body], i) => (
             <li key={head} className="flex gap-3">
@@ -410,18 +430,29 @@ function StructureCard({ template }: { template: StructureTemplate }) {
         <strong>เริ่มที่นี่ · </strong>
         {template.startHere}
       </p>
-      <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-        {template.beats.map((beat) => (
-          <li
-            key={beat.key}
-            className="flex items-center gap-1.5 text-[11px] text-ink/70"
-            title={beat.hint}
-          >
-            <BeatChip shape={beat.shape} color={beat.color} />
-            {beat.label}
-          </li>
-        ))}
-      </ul>
+      <details className="group mt-2">
+        <summary className="cursor-pointer list-none text-[12px] font-semibold text-[#2b7a8c] hover:text-ink [&::-webkit-details-marker]:hidden">
+          <span className="inline-flex items-center gap-1">
+            <span className="group-open:hidden">▸ อ่านเพิ่ม</span>
+            <span className="hidden group-open:inline">▾ ย่อ</span>
+          </span>
+        </summary>
+        <div className="mt-2 space-y-2.5">
+          <StructureBandGuide template={template} />
+          <ul className="flex flex-wrap gap-x-3 gap-y-1">
+            {template.beats.map((beat) => (
+              <li
+                key={beat.key}
+                className="flex items-center gap-1.5 text-[11px] text-ink/70"
+                title={beat.hint}
+              >
+                <BeatChip shape={beat.shape} color={beat.color} />
+                {beat.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
     </div>
   )
 }

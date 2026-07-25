@@ -10,7 +10,6 @@ const MARGIN_X = 500
 const MARGIN_Y = 260
 
 const INK_DIVIDER = 'rgba(20,22,25,0.28)'
-const INK_MUTED = 'rgba(20,22,25,0.45)'
 
 /**
  * Background drawn in flow coordinates: the vertical act dividers, the act
@@ -105,7 +104,8 @@ export function PhaseColumns() {
           )
         })}
 
-        {/* Paradigm line — spans the full frame width */}
+        {/* Paradigm line — spans the full frame width. Axis coaching lives in
+            the left bookmark rail so labels don't crowd the canvas. */}
         <div
           style={{
             position: 'absolute',
@@ -116,58 +116,6 @@ export function PhaseColumns() {
             borderTop: '3px solid var(--color-ink)',
           }}
         />
-
-        {/* Axis labels anchored at the visible left edge of the board */}
-        <div
-          className="font-display"
-          style={{
-            position: 'absolute',
-            left: 16 - left,
-            top: PARADIGM_LINE_Y - top - 108,
-            fontSize: 15,
-            fontWeight: 600,
-            fontStyle: 'italic',
-            color: INK_MUTED,
-          }}
-        >
-          {template.axis.lineTitle}
-        </div>
-        <div
-          style={{
-            position: 'absolute',
-            left: 16 - left,
-            top: PARADIGM_LINE_Y - top - 74,
-            width: 300,
-          }}
-        >
-          <div
-            className="font-display"
-            style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-ink)' }}
-          >
-            ↑ เหนือเส้น
-          </div>
-          <div style={{ fontSize: 13, color: INK_MUTED }}>
-            {template.axis.aboveHint}
-          </div>
-        </div>
-        <div
-          style={{
-            position: 'absolute',
-            left: 16 - left,
-            top: PARADIGM_LINE_Y - top + 16,
-            width: 300,
-          }}
-        >
-          <div
-            className="font-display"
-            style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-ink)' }}
-          >
-            ↓ ใต้เส้น
-          </div>
-          <div style={{ fontSize: 13, color: INK_MUTED }}>
-            {template.axis.belowHint}
-          </div>
-        </div>
       </div>
     </ViewportPortal>
   )

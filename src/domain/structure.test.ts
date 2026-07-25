@@ -103,6 +103,12 @@ describe('structure templates', () => {
     for (const t of STRUCTURE_TEMPLATES) {
       expect(t.description.length).toBeGreaterThan(20)
       expect(t.startHere.length).toBeGreaterThan(20)
+      expect(t.guide.length).toBeGreaterThan(40)
+      for (const band of t.bands) {
+        expect(band.job.length).toBeGreaterThan(10)
+        expect(band.putHere.length).toBeGreaterThan(10)
+        expect(band.goal.length).toBeGreaterThan(10)
+      }
     }
   })
 

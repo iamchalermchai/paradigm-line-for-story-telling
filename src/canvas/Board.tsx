@@ -21,10 +21,8 @@ import type { StoryScene } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
 import { EdgeEditor } from './EdgeEditor'
-import { EdgeLegend } from './EdgeLegend'
-import { StructurePicker } from './StructurePicker'
+import { BoardBookmarkRail } from './BoardBookmarkRail'
 import { TellingOverlay } from './TellingOverlay'
-import { ViewModeToggle } from './ViewModeToggle'
 import { StoryEdge } from './edges/StoryEdge'
 import {
   BEAT_LINE_Y,
@@ -195,47 +193,46 @@ export function Board() {
   )
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onNodeDragStart={onNodeDragStart}
-      onNodeDrag={onNodeDrag}
-      onNodeDragStop={onNodeDragStop}
-      onNodeDoubleClick={(_e, node) => {
-        if (node.type === 'scene') openSceneEditor(node.id)
-      }}
-      onConnect={onConnect}
-      onDelete={onDelete}
-      onEdgeClick={(_e, edge) => selectEdge(edge.id)}
-      onPaneClick={() => selectEdge(null)}
-      defaultViewport={project.viewport}
-      onMoveEnd={(_e, vp) => setViewport(vp)}
-      connectionMode={ConnectionMode.Loose}
-      snapToGrid={snapToGrid}
-      snapGrid={GRID}
-      minZoom={0.15}
-      maxZoom={2}
-      proOptions={{ hideAttribution: true }}
-      className={viewMode === 'telling' ? 'bg-cream telling-mode' : 'bg-cream'}
-    >
-      <PhaseColumns />
-      {viewMode === 'telling' && <TellingOverlay />}
-      <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="rgba(20,22,25,0.12)" />
-      <Controls showInteractive={false} />
-      <MiniMap pannable zoomable className="!bg-white" />
-      <Panel position="top-left">
-        <div className="flex max-w-64 flex-col gap-2">
-          <ViewModeToggle />
-          <StructurePicker />
-          <EdgeLegend />
-        </div>
-      </Panel>
-      <Panel position="top-right">
-        <div className="flex flex-col items-end gap-2">
+    <div className="relative h-full w-full">
+      <BoardBookmarkRail />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeDragStart={onNodeDragStart}
+        onNodeDrag={onNodeDrag}
+        onNodeDragStop={onNodeDragStop}
+        onNodeDoubleClick={(_e, node) => {
+          if (node.type === 'scene') openSceneEditor(node.id)
+        }}
+        onConnect={onConnect}
+        onDelete={onDelete}
+        onEdgeClick={(_e, edge) => selectEdge(edge.id)}
+        onPaneClick={() => selectEdge(null)}
+        defaultViewport={project.viewport}
+        onMoveEnd={(_e, vp) => setViewport(vp)}
+        connectionMode={ConnectionMode.Loose}
+        snapToGrid={snapToGrid}
+        snapGrid={GRID}
+        minZoom={0.15}
+        maxZoom={2}
+        proOptions={{ hideAttribution: true }}
+        className={viewMode === 'telling' ? 'bg-cream telling-mode' : 'bg-cream'}
+      >
+        <PhaseColumns />
+        {viewMode === 'telling' && <TellingOverlay />}
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={24}
+          size={1}
+          color="rgba(20,22,25,0.12)"
+        />
+        <Controls showInteractive={false} />
+        <MiniMap pannable zoomable className="!bg-white" />
+        <Panel position="top-right">
           <label className="flex cursor-pointer items-center gap-2 rounded bg-white px-3 py-1.5 text-xs text-ink-soft shadow">
             <input
               type="checkbox"
@@ -244,38 +241,28 @@ export function Board() {
             />
             จับแนวกริด
           </label>
-          {/* Persistent axis key — the paradigm meaning stays visible when the
-              in-canvas labels have been panned off screen. */}
-          <div
-            className="rounded bg-white/95 px-3 py-2 text-[11px] shadow"
-            style={{ border: '1px solid rgba(20,22,25,0.15)' }}
-          >
-            <div className="text-ink">↑ เหนือเส้น · Lie · Want</div>
-            <div className="my-1 h-px bg-ink/70" />
-            <div className="text-ink">↓ ใต้เส้น · Ghost · Need</div>
-          </div>
-        </div>
-      </Panel>
-      {project.scenes.length === 0 && (
-        <Panel position="top-center">
-          <div
-            className="mt-24 max-w-sm rounded-lg bg-white/90 px-6 py-5 text-center shadow-sm"
-            style={{ border: '1px solid rgba(20,22,25,0.15)' }}
-          >
-            <p className="font-display text-lg font-bold text-ink">
-              เริ่มวางเรื่องของคุณ
-            </p>
-            <p className="mt-1 text-sm text-ink/55">
-              กด <span className="font-medium text-ink">+ Scene</span> เพื่อเพิ่มฉากแรก
-              หรือ <span className="font-medium text-ink">Import Scene Bank</span>{' '}
-              เพื่อแปลงข้อความยาวเป็นฉากอัตโนมัติ
-            </p>
-          </div>
         </Panel>
-      )}
-      <Panel position="bottom-center">
-        <EdgeEditor />
-      </Panel>
-    </ReactFlow>
+        {project.scenes.length === 0 && (
+          <Panel position="top-center">
+            <div
+              className="mt-24 max-w-sm rounded-lg bg-white/90 px-6 py-5 text-center shadow-sm"
+              style={{ border: '1px solid rgba(20,22,25,0.15)' }}
+            >
+              <p className="font-display text-lg font-bold text-ink">
+                เริ่มวางเรื่องของคุณ
+              </p>
+              <p className="mt-1 text-sm text-ink/55">
+                กด <span className="font-medium text-ink">+ Scene</span> เพื่อเพิ่มฉากแรก
+                หรือ <span className="font-medium text-ink">Import Scene Bank</span>{' '}
+                เพื่อแปลงข้อความยาวเป็นฉากอัตโนมัติ
+              </p>
+            </div>
+          </Panel>
+        )}
+        <Panel position="bottom-center">
+          <EdgeEditor />
+        </Panel>
+      </ReactFlow>
+    </div>
   )
 }

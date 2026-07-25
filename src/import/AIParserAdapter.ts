@@ -30,9 +30,9 @@ export interface ParseResponse {
 }
 
 /**
- * Adapter boundary for turning raw prose into structured suggestions. A real
- * implementation would call an AI provider behind a server endpoint (so API
- * keys never reach the frontend); the MVP ships a deterministic mock.
+ * Adapter boundary for turning raw prose into structured suggestions.
+ * The app ships a deterministic offline `localParser`; a future AI provider
+ * can implement the same interface behind a server endpoint.
  */
 export interface AIParserAdapter {
   readonly name: string

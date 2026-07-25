@@ -246,6 +246,11 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         id: uid('ch'),
         name,
         color: CHARACTER_COLORS[existing.length % CHARACTER_COLORS.length],
+        ghost: '',
+        lie: '',
+        lieAtWork: '',
+        want: '',
+        need: '',
       }
       commit((p) => ({ ...p, characters: [...p.characters, character] }))
       return character

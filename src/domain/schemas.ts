@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { DEFAULT_STRUCTURE_ID } from './structure'
 import type { Project } from './types'
 
-export const SCHEMA_VERSION = 3
+export const SCHEMA_VERSION = 4
 
 export const storyPhaseSchema = z.enum([
   'setup',
@@ -86,6 +86,11 @@ export const characterSchema = z.object({
   id: z.string(),
   name: z.string(),
   color: z.string(),
+  ghost: z.string().default(''),
+  lie: z.string().default(''),
+  lieAtWork: z.string().default(''),
+  want: z.string().default(''),
+  need: z.string().default(''),
 })
 
 export const backstorySchema = z.object({
@@ -161,6 +166,11 @@ function migrate(raw: unknown): unknown {
     // still a valid 4-Phase key, so the data needs no remap — only the stamp.
     migrated = { ...migrated, schemaVersion: 3 }
     v = 3
+  }
+  if (v < 4) {
+    // v4 adds per-character Ghost/Lie/Want/Need; Zod defaults fill empties.
+    migrated = { ...migrated, schemaVersion: 4 }
+    v = 4
   }
 
   return migrated

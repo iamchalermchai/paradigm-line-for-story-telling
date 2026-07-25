@@ -29,4 +29,10 @@ describe('ClimaxOutcomePanel', () => {
       'got_better',
     )
   })
+
+  it('shows board evidence for climax-tagged scenes', () => {
+    render(<ClimaxOutcomePanel />)
+    expect(screen.getByText('หลักฐานบนกระดาน')).toBeInTheDocument()
+    expect(screen.getByText(/Want→/)).toBeInTheDocument()
+  })
 })

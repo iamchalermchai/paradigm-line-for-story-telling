@@ -135,7 +135,8 @@
     border-radius: 5px;
     padding: 2.5mm 3.5mm;
     margin-top: 2.5mm;
-    break-inside: avoid;
+    /* Tall once band coaching is included — allow page breaks. */
+    break-inside: auto;
   }
   .structure-box h3 {
     font-family: 'Trirong', serif;
@@ -156,6 +157,27 @@
     color: rgba(20, 22, 25, 0.7);
     margin-bottom: 0;
   }
+  .structure-box .guide {
+    font-size: 9pt;
+    color: rgba(20, 22, 25, 0.75);
+    margin: 1.5mm 0;
+  }
+  .band-list { list-style: none; padding: 0; margin: 1.5mm 0 2mm; }
+  .band-list li {
+    border-left: 2px solid rgba(43, 122, 140, 0.55);
+    background: rgba(20, 22, 25, 0.03);
+    padding: 1.5mm 2.5mm;
+    margin-bottom: 1.5mm;
+    font-size: 8.5pt;
+    line-height: 1.5;
+  }
+  .band-list .band-name {
+    font-family: 'Trirong', serif;
+    font-weight: 700;
+    font-size: 9.5pt;
+    margin-bottom: 0.5mm;
+  }
+  .band-list .lbl { font-weight: 600; color: rgba(20, 22, 25, 0.85); }
 
   .steps { list-style: none; padding: 0; counter-reset: step; }
   .steps li { display: flex; gap: 3mm; margin-bottom: 2.5mm; }
@@ -232,7 +254,7 @@
   <h2><span class="dot" style="background:#3d4dec"></span><span class="num" style="color:#3d4dec">3</span> ลากเส้นเชื่อม</h2>
   <div>
     <ol>
-      <li>เลือกชนิดเส้นก่อน จากแผง <strong>ชนิดเส้น</strong> มุมซ้ายบนของกระดาน</li>
+      <li>เลือกชนิดเส้นก่อน — เปิดแท็บคั่นหน้า <strong>ชนิด</strong> ที่ขอบซ้ายของกระดาน</li>
       <li>ชี้เมาส์ที่การ์ดต้นทาง จะเห็นจุดเชื่อมโผล่ทั้ง 4 ด้าน — ลากจากจุดนั้นไปปล่อยบนการ์ดปลายทาง</li>
       <li>คลิกเส้นที่วาดแล้วเพื่อเปิดแผงแก้ไขด้านล่าง: เปลี่ยนชนิด ใส่ป้ายกำกับ หรือลบเส้น</li>
     </ol>
@@ -258,7 +280,8 @@
       <li><strong>เหนือเส้น / ใต้เส้น</strong> อ่านตามป้ายของโครงปัจจุบัน — ใช้วางฉากที่ขับด้วยแรงภายนอกไว้เหนือเส้น และฉากที่แตะความจริงภายในไว้ใต้เส้น</li>
       <li>หมุด Beat (Catalyst, Midpoint, Climax …) เกาะอยู่บนเส้น ลากได้เฉพาะแนวนอน — ชุดหมุดมาจากโครงสร้างที่เลือก (ดูหัวข้อ 5)</li>
       <li>ปุ่ม <kbd>จัดเรียงอัตโนมัติ</kbd> ที่แถบบน จัดผังทั้งกระดานให้ทันที (กดปุ่มเลิกทำ <kbd><svg width="11" height="9" viewBox="0 0 11 9" style="vertical-align:-1px"><path d="M4 1 1.5 3.5 4 6" fill="none" stroke="#141619" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 3.5H7a3 3 0 0 1 3 3V8" fill="none" stroke="#141619" stroke-width="1.3" stroke-linecap="round"/></svg></kbd> เพื่อย้อนกลับได้)</li>
-      <li>สลับมุมมอง <strong>เวลาในเรื่อง / ลำดับเล่า</strong> ที่มุมซ้ายบนของกระดาน เพื่อดูลำดับเหตุการณ์จริง เทียบกับลำดับการเล่า — และติ๊ก <strong>จับแนวกริด</strong> ที่มุมขวาบน ถ้าอยากให้การ์ดเรียงเป็นระเบียบ</li>
+      <li>เครื่องมือกระดานอยู่ที่<strong>แท็บคั่นหน้าขอบซ้าย</strong> (เปิดใบเมื่อกด พับเข้าได้): <strong>เวลา</strong> = ลำดับเหตุการณ์จริง · <strong>เล่า</strong> = ลำดับการเล่า · <strong>โครง</strong> = เลือกโครงสร้างและอ่านคู่มือช่วง · <strong>ชนิด</strong> = เลือกชนิดเส้นก่อนลากเชื่อม · <strong>เส้น</strong> = ความหมายเหนือ/ใต้เส้นของโครงปัจจุบัน</li>
+      <li>ติ๊ก <strong>จับแนวกริด</strong> ที่มุมขวาบน ถ้าอยากให้การ์ดเรียงเป็นระเบียบ</li>
     </ul>
   </div>
 </section>
@@ -266,7 +289,7 @@
 <section class="breakable">
   <h2><span class="dot" style="background:#2b7a8c"></span><span class="num" style="color:#2b7a8c">5</span> โครงสร้างเรื่อง</h2>
   <div>
-    <p>เมื่อเปิดกระดานว่าง แอปจะถามให้เลือกโครงก่อนครั้งหนึ่ง (ข้ามได้ — ค่าเริ่มต้นคือ 4 Phase) หลังจากนั้นใช้แผง <strong>โครงสร้าง</strong> มุมซ้ายบนได้ตลอด การเลือกไม่ได้เปลี่ยนแค่ป้ายหัวคอลัมน์ — เลือกโครงสร้างไหน กระดานจะ<strong>วางหมุด Beat ชุดของโครงสร้างนั้นลงบนเส้น</strong> ให้ทันที ช่องแบ่งช่วงและป้ายเหนือ/ใต้เส้นเปลี่ยนตาม และช่อง Story Beat ในแผงแก้ไขฉากก็เปลี่ยนตัวเลือกตามไปด้วย</p>
+    <p>เมื่อเปิดกระดานว่าง แอปจะถามให้เลือกโครงก่อนครั้งหนึ่ง (ข้ามได้ — ค่าเริ่มต้นคือ 4 Phase) หลังจากนั้นเปิดแท็บคั่นหน้า <strong>โครง</strong> ที่ขอบซ้ายได้ตลอด การเลือกไม่ได้เปลี่ยนแค่ป้ายหัวคอลัมน์ — เลือกโครงสร้างไหน กระดานจะ<strong>วางหมุด Beat ชุดของโครงสร้างนั้นลงบนเส้น</strong> ให้ทันที ช่องแบ่งช่วงและป้ายเหนือ/ใต้เส้นเปลี่ยนตาม และช่อง Story Beat ในแผงแก้ไขฉากก็เปลี่ยนตัวเลือกตามไปด้วย</p>
     <p>สลับได้ตลอดเวลา ไม่มีอะไรหาย: การ์ดอยู่ตำแหน่งเดิม แท็ก Beat ที่เคยใส่ไว้ยังติดกับฉาก (สลับกลับมาก็เห็นเหมือนเดิม) และถ้าไม่ชอบก็กดปุ่มเลิกทำได้ ส่วนหมุดที่คุณ<strong>ล็อกตำแหน่ง</strong>ไว้ หรือหมุดที่เพิ่มเองจะไม่ถูกแทนที่</p>
 
     <div class="structure-box">
@@ -275,6 +298,13 @@
       <p>โครงเรื่องแบบ Paradigm ที่ผูกทุกฉากไว้กับบาดแผลของตัวละคร — เหมาะกับเรื่องที่คนอ่านต้องเปลี่ยนไปพร้อมตัวละคร</p>
       <p><em>Paradigm Line · ↑ Lie · Want · ↓ Ghost · Need</em></p>
       <p><strong>เริ่มที่นี่ · </strong>ตั้งต้นที่ตัวละครก่อนเหตุการณ์: กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ให้ได้ก่อน แล้วค่อยหาว่าฉากไหนทำให้ Lie ทำงาน และฉากไหนบังคับให้เห็น Need</p>
+      <p class="guide">โครงนี้เดินด้วยบาดแผลและคำโกหกที่ตัวละครเชื่อ — ทุกฉากควรถามว่ากำลังเลี้ยง Lie หรือบีบให้เห็น Need เหตุการณ์ไม่ได้เรียงแค่ "แล้วก็" แต่ต้องเป็น "เพราะฉะนั้น / แต่" ที่ทำให้เดิมพันสูงขึ้นจนเลือกทางใหม่ไม่ได้หลีก</p>
+      <ul class="band-list">
+        <li><div class="band-name">1. เริ่มต้น</div><span class="lbl">งาน · </span>ปูชีวิตปกติและแผลที่ยังไม่ถูกชำระ ก่อนโลกจะพัง<br /><span class="lbl">ควรใส่ · </span>ฉากที่โชว์ Lie ทำงานในชีวิตประจำวัน Ghost ที่ยังหลบอยู่ และเหตุ Catalyst ที่ทำให้สถานะเดิมอยู่ต่อไม่ได้<br /><span class="lbl">เป้าจบช่วง · </span>คนอ่านรู้ว่าตัวละครเป็นใคร เชื่ออะไรผิด และทำไมต้องเริ่มไล่ตาม Want</li>
+        <li><div class="band-name">2. ช่วงแรก</div><span class="lbl">งาน · </span>ให้ Lie กับ Want ยังใช้ได้ผล จนตัวละครมั่นใจเกินจริง<br /><span class="lbl">ควรใส่ · </span>ฉากที่แผนเดิมสำเร็จ Things Go Well คำเตือนแรกที่ยังถูกละเลย และการประกาศ Want ชัดๆ<br /><span class="lbl">เป้าจบช่วง · </span>คนอ่านเชื่อว่าวิธีเดิมใช้ได้ — พอจะเจ็บเมื่อมันพังในระยะถัดไป</li>
+        <li><div class="band-name">3. ช่วงกลาง</div><span class="lbl">งาน · </span>ขึ้นราคาของ Lie ให้ Ghost ขัดขา และตัดทางถอย<br /><span class="lbl">ควรใส่ · </span>ฉาก Midpoint ที่เดิมพันเปลี่ยน Ghost ที่ย้อนกลับมา และ Low Point ที่แพงที่สุดของการยึด Lie<br /><span class="lbl">เป้าจบช่วง · </span>ตัวละครถอยกลับไปเป็นคนเดิมไม่ได้แล้ว — เหลือแต่การเผชิญความจริง</li>
+        <li><div class="band-name">4. ช่วงท้าย</div><span class="lbl">งาน · </span>บังคับให้เลือก Need แล้วลงมือโดยไม่มีตาข่าย<br /><span class="lbl">ควรใส่ · </span>ฉาก Aha / Choice / Climax / Ending ที่พิสูจน์ว่าตัวละครเปลี่ยนจริง ไม่ใช่แค่พูด<br /><span class="lbl">เป้าจบช่วง · </span>ชีวิตหลังจบวัดได้ว่าต่างจากตอนเปิด — Want กับ Need ลงเอยชัด</li>
+      </ul>
       <p class="beats">หมุด: Catalyst · Want · Things Go Well · Warning · Midpoint · Ghost · Low Point · Aha! · Choice · Climax · Ending</p>
     </div>
 
@@ -284,6 +314,12 @@
       <p>สามองก์แบบคลาสสิก โครงที่กว้างและยืดหยุ่นที่สุด — เหมาะเมื่ออยากเห็นภาพรวมก่อนลงรายละเอียด</p>
       <p><em>เส้นเรื่อง · ↑ ภายนอกที่ไล่ตาม · ↓ ความจริงภายใน</em></p>
       <p><strong>เริ่มที่นี่ · </strong>ปักสองหมุดให้ได้ก่อน: Inciting Incident ที่เปิดปัญหา และ Climax ที่ปิดมัน แล้วถามว่าอะไรทำให้ระยะกลางยาวขนาดนั้น — คำตอบคือ Midpoint</p>
+      <p class="guide">สามองก์คือกรอบกว้าง: เปิดปัญหา ยืดด้วยการปะทะ แล้วปิดด้วยการเผชิญหน้า ใช้เมื่ออยากเห็นภาพรวมก่อนลงบีตรายละเอียด — ทุกองก์ต้องมีคำถามที่ค้างและ stake ที่สูงขึ้น ไม่ใช่แค่แบ่งหน้าเป็นสามก้อน</p>
+      <ul class="band-list">
+        <li><div class="band-name">Act 1 · Setup</div><span class="lbl">งาน · </span>แนะนำโลก ปัญหา และทางเข้าสู่เรื่อง<br /><span class="lbl">ควรใส่ · </span>ฉากชีวิตก่อนพายุ Inciting Incident และ Plot Point 1 ที่ตัวละครเลือกก้าวเข้าโลกใหม่<br /><span class="lbl">เป้าจบช่วง · </span>คำถามหลักของเรื่องถูกวาง และตัวละครไม่สามารถกลับไปสถานะเดิมได้โดยไม่มีราคา</li>
+        <li><div class="band-name">Act 2 · Confrontation</div><span class="lbl">งาน · </span>ยืดการปะทะ ยกระดับ stake และพลิกกลางเรื่อง<br /><span class="lbl">ควรใส่ · </span>ฉากลองผิดลองถูก อุปสรรคซ้อน Midpoint ที่พลิกจากตั้งรับเป็นรุก และแรงกดจนถึง Plot Point 2<br /><span class="lbl">เป้าจบช่วง · </span>ทางเลือกหมดลง เหลือทางเดียวคือเผชิญหน้า — คนอ่านรู้ว่าทำไมองก์สามต้องเกิด</li>
+        <li><div class="band-name">Act 3 · Resolution</div><span class="lbl">งาน · </span>ตอบคำถามหลักแล้วโชว์โลกหลังพายุ<br /><span class="lbl">ควรใส่ · </span>ฉาก Climax ที่ลงมือตัดสิน และ Resolution ที่ให้เห็นอะไรเปลี่ยนไปจริง<br /><span class="lbl">เป้าจบช่วง · </span>คำถามเปิดเรื่องถูกตอบ และการเปลี่ยนแปลงวัดได้จากชีวิตหลังจบ</li>
+      </ul>
       <p class="beats">หมุด: Inciting Incident · Plot Point 1 · Midpoint · Plot Point 2 · Climax · Resolution</p>
     </div>
 
@@ -293,6 +329,13 @@
       <p>ผังบีตละเอียด 15 จุด อ้างตำแหน่งตามสัดส่วนหน้า — เหมาะกับงานที่ต้องคุมจังหวะแน่น เช่นบทภาพยนตร์</p>
       <p><em>เส้นเรื่อง · ↑ ภายนอกที่ไล่ตาม · ↓ ความจริงภายใน</em></p>
       <p><strong>เริ่มที่นี่ · </strong>เขียน logline หนึ่งบรรทัดก่อนแตะกระดาน แล้วปักสามหมุดหลัก Catalyst · Midpoint · All Is Lost จากนั้นค่อยเติมบีตที่เหลือเข้าไปในช่องว่าง</p>
+      <p class="guide">Save the Cat คุมจังหวะด้วยบีตหนา — คอลัมน์คือช่วงพลังงานของเรื่อง ไม่ใช่แค่ชื่อองก์ ใช้เมื่อต้องการรู้ว่าคนดูควรได้คำสัญญาของเรื่องเมื่อไหร่ เจ็บเมื่อไหร่ และเห็นภาพปิดที่คู่กับภาพเปิดเมื่อไหร่ setup ทุกจุดต้องมี payoff</p>
+      <ul class="band-list">
+        <li><div class="band-name">Act 1 · Setup</div><span class="lbl">งาน · </span>ปูภาพเปิด ธีม ชีวิตปกติ และแรงผลักเข้าองก์สอง<br /><span class="lbl">ควรใส่ · </span>Opening Image Theme Stated Setup Catalyst Debate และ Break into Two<br /><span class="lbl">เป้าจบช่วง · </span>คนดูรู้ว่าซื้อตั๋วมาดูอะไร และตัวละครเลือกก้าวออกจากโลกเดิมเอง</li>
+        <li><div class="band-name">Fun &amp; Games</div><span class="lbl">งาน · </span>ส่งมอบคำสัญญาของเรื่อง — สนุก ลุ้น ตามโจทย์ที่ขายไว้<br /><span class="lbl">ควรใส่ · </span>B Story Fun and Games และฉากที่ตัวละครเล่นในโลกใหม่ก่อนเดิมพันจะหนักจริง<br /><span class="lbl">เป้าจบช่วง · </span>คนดูได้สิ่งที่คาดหวังจากโลกล็อกไลน์ ก่อน Midpoint จะพลิกน้ำหนัก</li>
+        <li><div class="band-name">Bad Guys Close In</div><span class="lbl">งาน · </span>บีบจากภายนอกและภายในจนทุกอย่างพัง<br /><span class="lbl">ควรใส่ · </span>Midpoint Bad Guys Close In All Is Lost และ Dark Night of the Soul<br /><span class="lbl">เป้าจบช่วง · </span>สิ่งที่ตัวละครพึ่งพาถูกพราก — เหลือความว่างก่อนจะหาคำตอบใหม่</li>
+        <li><div class="band-name">Finale</div><span class="lbl">งาน · </span>รวมบทเรียน ลงมือแก้ และปิดด้วยภาพคู่ของเปิดเรื่อง<br /><span class="lbl">ควรใส่ · </span>Break into Three Finale และ Final Image ที่พิสูจน์การเปลี่ยน<br /><span class="lbl">เป้าจบช่วง · </span>เส้น A กับ B รวมกันแก้ปัญหา และภาพจบสะท้อนภาพเปิดอย่างชัด</li>
+      </ul>
       <p class="beats">หมุด: Opening Image · Theme Stated · Setup · Catalyst · Debate · Break into Two · B Story · Fun and Games · Midpoint · Bad Guys Close In · All Is Lost · Dark Night of the Soul · Break into Three · Finale · Final Image</p>
     </div>
 
@@ -302,6 +345,13 @@
       <p>โครงสี่ขั้นแบบเอเชียตะวันออกที่ไม่ต้องมีความขัดแย้งเป็นเครื่องยนต์ — เหมาะกับเรื่องสั้น เรื่องชีวิต และงานที่เดินด้วยการเปลี่ยนมุมมอง</p>
       <p><em>เส้น 起承転結 · ↑ โลกตามที่เล่า · ↓ ความหมายที่ถูกพลิก</em></p>
       <p><strong>เริ่มที่นี่ · </strong>หา 転 Ten ให้ได้ก่อนเป็นอย่างแรก: อะไรที่โผล่เข้ามาแล้วทำให้ทุกอย่างก่อนหน้ามีความหมายใหม่ เมื่อได้จุดนั้นแล้วจึงถอยกลับไปเขียน 起 กับ 承 ให้เป็นชีวิตปกติที่เงียบพอจะถูกพลิก</p>
+      <p class="guide">Kishōtenketsu ไม่ใช้ความขัดแย้งเป็นเครื่องยนต์ — พลังอยู่ที่การพลิกมุมมอง 起 กับ 承 ต้องเงียบและจริงพอที่ 転 จะเปลี่ยนความหมายของทุกอย่างก่อนหน้า ส่วน 結 ไม่ใช่การเอาชนะ แต่คือการวางสองภาพไว้ข้างกันจนคนอ่านเห็นภาพรวมใหม่</p>
+      <ul class="band-list">
+        <li><div class="band-name">起 Ki · เปิดโลก</div><span class="lbl">งาน · </span>แนะนำผู้คนและสถานที่ตามที่เป็นอยู่<br /><span class="lbl">ควรใส่ · </span>ฉากชีวิตปกติ รายละเอียดโลก และความสัมพันธ์ที่ยังไม่ถูกบีบด้วยปัญหาใหญ่<br /><span class="lbl">เป้าจบช่วง · </span>คนอ่านวางใจในโลกนี้พอที่จะรู้สึกเมื่อความหมายถูกพลิก</li>
+        <li><div class="band-name">承 Shō · ขยายความ</div><span class="lbl">งาน · </span>อยู่กับโลกนั้นต่อให้ลึกขึ้น โดยยังไม่พลิก<br /><span class="lbl">ควรใส่ · </span>ฉากที่เติมมิติ นิสัย จังหวะชีวิต — ทำให้สิ่งที่เห็นใน 起 มีน้ำหนักขึ้น<br /><span class="lbl">เป้าจบช่วง · </span>โลกเดิมชัดและคุ้นจนพร้อมถูกอ่านใหม่หลัง 転</li>
+        <li><div class="band-name">転 Ten · จุดพลิก</div><span class="lbl">งาน · </span>นำสิ่งที่ไม่เกี่ยวข้องเข้ามาแล้วเปลี่ยนความหมายของก่อนหน้า<br /><span class="lbl">ควรใส่ · </span>ฉากหรือข้อมูลที่ดูนอกเรื่องในตอนแรก แต่ทำให้ทุกอย่างก่อนหน้ามีความหมายใหม่<br /><span class="lbl">เป้าจบช่วง · </span>คนอ่านมองย้อน 起–承 แล้วเห็นภาพคนละแบบจากตอนอ่านครั้งแรก</li>
+        <li><div class="band-name">結 Ketsu · คลี่คลาย</div><span class="lbl">งาน · </span>วางสองส่วนไว้ข้างกันจนเห็นภาพรวม ไม่ใช่พิชิตศัตรู<br /><span class="lbl">ควรใส่ · </span>ฉากหลังพลิกที่ให้พื้นที่หายใจ และโชว์ความหมายใหม่โดยไม่ต้องชนะใคร<br /><span class="lbl">เป้าจบช่วง · </span>เรื่องจบด้วยความเข้าใจใหม่ที่วัดได้ ไม่จำเป็นต้องมีผู้ชนะ</li>
+      </ul>
       <p class="beats">หมุด: 起 เปิดโลก · 承 ขยายความ · 転 จุดพลิก · 結 คลี่คลาย — สังเกตว่ามีหมุดหลักตัวเดียวคือ Ten เพราะโครงนี้เดินด้วยการพลิกมุมมอง ไม่ใช่การเอาชนะ</p>
     </div>
 
@@ -311,6 +361,12 @@
       <p>การเดินทางของวีรบุรุษแบบ Vogler — 12 บีตใน 3 ช่วง Departure · Initiation · Return เหมาะกับเรื่องผจญภัยที่ตัวละครต้องเปลี่ยนตัวตน</p>
       <p><em>เส้นการเดินทาง · ↑ โลกภายนอกของการผจญภัย · ↓ การเปลี่ยนแปลงภายในวีรบุรุษ</em></p>
       <p><strong>เริ่มที่นี่ · </strong>ปักสามหมุดก่อน: Call to Adventure ที่ยื่นคำเชิญ Crossing the Threshold ที่ก้าวออก และ Ordeal ที่เกือบตาย — แล้วถามว่าวีรบุรุษกลับมาพร้อมอะไรใน Return with the Elixir</p>
+      <p class="guide">Hero's Journey คือการเดินทางที่โลกภายนอกกับการเปลี่ยนแปลงภายในวิ่งคู่กัน Departure พิสูจน์ว่าออกจากบ้าน Initiation พิสูจน์ว่าเกือบตายแล้วได้ของ และ Return พิสูจน์ว่ากลับมาเป็นคนละคนพร้อมของขวัญให้โลกเดิม — ไม่ใช่แค่รายการสถานที่ผจญภัย</p>
+      <ul class="band-list">
+        <li><div class="band-name">Departure</div><span class="lbl">งาน · </span>ออกจากโลกปกติหลังคำเชิญและการลังเล<br /><span class="lbl">ควรใส่ · </span>Ordinary World Call to Adventure Refusal Mentor และ Crossing the Threshold<br /><span class="lbl">เป้าจบช่วง · </span>วีรบุรุษก้าวเข้าโลกพิเศษแล้ว — ถอยกลับเป็นคนเดิมไม่ได้โดยไม่มีราคา</li>
+        <li><div class="band-name">Initiation</div><span class="lbl">งาน · </span>ทดสอบ หาพวก และเผชิญ Ordeal จนได้ Reward<br /><span class="lbl">ควรใส่ · </span>Tests Allies Enemies Approach Ordeal และ Reward<br /><span class="lbl">เป้าจบช่วง · </span>ตัวตนถูกเผาด้วยการเกือบพ่าย — ได้ของที่ตามหาแต่ยังไม่จบการเดินทาง</li>
+        <li><div class="band-name">Return</div><span class="lbl">งาน · </span>กลับโลกเดิม พิสูจน์การเปลี่ยน และมอบ Elixir<br /><span class="lbl">ควรใส่ · </span>The Road Back Resurrection และ Return with the Elixir<br /><span class="lbl">เป้าจบช่วง · </span>วีรบุรุษกลับพร้อมของขวัญ และการเปลี่ยนแปลงภายในปรากฏชัดในโลกภายนอก</li>
+      </ul>
       <p class="beats">หมุด: Ordinary World · Call to Adventure · Refusal of the Call · Meeting the Mentor · Crossing the Threshold · Tests, Allies, Enemies · Approach to the Inmost Cave · Ordeal · Reward · The Road Back · Resurrection · Return with the Elixir</p>
     </div>
 
@@ -323,12 +379,12 @@
   <div>
     <p>เริ่มเรื่องใหม่หนึ่งเรื่อง ครบใน 6 ขั้น:</p>
     <ol class="steps">
-      <li><span class="n">1</span><span><strong>เลือกโครงสร้าง</strong> — ตอบหน้าต่างเลือกโครงตอนกระดานว่าง (หรือใช้แผง "โครงสร้าง" มุมซ้ายบนทีหลัง) หมุด Beat จะมาวางบนเส้นให้เป็นโครงร่างว่าต้องเติมอะไร</span></li>
-      <li><span class="n">2</span><span><strong>ปูพื้นตัวละคร</strong> — กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย ให้กระดานรู้ว่าแกนเรื่องคืออะไร</span></li>
-      <li><span class="n">3</span><span><strong>สร้างฉากสำคัญ</strong> — กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) ของแต่ละฉาก</span></li>
+      <li><span class="n">1</span><span><strong>เลือกโครงสร้าง</strong> — ตอบหน้าต่างเลือกโครงตอนกระดานว่าง (หรือเปิดแท็บคั่นหน้า "โครง" ที่ขอบซ้ายทีหลัง) หมุด Beat จะมาวางบนเส้นให้เป็นโครงร่างว่าต้องเติมอะไร</span></li>
+      <li><span class="n">2</span><span><strong>ปูพื้นตัวละคร</strong> — กรอก Ghost / Lie / Want / Need ในแท็บ Backstory ด้านซ้าย แล้วตั้งผลลัพธ์ตอนจบ (Want / Need) — ด้านล่างมี "หลักฐานบนกระดาน" สรุปฉาก climax และเส้น Want→ · Need→ · Fail→ ที่ชี้เข้าฉากนั้น</span></li>
+      <li><span class="n">3</span><span><strong>สร้างฉากสำคัญ</strong> — กด + Scene สัก 5–6 ฉาก กรอกอย่างน้อยชื่อฉากกับการกระทำ (Action) — ฉากจบให้แท็ก Story Beat เป็น climax / finale / resurrection / ordeal เพื่อให้หลักฐานบนกระดานจับได้</span></li>
       <li><span class="n">4</span><span><strong>วางลงไทม์ไลน์</strong> — ลากการ์ดไปให้อยู่ใต้หมุด Beat ที่ตรงกับมัน ฉากที่ตัวละครไล่ตาม Want ไว้เหนือเส้น ฉากที่แผล Ghost ทำงานไว้ใต้เส้น</span></li>
-      <li><span class="n">5</span><span><strong>ลากเส้นเชื่อมเรื่อง</strong> — เลือกชนิดเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลว</span></li>
-      <li><span class="n">6</span><span><strong>ตรวจและแชร์</strong> — สลับไปมุมมอง "ลำดับเล่า" ตรวจลำดับการเล่า แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ</span></li>
+      <li><span class="n">5</span><span><strong>ลากเส้นเชื่อมเรื่อง</strong> — เปิดแท็บ "ชนิด" เลือกเส้น "เหตุการณ์จริง" แล้วเชื่อมฉากตามลำดับ จากนั้นใช้เส้นชนิดอื่นวาดทางแยกที่คาดหวัง / ล้มเหลวเข้าฉาก climax</span></li>
+      <li><span class="n">6</span><span><strong>ตรวจและแชร์</strong> — เปิดแท็บ "เล่า" ตรวจลำดับการเล่า เทียบหลักฐานบนกระดานกับผลลัพธ์ตอนจบที่เลือก แล้วใช้ Export PNG ในเมนู ··· เพื่อแชร์กระดานเป็นภาพ</span></li>
     </ol>
     <p class="tip">จะโพสต์ลงเฟซบุ๊ก? ในหน้าต่าง Export PNG เลือก <strong>แบ่งเป็นหลายภาพ</strong> — เฟซบุ๊กย่อทุกภาพเหลือ 2048px กระดานใหญ่ในภาพเดียวจะอ่านไม่ออก แบบแบ่งภาพจะตัดกระดานเป็นช่วงๆ ให้ยังอ่านชัด แล้วอัปโหลดเป็นอัลบั้มในโพสต์เดียวได้เลย</p>
   </div>

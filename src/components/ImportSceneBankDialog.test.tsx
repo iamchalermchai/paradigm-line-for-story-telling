@@ -30,18 +30,16 @@ describe('ImportSceneBankDialog', () => {
     })
     fireEvent.click(screen.getByText('วิเคราะห์'))
 
-    // Review step appears with the extracted scenes.
-    await waitFor(() => expect(screen.getByText(/พบ 3 ฉาก/)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/พบ 2 ฉาก/)).toBeInTheDocument())
 
-    fireEvent.click(screen.getByText(/เพิ่ม 3 ฉากลงกระดาน/))
+    fireEvent.click(screen.getByText(/เพิ่ม 2 ฉากลงกระดาน/))
 
-    expect(store().project.scenes).toHaveLength(3)
-    // Import closes the dialog.
+    expect(store().project.scenes).toHaveLength(2)
+    expect(store().project.backstory.ghost).toContain('รุ่นพี่')
     expect(useUiStore.getState().dialog).toBeNull()
   })
 
   it('fills only empty backstory fields, never overwriting', async () => {
-    // Pre-fill ghost so it must NOT be overwritten.
     store().updateBackstory({ ghost: 'ผีเดิมที่ห้ามทับ' })
 
     render(<ImportSceneBankDialog />)
@@ -49,8 +47,8 @@ describe('ImportSceneBankDialog', () => {
       target: { value: SAMPLE },
     })
     fireEvent.click(screen.getByText('วิเคราะห์'))
-    await waitFor(() => expect(screen.getByText(/พบ 3 ฉาก/)).toBeInTheDocument())
-    fireEvent.click(screen.getByText(/เพิ่ม 3 ฉากลงกระดาน/))
+    await waitFor(() => expect(screen.getByText(/พบ 2 ฉาก/)).toBeInTheDocument())
+    fireEvent.click(screen.getByText(/เพิ่ม 2 ฉากลงกระดาน/))
 
     expect(store().project.backstory.ghost).toBe('ผีเดิมที่ห้ามทับ')
   })
@@ -61,13 +59,12 @@ describe('ImportSceneBankDialog', () => {
       target: { value: SAMPLE },
     })
     fireEvent.click(screen.getByText('วิเคราะห์'))
-    await waitFor(() => expect(screen.getByText(/พบ 3 ฉาก/)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/พบ 2 ฉาก/)).toBeInTheDocument())
 
-    // Deselect the first suggestion.
     const checkboxes = screen.getAllByRole('checkbox')
     fireEvent.click(checkboxes[0])
 
-    fireEvent.click(screen.getByText(/เพิ่ม 2 ฉากลงกระดาน/))
-    expect(store().project.scenes).toHaveLength(2)
+    fireEvent.click(screen.getByText(/เพิ่ม 1 ฉากลงกระดาน/))
+    expect(store().project.scenes).toHaveLength(1)
   })
 })

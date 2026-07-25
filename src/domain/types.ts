@@ -121,11 +121,18 @@ export interface Backstory {
 
 /** A named character in the story. Scenes reference characters by name
  *  (scene.characters stays string[]), so the roster is a helper layer:
- *  it supplies colour and quick assignment, not a hard foreign key. */
+ *  it supplies colour, arc notes, and quick assignment — not a hard FK.
+ *  Project-level `Backstory` stays the story spine; per-character fields
+ *  hold Ghost/Lie/Want/Need for multi-POV or antagonist planning. */
 export interface Character {
   id: string
   name: string
   color: string
+  ghost: string
+  lie: string
+  lieAtWork: string
+  want: string
+  need: string
 }
 
 /** Roster colours drawn from the board palette (name + colour together on chips,

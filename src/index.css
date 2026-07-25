@@ -58,6 +58,18 @@ body,
   transition: opacity 0.2s ease;
 }
 
+/* Bookmark rail leaf sliding out from the board's left edge. */
+@keyframes bookmark-leaf {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* Respect users who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { STRUCTURE_TEMPLATES } from '../domain/structure'
+import { getStructureTemplate, STRUCTURE_TEMPLATES } from '../domain/structure'
 import { useUiStore } from '../store/uiStore'
 import { HelpDialog } from './HelpDialog'
 
@@ -29,5 +29,16 @@ describe('HelpDialog', () => {
     expect(screen.getByText('転 จุดพลิก')).toBeInTheDocument()
     expect(screen.getByText('All Is Lost')).toBeInTheDocument()
     expect(screen.getByText('Ordeal')).toBeInTheDocument()
+  })
+
+  it('expands structure cards to show column coaching', () => {
+    useUiStore.getState().openDialog('help')
+    render(<HelpDialog />)
+    const toggles = screen.getAllByText('▸ อ่านเพิ่ม')
+    expect(toggles.length).toBe(STRUCTURE_TEMPLATES.length)
+    fireEvent.click(toggles[0])
+    const fourPhase = getStructureTemplate('four-phase')
+    expect(screen.getByText(fourPhase.bands[0].job)).toBeInTheDocument()
+    expect(screen.getByText(fourPhase.guide)).toBeInTheDocument()
   })
 })

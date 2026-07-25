@@ -10,7 +10,7 @@ import {
 } from '../domain/types'
 import type { Backstory } from '../domain/types'
 import type { SceneSuggestion } from '../import/AIParserAdapter'
-import { mockParser } from '../import/mockParser'
+import { localParser } from '../import/localParser'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
 import { Modal } from './Modal'
@@ -53,7 +53,7 @@ export function ImportSceneBankDialog() {
 
   async function handleParse() {
     setParsing(true)
-    const result = await mockParser.parse(rawText)
+    const result = await localParser.parse(rawText)
     setSuggestions(result.scenes)
     setBackstory(result.backstory)
     setSelected(new Set(result.scenes.map((s) => s.id)))

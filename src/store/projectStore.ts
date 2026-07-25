@@ -22,7 +22,6 @@ import type {
   StoryScene,
   Viewport,
 } from '../domain/types'
-import { LAYER_SNAP_Y, snapSceneToLayer } from '../domain/layers'
 import {
   applySnapshot,
   HISTORY_LIMIT,
@@ -175,7 +174,7 @@ interface ProjectState {
   applyAutoLayout: () => void
   setViewport: (viewport: Viewport) => void
   setStructureTemplate: (id: string) => void
-  /** Toggle four Y-lanes (META/CHAR/MEM/GHOST) on the board. */
+  /** @deprecated UI always shows มิติ; kept for project round-trip. */
   setLaneMode: (enabled: boolean) => void
 
   // Telling chapters
@@ -347,11 +346,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         scenes: p.scenes.map((s) => {
           const layer = map.get(s.id)
           if (!layer) return s
-          return {
-            ...s,
-            storyLayer: layer,
-            position: { ...s.position, y: LAYER_SNAP_Y[layer] },
-          }
+          return { ...s, storyLayer: layer }
         }),
       }))
     },
@@ -511,18 +506,7 @@ export const useProjectStore = create<ProjectState>((set, get) => {
       }),
 
     setLaneMode: (enabled) =>
-      commit((p) => {
-        if (p.laneMode === enabled) return p
-        const next = { ...p, laneMode: enabled }
-        if (!enabled) return next
-        return {
-          ...next,
-          scenes: p.scenes.map((s) => {
-            const snap = snapSceneToLayer(s.position, s.storyLayer)
-            return { ...s, position: { x: snap.x, y: snap.y } }
-          }),
-        }
-      }),
+      commit((p) => (p.laneMode === enabled ? p : { ...p, laneMode: enabled })),
 
     addTellingChapter: () => {
       const key = uid('tc')

@@ -1,16 +1,7 @@
 import { ViewportPortal } from '@xyflow/react'
 import { BOARD_WIDTH, getStructureTemplate } from '../domain/structure'
-import {
-  isLaneMode,
-  LAYER_COLORS,
-  LAYER_LABELS,
-  LAYER_SNAP_Y,
-  STORY_LAYERS,
-} from '../domain/layers'
 import { PARADIGM_LINE_Y } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
-
-const LANE_LINE_OFFSET = 90
 
 // Rough card footprint + breathing room, used to size the frame around content.
 const CARD_W = 300
@@ -31,10 +22,8 @@ export function PhaseColumns() {
   const scenes = useProjectStore((s) => s.project.scenes)
   const beats = useProjectStore((s) => s.project.beats)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
-  const laneMode = useProjectStore((s) => s.project.laneMode)
   const template = getStructureTemplate(structureId)
   const bands = template.bands
-  const lanes = isLaneMode(laneMode)
 
   // --- Content bounds (with a fixed baseline so an empty board still frames well) ---
   const sceneX = scenes.map((s) => s.position.x)
@@ -115,52 +104,17 @@ export function PhaseColumns() {
           )
         })}
 
-        {/* Paradigm / lane lines */}
-        {lanes ? (
-          STORY_LAYERS.map((layer) => (
-            <div
-              key={layer}
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: LAYER_SNAP_Y[layer] + LANE_LINE_OFFSET - top,
-                width: frameW,
-                height: 0,
-                borderTop: `${layer === 'character' ? 3 : 1.5}px solid ${LAYER_COLORS[layer]}`,
-                opacity: layer === 'character' ? 0.9 : 0.45,
-              }}
-            />
-          ))
-        ) : (
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: PARADIGM_LINE_Y - top,
-              width: frameW,
-              height: 0,
-              borderTop: '3px solid var(--color-ink)',
-            }}
-          />
-        )}
-        {lanes &&
-          STORY_LAYERS.map((layer) => (
-            <div
-              key={`label-${layer}`}
-              className="font-display"
-              style={{
-                position: 'absolute',
-                left: 8 - left,
-                top: LAYER_SNAP_Y[layer] + LANE_LINE_OFFSET - top - 10,
-                fontSize: 11,
-                fontWeight: 700,
-                color: LAYER_COLORS[layer],
-                opacity: 0.75,
-              }}
-            >
-              {LAYER_LABELS[layer]}
-            </div>
-          ))}
+        {/* Paradigm line — always visible; narrative dimension lives in the มิติ tab */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: PARADIGM_LINE_Y - top,
+            width: frameW,
+            height: 0,
+            borderTop: '3px solid var(--color-ink)',
+          }}
+        />
       </div>
     </ViewportPortal>
   )

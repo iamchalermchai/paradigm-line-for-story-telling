@@ -13,6 +13,7 @@
     "prototype:layers": "vite --open '/?layers=A'",
     "prototype:layer": "vite --open '/?layerField=AC'",
     "prototype:layer-rail": "vite --open '/?layerRail=open'",
+    "prototype:lane-paradigm": "vite --open '/?laneParadigm=A'",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

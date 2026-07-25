@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { DEFAULT_STRUCTURE_ID } from './structure'
-import type { Project } from './types'
+import type { Project, StoryLayer } from './types'
 
-export const SCHEMA_VERSION = 6
+export const SCHEMA_VERSION = 7
 
 export const storyPhaseSchema = z.enum([
   'setup',
@@ -143,6 +143,13 @@ export const projectSchema = z.object({
 
 export type ProjectInput = z.infer<typeof projectSchema>
 
+/** Demo story layer tags — applied on migrate for saved seed projects. */
+const SEED_AL_STORY_LAYERS: Record<string, StoryLayer> = {
+  'scene-ghost-bg': 'memory',
+  'scene-ghost': 'memory',
+  'scene-lowpoint': 'ghost',
+}
+
 /**
  * Migrate a raw parsed object of an unknown/older schema version up to the
  * current version. Kept as an explicit switch so future migrations slot in.
@@ -203,6 +210,19 @@ function migrate(raw: unknown): unknown {
       schemaVersion: 6,
     }
     v = 6
+  }
+  if (v < 7) {
+    const rec = migrated as Record<string, unknown>
+    if (rec.id === 'seed-al' && Array.isArray(rec.scenes)) {
+      rec.scenes = (
+        rec.scenes as Array<{ id: string; storyLayer?: StoryLayer }>
+      ).map((s) => {
+        const layer = SEED_AL_STORY_LAYERS[s.id]
+        return layer ? { ...s, storyLayer: layer } : s
+      })
+    }
+    migrated = { ...migrated, schemaVersion: 7 }
+    v = 7
   }
 
   return migrated

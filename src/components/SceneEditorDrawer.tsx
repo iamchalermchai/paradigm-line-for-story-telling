@@ -9,11 +9,9 @@ import {
 import { ARC_RELATION_LABELS, STORY_PHASES } from '../domain/types'
 import type { ArcRelation, StoryScene } from '../domain/types'
 import {
-  isLaneMode,
   LAYER_COLORS,
   LAYER_HINTS,
   LAYER_LABELS,
-  LAYER_SNAP_Y,
   STORY_LAYERS,
   suggestStoryLayer,
 } from '../domain/layers'
@@ -38,7 +36,6 @@ export function SceneEditorDrawer() {
   const closeSceneEditor = useUiStore((s) => s.closeSceneEditor)
   const scenes = useProjectStore((s) => s.project.scenes)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
-  const laneMode = useProjectStore((s) => s.project.laneMode)
   const chapterOrder = useProjectStore((s) => s.project.tellingChapterOrder)
   const roster = useProjectStore((s) => s.project.characters)
   const backstory = useProjectStore((s) => s.project.backstory)
@@ -47,7 +44,6 @@ export function SceneEditorDrawer() {
   const deleteScene = useProjectStore((s) => s.deleteScene)
 
   const template = getStructureTemplate(structureId)
-  const lanes = isLaneMode(laneMode)
   const chapters = tellingChapters(scenes, chapterOrder)
 
   const scene = scenes.find((s) => s.id === editingSceneId) ?? null
@@ -66,6 +62,11 @@ export function SceneEditorDrawer() {
   const warnings = useMemo(
     () => (draft ? validateScene(draft, others, template) : []),
     [draft, others, template],
+  )
+
+  const layerSuggestion = useMemo(
+    () => (draft ? suggestStoryLayer(draft, backstory, roster) : null),
+    [draft, backstory, roster],
   )
 
   if (!editingSceneId || !draft) return null
@@ -270,59 +271,93 @@ export function SceneEditorDrawer() {
             onChange={(v) => set('beat', v || undefined)}
           />
         </div>
-        <Select
-          label="แท็กเส้น Ghost / Lie / Want / Need (ฉากนี้แตะเส้นไหน)"
-          value={draft.arcRelation}
-          options={ARC_RELATIONS.map((r) => [r, ARC_RELATION_LABELS[r]])}
-          onChange={(v) => set('arcRelation', v as ArcRelation)}
-        />
-        {lanes && (
-          <div
-            className="space-y-2 rounded px-2.5 py-2"
-            style={{
-              border: '1px solid rgba(61,77,236,0.25)',
-              background: 'rgba(61,77,236,0.05)',
-            }}
-          >
-            <p className="font-display text-[12px] font-bold text-ink">เลนการเล่า</p>
-            <div className="flex flex-wrap gap-1">
-              {STORY_LAYERS.map((layer) => (
-                <button
-                  key={layer}
-                  type="button"
-                  className="rounded px-2 py-1 text-[11px] font-semibold"
-                  style={{
-                    background:
-                      draft.storyLayer === layer ? LAYER_COLORS[layer] : 'white',
-                    color:
-                      draft.storyLayer === layer ? '#f8f6f0' : 'var(--color-ink-soft)',
-                    border: `1px solid ${
-                      draft.storyLayer === layer
-                        ? LAYER_COLORS[layer]
-                        : 'rgba(20,22,25,0.25)'
-                    }`,
-                  }}
-                  onClick={() => {
-                    set('storyLayer', layer)
-                    set('position', {
-                      ...draft.position,
-                      y: LAYER_SNAP_Y[layer],
-                    })
-                  }}
-                >
-                  {LAYER_LABELS[layer]}
-                </button>
-              ))}
-            </div>
-            <p className="text-[10px] leading-snug text-ink/50">
-              {LAYER_HINTS[draft.storyLayer]} · CHARACTER = ค่าเริ่มต้น (การ์ดไม่โชว์ชิป)
-            </p>
-            <p className="text-[10px] text-ink/45">
-              แนะนำ:{' '}
-              {suggestStoryLayer(draft, backstory, roster).reason}
-            </p>
+        <div
+          className="space-y-2 rounded px-2.5 py-2"
+          style={{
+            border: '1px solid rgba(61,77,236,0.25)',
+            background: 'rgba(61,77,236,0.05)',
+          }}
+        >
+          <p className="font-display text-[12px] font-bold text-ink">
+            เส้น Paradigm · มิติการเล่า
+          </p>
+          <p className="text-[10px] leading-snug text-ink/50">
+            <strong className="text-ink/70">แท็กเส้น</strong> = ฉากแตะ Lie/Want/Ghost
+            บนกระดาน · <strong className="text-ink/70">มิติ</strong> = เล่าชั้นไหน ·
+            ไม่ย้ายการ์ด
+          </p>
+          <Select
+            label="แท็กเส้น (ฉากนี้แตะเส้นไหน)"
+            value={draft.arcRelation}
+            options={ARC_RELATIONS.map((r) => [r, ARC_RELATION_LABELS[r]])}
+            onChange={(v) => set('arcRelation', v as ArcRelation)}
+          />
+          <p className="text-[10px] font-medium text-ink/55">มิติของเรื่องเล่า</p>
+          <div className="flex flex-wrap gap-1">
+            {STORY_LAYERS.map((layer) => (
+              <button
+                key={layer}
+                type="button"
+                className="rounded px-2 py-1 text-[11px] font-semibold"
+                style={{
+                  background:
+                    draft.storyLayer === layer ? LAYER_COLORS[layer] : 'white',
+                  color:
+                    draft.storyLayer === layer ? '#f8f6f0' : 'var(--color-ink-soft)',
+                  border: `1px solid ${
+                    draft.storyLayer === layer
+                      ? LAYER_COLORS[layer]
+                      : 'rgba(20,22,25,0.25)'
+                  }`,
+                }}
+                onClick={() => set('storyLayer', layer)}
+              >
+                {LAYER_LABELS[layer]}
+              </button>
+            ))}
           </div>
-        )}
+          <p className="text-[10px] leading-snug text-ink/50">
+            {LAYER_HINTS[draft.storyLayer]}
+            {draft.storyLayer === 'character' && ' · การ์ดไม่โชว์ชิป'}
+          </p>
+          {layerSuggestion?.arcNote &&
+            draft.arcRelation === 'ghost' &&
+            draft.storyLayer !== 'ghost' &&
+            draft.storyLayer !== 'memory' && (
+              <p
+                className="rounded px-2 py-1.5 text-[10px] leading-snug text-ink/65"
+                style={{
+                  border: '1px solid rgba(205,80,66,0.25)',
+                  background: 'rgba(205,80,66,0.06)',
+                }}
+              >
+                {layerSuggestion.arcNote}
+              </p>
+            )}
+          {layerSuggestion && (
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-[10px] text-ink/45">
+                แนะนำมิติ: {layerSuggestion.reason}
+                {layerSuggestion.layer !== draft.storyLayer && (
+                  <>
+                    {' '}
+                    → <strong>{LAYER_LABELS[layerSuggestion.layer]}</strong>
+                  </>
+                )}
+              </p>
+              {layerSuggestion.layer !== draft.storyLayer && (
+                <button
+                  type="button"
+                  className="rounded px-2 py-0.5 text-[10px] font-semibold text-cream"
+                  style={{ background: 'var(--color-mint-deep)' }}
+                  onClick={() => set('storyLayer', layerSuggestion.layer)}
+                >
+                  ใช้คำแนะนำ
+                </button>
+              )}
+            </div>
+          )}
+        </div>
         <Select
           label="บทการเล่า (จัดลำดับด้วยการลากในแผงซ้าย โหมด “ลำดับเล่า”)"
           value={draft.tellingChapter ?? ''}

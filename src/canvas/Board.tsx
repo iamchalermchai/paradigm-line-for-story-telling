@@ -17,7 +17,6 @@ import {
   type OnNodeDrag,
 } from '@xyflow/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { isLaneMode, snapSceneToLayer } from '../domain/layers'
 import type { StoryScene } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
@@ -38,6 +37,7 @@ import { PhaseColumns } from './PhaseColumns'
 import { SceneNode } from './nodes/SceneNode'
 import { InternalConflictPrototypeHost } from './prototype/internalConflict/InternalConflictPrototype'
 import { LayeredBoardPrototypeHost } from './prototype/layeredBoard/LayeredBoardPrototype'
+import { LaneParadigmPrototypeHost } from './prototype/laneParadigm/LaneParadigmPrototype'
 import { LayerRailPrototypeHost } from './prototype/layerRail/LayerRailPrototype'
 import { StoryLayerPrototypeHost } from './prototype/storyLayer/StoryLayerPrototype'
 
@@ -60,8 +60,6 @@ const GRID: [number, number] = [16, 16]
 export function Board() {
   const project = useProjectStore((s) => s.project)
   const applyNodeDrag = useProjectStore((s) => s.applyNodeDrag)
-  const laneMode = useProjectStore((s) => s.project.laneMode)
-  const lanes = isLaneMode(laneMode)
   const setViewport = useProjectStore((s) => s.setViewport)
   const addEdge = useProjectStore((s) => s.addEdge)
   const deleteElements = useProjectStore((s) => s.deleteElements)
@@ -159,38 +157,18 @@ export function Board() {
         )
         return
       }
-      if (node.type === 'scene' && lanes) {
-        const snap = snapSceneToLayer(node.position)
-        setNodes((nds) =>
-          nds.map((n) =>
-            n.id === node.id
-              ? { ...n, position: { x: snap.x, y: snap.y } }
-              : n,
-          ),
-        )
-      }
     },
-    [setNodes, lanes],
+    [setNodes],
   )
 
   const onNodeDragStop = useCallback<OnNodeDrag>(
     (_event, _node, dragged: Node[]) => {
       const updates = dragged.map((n) => ({ id: n.id, position: n.position }))
       const { scenes, beats } = reconcileDrag(updates, sceneIds, beatIds)
-      const sceneUpdates = lanes
-        ? scenes.map((s) => {
-            const snap = snapSceneToLayer(s.position)
-            return {
-              ...s,
-              position: { x: snap.x, y: snap.y },
-              storyLayer: snap.storyLayer,
-            }
-          })
-        : scenes
       isDragging.current = false
-      applyNodeDrag(sceneUpdates, beats)
+      applyNodeDrag(scenes, beats)
     },
-    [sceneIds, beatIds, applyNodeDrag, lanes],
+    [sceneIds, beatIds, applyNodeDrag],
   )
 
   const onConnect = useCallback<OnConnect>(
@@ -227,6 +205,7 @@ export function Board() {
       <LayeredBoardPrototypeHost />
       <StoryLayerPrototypeHost />
       <LayerRailPrototypeHost />
+      <LaneParadigmPrototypeHost />
       <ReactFlow
         nodes={nodes}
         edges={edges}

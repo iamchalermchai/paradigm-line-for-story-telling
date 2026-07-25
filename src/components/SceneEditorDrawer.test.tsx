@@ -96,4 +96,21 @@ describe('SceneEditorDrawer', () => {
       store().project.scenes.find((s) => s.id === 'scene-want')?.title,
     ).toBe('เริ่มเขียนสมุด 30 วัน')
   })
+
+  it('applies layer suggestion from arc tag without moving Y', () => {
+    store().updateScene('scene-want', { storyLayer: 'ghost' })
+    const yBefore = store().project.scenes.find((s) => s.id === 'scene-want')!
+      .position.y
+    useUiStore.getState().openSceneEditor('scene-want')
+    render(<SceneEditorDrawer />)
+    fireEvent.change(screen.getByLabelText(/แท็กเส้น/), {
+      target: { value: 'ghost' },
+    })
+    fireEvent.click(screen.getByText('ใช้คำแนะนำ'))
+    fireEvent.click(screen.getByText('บันทึก'))
+    const updated = store().project.scenes.find((s) => s.id === 'scene-want')
+    expect(updated?.arcRelation).toBe('ghost')
+    expect(updated?.storyLayer).toBe('character')
+    expect(updated?.position.y).toBe(yBefore)
+  })
 })

@@ -102,6 +102,25 @@ describe('project schema', () => {
     expect(result.ok).toBe(true)
     expect(result.project?.laneMode).toBe(true)
     expect(result.project?.structureTemplateId).toBe('four-phase')
-    expect(result.project?.schemaVersion).toBe(6)
+    expect(result.project?.schemaVersion).toBe(SCHEMA_VERSION)
+  })
+
+  it('migrates v6 seed-al projects with demo storyLayer tags', () => {
+    const seed = createSeedProject()
+    const raw = JSON.parse(JSON.stringify(seed))
+    raw.schemaVersion = 6
+    raw.id = 'seed-al'
+    for (const scene of raw.scenes) {
+      scene.storyLayer = 'character'
+    }
+    const result = parseProject(raw)
+    expect(result.ok).toBe(true)
+    expect(result.project?.schemaVersion).toBe(SCHEMA_VERSION)
+    const layers = Object.fromEntries(
+      result.project!.scenes.map((s) => [s.id, s.storyLayer]),
+    )
+    expect(layers['scene-ghost-bg']).toBe('memory')
+    expect(layers['scene-ghost']).toBe('memory')
+    expect(layers['scene-lowpoint']).toBe('ghost')
   })
 })

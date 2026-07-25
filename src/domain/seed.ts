@@ -73,6 +73,7 @@ const scenes: StoryScene[] = [
     phase: 'setup',
     beat: undefined,
     arcRelation: 'ghost',
+    storyLayer: 'memory',
     position: { x: 60, y: 160 },
   }),
   scene(1, {
@@ -171,6 +172,7 @@ const scenes: StoryScene[] = [
     phase: 'middle',
     beat: 'ghost',
     arcRelation: 'ghost',
+    storyLayer: 'memory',
     position: { x: 1620, y: 370 },
   }),
   scene(7, {
@@ -187,6 +189,7 @@ const scenes: StoryScene[] = [
     phase: 'middle',
     beat: 'low_point',
     arcRelation: 'ghost',
+    storyLayer: 'ghost',
     position: { x: 1880, y: 150 },
   }),
   scene(8, {

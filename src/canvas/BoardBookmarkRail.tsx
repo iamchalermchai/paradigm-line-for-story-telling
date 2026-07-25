@@ -1,7 +1,6 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { LayerDiagram } from '../components/LayerDiagram'
 import {
-  isLaneMode,
   LAYER_COLORS,
   LAYER_HINTS,
   LAYER_LABELS,
@@ -57,17 +56,11 @@ export function BoardBookmarkRail({
 } = {}) {
   const viewMode = useUiStore((s) => s.viewMode)
   const setViewMode = useUiStore((s) => s.setViewMode)
-  const laneMode = useProjectStore((s) => s.project.laneMode)
   const scenes = useProjectStore((s) => s.project.scenes)
   const backstory = useProjectStore((s) => s.project.backstory)
   const characters = useProjectStore((s) => s.project.characters)
   const applyLayerSuggestions = useProjectStore((s) => s.applyLayerSuggestions)
-  const lanes = isLaneMode(laneMode)
   const [openTab, setOpenTab] = useState<RailTab | null>(initialOpenTab)
-
-  useEffect(() => {
-    if (!lanes && openTab === 'layers') setOpenTab(null)
-  }, [lanes, openTab])
 
   function toggle(tab: RailTab) {
     if (tab === 'chronological' || tab === 'telling') setViewMode(tab)
@@ -130,16 +123,14 @@ export function BoardBookmarkRail({
           accent="teal"
           onClick={() => toggle('diagram')}
         />
-        {lanes && (
-          <BookmarkTab
-            label="เลน"
-            title="เลน META / CHARACTER / MEMORY / GHOST"
-            active={openTab === 'layers'}
-            open={openTab === 'layers'}
-            accent="teal"
-            onClick={() => toggle('layers')}
-          />
-        )}
+        <BookmarkTab
+          label="มิติ"
+          title="มิติของเรื่องเล่า · META / CHARACTER / MEMORY / GHOST"
+          active={openTab === 'layers'}
+          open={openTab === 'layers'}
+          accent="teal"
+          onClick={() => toggle('layers')}
+        />
       </div>
 
       {openTab && (
@@ -148,7 +139,7 @@ export function BoardBookmarkRail({
           {openTab === 'edges' && <EdgesLeafBody />}
           {openTab === 'axis' && <AxisLeafBody />}
           {openTab === 'diagram' && <DiagramLeafBody />}
-          {openTab === 'layers' && lanes && (
+          {openTab === 'layers' && (
             <LayersLeafBody
               scenes={scenes}
               backstory={backstory}
@@ -263,11 +254,8 @@ function BookmarkTab({
 
 function StructureLeafBody() {
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
-  const laneMode = useProjectStore((s) => s.project.laneMode)
   const setStructureTemplate = useProjectStore((s) => s.setStructureTemplate)
-  const setLaneMode = useProjectStore((s) => s.setLaneMode)
   const template = getStructureTemplate(structureId)
-  const lanes = isLaneMode(laneMode)
 
   return (
     <div className="space-y-2.5 text-xs text-ink">
@@ -288,37 +276,16 @@ function StructureLeafBody() {
           </option>
         ))}
       </select>
-      <label
-        className="flex cursor-pointer items-start gap-2 rounded px-2 py-2"
+      <p
+        className="rounded px-2 py-2 text-[10px] leading-snug text-ink/60"
         style={{
-          border: lanes
-            ? '1px solid rgba(43,122,140,0.45)'
-            : '1px solid rgba(20,22,25,0.15)',
-          background: lanes ? 'rgba(43,122,140,0.1)' : 'rgba(20,22,25,0.03)',
+          border: '1px solid rgba(20,22,25,0.12)',
+          background: 'rgba(43,122,140,0.06)',
         }}
       >
-        <input
-          type="checkbox"
-          className="mt-0.5"
-          checked={lanes}
-          onChange={(e) => setLaneMode(e.target.checked)}
-          aria-label="เปิดเลนการเล่า META CHARACTER MEMORY GHOST"
-        />
-        <span className="leading-snug">
-          <span className="font-display font-bold text-ink">เลนการเล่า</span>
-          <span className="text-ink/55"> — META / CHARACTER / MEMORY / GHOST</span>
-          {lanes ? (
-            <span className="mt-1 block text-[10px] text-ink/65">
-              เปิดแท็บ <strong className="text-ink">เลน</strong> (ถัดจาก ดูภาพ) เพื่อ mini
-              map · แนะนำเลน
-            </span>
-          ) : (
-            <span className="mt-1 block text-[10px] text-ink/50">
-              สำหรับเรื่องที่เล่นข้ามความจริง/ความทรงจำ — ใช้คู่กับโครงที่เลือกด้านบน
-            </span>
-          )}
-        </span>
-      </label>
+        เรื่องเล่นข้ามความจริง/ความทรงจำ? ใช้แท็บ{' '}
+        <strong className="text-ink">มิติ</strong> (ถัดจาก ดูภาพ)
+      </p>
       <div
         className={
           template.bands.length <= 3
@@ -541,21 +508,35 @@ function LayersLeafBody({
   }))
 
   const toApply = suggestions.filter((s) => s.layer !== s.scene.storyLayer)
+  const taggedCount = scenes.filter((s) => s.storyLayer !== 'character').length
 
   return (
     <div className="space-y-2.5 text-xs text-ink">
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="font-display text-sm font-bold">เลนบนกระดาน</h3>
-        <span
-          className="rounded px-1.5 py-0.5 text-[9px] font-bold text-cream"
-          style={{ background: '#2b7a8c' }}
-        >
-          เลนการเล่า
-        </span>
+        <h3 className="font-display text-sm font-bold">มิติของเรื่องเล่า</h3>
+        {taggedCount > 0 && (
+          <span
+            className="rounded px-1.5 py-0.5 text-[9px] font-bold text-cream"
+            style={{ background: '#2b7a8c' }}
+          >
+            {taggedCount} ฉาก
+          </span>
+        )}
       </div>
       <p className="text-[10px] leading-snug text-ink/55">
-        CHARACTER = ค่าเริ่มต้น · การ์ดไม่โชว์ชิป · กดภาพเลนเพื่อขยาย
+        Paradigm ขับตำแหน่งบนกระดาน · ตั้งแท็กเส้น + มิติในแก้ไขฉาก · กดภาพเพื่อขยาย
       </p>
+      {taggedCount === 0 && scenes.length > 0 && (
+        <p
+          className="rounded px-2 py-1.5 text-[10px] leading-snug text-ink/60"
+          style={{
+            border: '1px solid rgba(20,22,25,0.12)',
+            background: 'rgba(20,22,25,0.03)',
+          }}
+        >
+          ทุกฉากอยู่มิติ CHARACTER — ตั้งแท็กเส้นในแก้ไขฉาก แล้วกดแนะนำมิติ
+        </p>
+      )}
 
       <LayerDiagram
         scenes={scenes}
@@ -569,7 +550,7 @@ function LayersLeafBody({
         style={{ border: '1px solid rgba(20,22,25,0.2)' }}
         onClick={() => setExpanded(true)}
       >
-        ขยายภาพเลน
+        ขยายภาพมิติ
       </button>
 
       <div className="space-y-1">
@@ -634,7 +615,7 @@ function LayersLeafBody({
           style={{ background: 'var(--color-ink)' }}
           onClick={() => setShowSuggest(true)}
         >
-          แนะนำเลน
+          แนะนำมิติ
         </button>
         {showSuggest && toApply.length > 0 && (
           <ul className="space-y-1">
@@ -675,21 +656,26 @@ function LayersLeafBody({
           className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/40 p-4"
           role="dialog"
           aria-modal
-          aria-label="ภาพเลนขยาย"
+          aria-label="ภาพมิติขยาย"
           onClick={() => setExpanded(false)}
         >
           <div
-            className="max-h-[92vh] w-full max-w-4xl overflow-auto rounded-md bg-cream p-4 shadow-lg"
+            className="max-h-[92vh] w-full max-w-5xl overflow-auto rounded-md bg-cream p-4 shadow-lg"
             style={{ border: '2px solid rgba(20,22,25,0.2)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-2 flex items-baseline justify-between gap-2">
-              <h2 className="font-display text-base font-bold text-ink">
-                ภาพเลนบนกระดาน
-              </h2>
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="font-display text-base font-bold text-ink">
+                  ภาพมิติของเรื่องเล่า
+                </h2>
+                <p className="mt-0.5 text-[11px] text-ink/50">
+                  เวลาไหลซ้าย→ขวา · ความลึกของการเล่าบน→ล่าง · ชื่อฉากอยู่ติดจุด
+                </p>
+              </div>
               <button
                 type="button"
-                className="text-[11px] text-ink/50 hover:text-ink"
+                className="shrink-0 rounded px-2 py-1 text-[11px] text-ink/50 hover:bg-sand/20 hover:text-ink"
                 onClick={() => setExpanded(false)}
               >
                 ปิด

@@ -1,7 +1,7 @@
 # Plotline Board — project memory
 
 บันทึกบริบทงาน ว่าทำอะไรไปแล้ว ตอนนี้อยู่ตรงไหน และลองแล้วถึงไหน  
-อัปเดตล่าสุด: **2026-07-25** · นอก·/ใน· + Help/PDF · deploy: GitHub Pages จาก `main`
+อัปเดตล่าสุด: **2026-07-26** · มิติของเรื่องเล่า (B+) · deploy: GitHub Pages จาก `main`
 
 ---
 
@@ -50,6 +50,7 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 | **ส่งออก JSON / นำเข้าข้อความ·JSON แมปกระดาน** | ✅ เมนู ⋯ · `mapToBoard` (โปรเจกต์เต็มหรือฉาก) |
 | **แรงต้านฉาก นอก·/ใน·** (`internalConflict`) | ✅ editor + การ์ด + Help/PDF สอนแล้ว |
 | **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) | ✅ ทั้ง 5 โครง · ภาษาภาพเดียวกับบอร์ด |
+| **มิติของเรื่องเล่า** (`storyLayer` · แท็บ **มิติ** · ภาพมิติขยาย) | ✅ B+ shipped · schema v7 · diagram sidebar + label ติดจุด |
 
 ### ยังไม่พับเข้า UI / ยังไม่ทำ
 | รายการ | โน้ต |
@@ -80,9 +81,10 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 14. **Hero’s Journey + axis ต่อโครง + StructureChooser กระดานว่าง**  
 15. **Bookmark chrome + climax evidence + Help/PDF sync**
 16. **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) + ภาษาภาพบอร์ด + แก้ truncate ใบโครง
-17. **Import mapToBoard** + **internal conflict นอก·/ใน·** + Help/PDF ← ปัจจุบัน
+17. **Import mapToBoard** + **internal conflict นอก·/ใน·** + Help/PDF  
+18. **มิติของเรื่องเล่า (B+)** — Paradigm master · แท็บมิติ · diagram sidebar · suggest · v7 ← ปัจจุบัน
 
-รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md) · [2026-07-25-import-export-map.md](./2026-07-25-import-export-map.md) · [2026-07-25-internal-conflict.md](./2026-07-25-internal-conflict.md)
+รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md) · [2026-07-25-import-export-map.md](./2026-07-25-import-export-map.md) · [2026-07-25-internal-conflict.md](./2026-07-25-internal-conflict.md) · [2026-07-25-layered-memory.md](./2026-07-25-layered-memory.md)
 
 ---
 
@@ -109,9 +111,10 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 Logic TUI: `npm run prototype:planning` → `src/domain/prototype/planningTui.ts`  
 Layered board (META/CHAR/MEM/GHOST): `npm run prototype:layers` → `/?layers=A|B|C`  
 Story layer field UX: `npm run prototype:layer` → `/?layerField=A|B|C|AC`  
-Layer rail study: `npm run prototype:layer-rail` → `/?layerRail=open`
+Layer rail study: `npm run prototype:layer-rail` → `/?layerRail=open`  
+Lane + Paradigm study: `npm run prototype:lane-paradigm` → `/?laneParadigm=A`
 
-**Production (2026-07-25):** **เลนการเล่า** (`laneMode`) ในแท็บ **โครง** · แท็บ **เลน** · `storyLayer` · ดู `memory/2026-07-25-layered-memory.md`
+**Production (2026-07-26):** แท็บ **มิติ** · `storyLayer` · Paradigm ไม่ถูกแทน · ภาพมิติ sidebar + label ติดจุด · ดู `memory/2026-07-25-layered-memory.md`
 
 ### สิ่งที่เคยอยู่บนจอแล้วย้าย/ตัด
 - StructurePicker + EdgeLegend **ลอยมุมซ้ายบน** → ย้ายเข้า bookmark **โครง** / **ชนิด**  

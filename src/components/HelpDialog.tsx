@@ -294,9 +294,8 @@ function HelpContent() {
                 ไม่ใช่ภาพเดียวทุกโครง
               </li>
               <li>
-                <strong>เลน</strong> — โผล่เมื่อเปิด <strong>เลนการเล่า</strong> ในแท็บ{' '}
-                <strong>โครง</strong> (META / CHARACTER / MEMORY / GHOST) · mini map ·
-                แนะนำเลน · กรองมอง
+                <strong>มิติ</strong> — มิติของเรื่องเล่า (META / CHARACTER / MEMORY /
+                GHOST) · mini map · แนะนำมิติ · กรองมอง
               </li>
             </ul>
           </li>
@@ -331,8 +330,7 @@ function HelpContent() {
           ยังไม่รู้จะใช้อันไหน? ถ้าเรื่องเดินด้วยความอยากของตัวละคร เริ่มที่ 4 Phase —
           ถ้าเป็นการผจญภัยที่ตัวละครต้องข้ามธรณีแล้วกลับมาคนละคน ลอง Hero&apos;s Journey —
           ถ้าเดินด้วยบรรยากาศหรือการค่อยๆ เข้าใจอะไรบางอย่าง ลอง Kishōtenketsu —
-          ถ้าเล่นข้ามความจริง/ความทรงจำ เปิด <strong>เลนการเล่า</strong> ในแท็บ{' '}
-          <strong>โครง</strong> แล้วใช้แท็บ <strong>เลน</strong>
+          ถ้าเล่นข้ามความจริง/ความทรงจำ ใช้แท็บ <strong>มิติ</strong> และแก้มิติในแผงแก้ไขฉาก
         </Tip>
       </Section>
 

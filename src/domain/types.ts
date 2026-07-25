@@ -70,7 +70,7 @@ export interface StoryScene {
   phase: StoryPhase
   beat?: BeatKey
   arcRelation: ArcRelation
-  /** Y-lane when lane mode is on (default CHARACTER). */
+  /** Narrative dimension when มิติของเรื่องเล่า is on (default CHARACTER). */
   storyLayer: StoryLayer
   /** Telling chapter (a single letter A/B/C…). Scenes that share a letter are
    *  narrated together; chapter order (A→B→C) is the telling order, which can
@@ -190,7 +190,7 @@ export interface Project {
   climaxOutcome: ClimaxOutcome
   /** id of the selected vertical structure overlay (see domain/structure.ts). */
   structureTemplateId: string
-  /** Four Y-lanes (META/CHAR/MEM/GHOST) overlay — independent of structure template. */
+  /** Legacy persisted flag (UI no longer gates on this). */
   laneMode: boolean
   /** Ordered telling-chapter keys; display letters (A/B/C…) derive from position.
    *  Empty = derive order from scene keys (see domain/telling.ts). */

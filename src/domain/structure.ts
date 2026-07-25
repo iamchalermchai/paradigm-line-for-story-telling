@@ -689,6 +689,93 @@ export const STRUCTURE_TEMPLATES: StructureTemplate[] = [
       },
     ],
   },
+  {
+    id: 'layered-memory',
+    name: 'Layered Memory',
+    description:
+      'สี่เลน META / CHARACTER / MEMORY / GHOST — เหมาะกับเรื่องที่เล่าข้ามชั้นความจริง ความทรงจำ และแผล',
+    startHere:
+      'เลือกเลนต่อการ์ดในแท็บ 「เลน」 หรือ editor — CHARACTER เป็นค่าเริ่มต้น · ใช้แท็ก Ghost กับ beat ช่วยแนะนำเลน',
+    guide:
+      'โครงนี้ไม่แทนที่ Paradigm Line ทั้งแอป — เป็นแกน Y สำหรับเรื่องที่เล่า/ย้อน/หลอกหลอนซ้อนกัน เส้นกระตุ้นข้ามเลนบอกว่าฉากปัจจุบันดึง memory หรือ ghost',
+    axis: {
+      lineTitle: 'สี่เลนบนกระดาน',
+      aboveHint: 'META · CHARACTER — เหตุการณ์และกรอบการเล่า',
+      belowHint: 'MEMORY · GHOST — ความทรงจำและแผลที่ถูกกระตุ้น',
+    },
+    bands: [
+      {
+        label: '1. เริ่มต้น',
+        start: 0,
+        job: 'ปูโลกและวางเลนแรกๆ',
+        putHere: 'META กรอบการเล่า · CHARACTER เหตุการณ์ปัจจุบัน · MEMORY/GHOST ที่ถูกแตะ',
+        goal: 'คนอ่านรู้ว่ามีชั้นเวลา/ความหมายอะไรซ้อนกัน',
+      },
+      {
+        label: '2. ช่วงแรก',
+        start: 0.25,
+        job: 'ให้เลน CHARACTER เดิน และ memory/ghost ถูกกระตุ้น',
+        putHere: 'ฉากที่เส้นกระตุ้นข้ามเลนเริ่มทำงาน',
+        goal: 'ความสัมพันธ์ข้ามเลนอ่านออก',
+      },
+      {
+        label: '3. ช่วงกลาง',
+        start: 0.5,
+        job: 'ขึ้นราคา — ghost และ memory บีบ CHARACTER',
+        putHere: 'Midpoint ที่เลื่อนชั้น · แผลที่กลับมาแรงขึ้น',
+        goal: 'ทุกเลนดึงเข้าหากัน',
+      },
+      {
+        label: '4. ช่วงท้าย',
+        start: 0.75,
+        job: 'ปิดด้วยการจัดชั้นความหมายใหม่',
+        putHere: 'Climax/Ending บน CHARACTER · META ปิดกรอบ',
+        goal: 'คนอ่านเห็นภาพรวมทั้งสี่เลน',
+      },
+    ],
+    beats: [
+      {
+        key: 'catalyst',
+        label: 'Catalyst',
+        fraction: 0.18,
+        shape: 'circle',
+        color: AMBER,
+        hint: 'เหตุการณ์ที่ทำให้ชั้นต่างๆ เริ่มชนกัน',
+      },
+      {
+        key: 'midpoint',
+        label: 'Midpoint',
+        fraction: 0.5,
+        shape: 'tick',
+        color: INK,
+        hint: 'จุดที่เลื่อนชั้นหรือความหมายพลิก',
+      },
+      {
+        key: 'ghost',
+        label: 'Ghost',
+        fraction: 0.58,
+        shape: 'dotted-circle',
+        color: RUST,
+        hint: 'แผลที่ย้อนกลับมาขัดขา',
+      },
+      {
+        key: 'climax',
+        label: 'Climax',
+        fraction: 0.9,
+        shape: 'tick',
+        color: INK,
+        hint: 'ลงมือบนเลน CHARACTER',
+      },
+      {
+        key: 'ending',
+        label: 'Ending',
+        fraction: 0.98,
+        shape: 'circle',
+        color: AMBER,
+        hint: 'ปิดกรอบ META/ความหมายใหม่',
+      },
+    ],
+  },
 ]
 
 export const DEFAULT_STRUCTURE_ID = 'four-phase'

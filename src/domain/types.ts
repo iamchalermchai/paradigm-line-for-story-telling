@@ -43,6 +43,8 @@ export const ABOVE_LINE_RELATIONS: ArcRelation[] = ['lie', 'lie_at_work', 'want'
 // The horizontal paradigm line sits at y = 0. Above = negative, below = positive.
 export const PARADIGM_LINE_Y = 0
 
+export type StoryLayer = 'meta' | 'character' | 'memory' | 'ghost'
+
 export interface Position {
   x: number
   y: number
@@ -68,6 +70,8 @@ export interface StoryScene {
   phase: StoryPhase
   beat?: BeatKey
   arcRelation: ArcRelation
+  /** Y-lane on layered-memory boards (default CHARACTER). */
+  storyLayer: StoryLayer
   /** Telling chapter (a single letter A/B/C…). Scenes that share a letter are
    *  narrated together; chapter order (A→B→C) is the telling order, which can
    *  differ from chronological order on the paradigm line. Undefined = unassigned. */

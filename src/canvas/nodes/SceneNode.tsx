@@ -2,6 +2,11 @@ import { Handle, Position, type NodeProps } from '@xyflow/react'
 import { memo } from 'react'
 import { colorForName } from '../../domain/characters'
 import { beatLabel, getStructureTemplate } from '../../domain/structure'
+import {
+  isLayeredMemory,
+  LAYER_COLORS,
+  LAYER_LABELS,
+} from '../../domain/layers'
 import { chapterLetterForScene } from '../../domain/telling'
 import { ARC_RELATION_LABELS } from '../../domain/types'
 import type { ArcRelation } from '../../domain/types'
@@ -80,6 +85,7 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
   )
   const characters = useProjectStore((s) => s.project.characters)
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const layered = isLayeredMemory(structureId)
 
   // The "Character" side of Character + Action = Plot: lead with the POV actor.
   const who =
@@ -147,6 +153,21 @@ function SceneNodeComponent({ data, selected }: NodeProps) {
           </span>
         )}
         <span>{ARC_RELATION_LABELS[scene.arcRelation]}</span>
+        {layered && scene.storyLayer !== 'character' && (
+          <>
+            <span aria-hidden>·</span>
+            <span
+              className="inline-flex rounded px-1.5 py-0.5 text-[10px] font-bold"
+              style={{
+                background: `${LAYER_COLORS[scene.storyLayer]}18`,
+                color: LAYER_COLORS[scene.storyLayer],
+                border: `1px solid ${LAYER_COLORS[scene.storyLayer]}55`,
+              }}
+            >
+              {LAYER_LABELS[scene.storyLayer]}
+            </span>
+          </>
+        )}
         {scene.beat && (
           <>
             <span aria-hidden>·</span>

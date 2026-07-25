@@ -23,6 +23,7 @@ function scene(id: string, chapter?: string): StoryScene {
     changeAfterScene: '',
     phase: 'setup',
     arcRelation: 'neutral',
+    storyLayer: 'character',
     tellingChapter: chapter,
     position: { x: 0, y: 0 },
     order: 0,

@@ -1,4 +1,13 @@
 import { useState, type ReactNode } from 'react'
+import { LayerDiagram } from '../components/LayerDiagram'
+import {
+  isLayeredMemory,
+  LAYER_COLORS,
+  LAYER_HINTS,
+  LAYER_LABELS,
+  STORY_LAYERS,
+  suggestStoryLayer,
+} from '../domain/layers'
 import {
   hasStructureDiagram,
   StructureTeachingDiagram,
@@ -10,11 +19,12 @@ import {
   STRUCTURE_TEMPLATES,
 } from '../domain/structure'
 import { EDGE_LABELS, type EdgeType } from '../domain/types'
+import type { Backstory, Character, StoryLayer, StoryScene } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore, type ViewMode } from '../store/uiStore'
 import { EDGE_STYLE } from './edges/StoryEdge'
 
-export type RailTab = ViewMode | 'structure' | 'edges' | 'axis' | 'diagram'
+export type RailTab = ViewMode | 'structure' | 'edges' | 'axis' | 'diagram' | 'layers'
 
 const VIEW_TABS: {
   id: ViewMode
@@ -47,6 +57,12 @@ export function BoardBookmarkRail({
 } = {}) {
   const viewMode = useUiStore((s) => s.viewMode)
   const setViewMode = useUiStore((s) => s.setViewMode)
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const scenes = useProjectStore((s) => s.project.scenes)
+  const backstory = useProjectStore((s) => s.project.backstory)
+  const characters = useProjectStore((s) => s.project.characters)
+  const applyLayerSuggestions = useProjectStore((s) => s.applyLayerSuggestions)
+  const layered = isLayeredMemory(structureId)
   const [openTab, setOpenTab] = useState<RailTab | null>(initialOpenTab)
 
   function toggle(tab: RailTab) {
@@ -56,7 +72,10 @@ export function BoardBookmarkRail({
 
   const viewMeta = VIEW_TABS.find((t) => t.id === openTab)
   const large =
-    openTab === 'structure' || openTab === 'edges' || openTab === 'diagram'
+    openTab === 'structure' ||
+    openTab === 'edges' ||
+    openTab === 'diagram' ||
+    openTab === 'layers'
 
   return (
     <div
@@ -107,6 +126,16 @@ export function BoardBookmarkRail({
           accent="teal"
           onClick={() => toggle('diagram')}
         />
+        {layered && (
+          <BookmarkTab
+            label="เลน"
+            title="เลน META / CHARACTER / MEMORY / GHOST"
+            active={openTab === 'layers'}
+            open={openTab === 'layers'}
+            accent="teal"
+            onClick={() => toggle('layers')}
+          />
+        )}
       </div>
 
       {openTab && (
@@ -115,6 +144,14 @@ export function BoardBookmarkRail({
           {openTab === 'edges' && <EdgesLeafBody />}
           {openTab === 'axis' && <AxisLeafBody />}
           {openTab === 'diagram' && <DiagramLeafBody />}
+          {openTab === 'layers' && layered && (
+            <LayersLeafBody
+              scenes={scenes}
+              backstory={backstory}
+              characters={characters}
+              onApplySuggestions={applyLayerSuggestions}
+            />
+          )}
           {viewMeta && (
             <div>
               <h3 className="font-display text-sm font-bold text-ink">
@@ -433,6 +470,194 @@ function DiagramLeafBody() {
             </div>
             <p className="mb-3 text-[12px] leading-snug text-ink/60">{meta.blurb}</p>
             <StructureTeachingDiagram templateId={structureId} />
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function LayersLeafBody({
+  scenes,
+  backstory,
+  characters,
+  onApplySuggestions,
+}: {
+  scenes: StoryScene[]
+  backstory: Backstory
+  characters: Character[]
+  onApplySuggestions: (patches: { id: string; storyLayer: StoryLayer }[]) => void
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const [visible, setVisible] = useState<Record<StoryLayer, boolean>>({
+    meta: true,
+    character: true,
+    memory: true,
+    ghost: true,
+  })
+  const [showSuggest, setShowSuggest] = useState(false)
+
+  const suggestions = scenes.map((s) => ({
+    scene: s,
+    ...suggestStoryLayer(s, backstory, characters),
+  }))
+
+  const toApply = suggestions.filter((s) => s.layer !== s.scene.storyLayer)
+
+  return (
+    <div className="space-y-2.5 text-xs text-ink">
+      <div className="flex items-baseline justify-between gap-2">
+        <h3 className="font-display text-sm font-bold">เลนบนกระดาน</h3>
+        <span
+          className="rounded px-1.5 py-0.5 text-[9px] font-bold text-cream"
+          style={{ background: 'var(--color-rust)' }}
+        >
+          layered-memory
+        </span>
+      </div>
+      <p className="text-[10px] leading-snug text-ink/55">
+        CHARACTER = ค่าเริ่มต้น · การ์ดไม่โชว์ชิป · กดภาพเลนเพื่อขยาย
+      </p>
+
+      <LayerDiagram
+        scenes={scenes}
+        size="mini"
+        visible={visible}
+        onExpand={() => setExpanded(true)}
+      />
+      <button
+        type="button"
+        className="w-full rounded px-2 py-1 text-[10px] font-semibold text-ink hover:bg-sand/25"
+        style={{ border: '1px solid rgba(20,22,25,0.2)' }}
+        onClick={() => setExpanded(true)}
+      >
+        ขยายภาพเลน
+      </button>
+
+      <div className="space-y-1">
+        {STORY_LAYERS.map((layer) => (
+          <p
+            key={layer}
+            className="text-[10px] leading-snug text-ink/55"
+            style={{ opacity: visible[layer] ? 1 : 0.35 }}
+          >
+            <span
+              className="font-display font-bold"
+              style={{ color: LAYER_COLORS[layer] }}
+            >
+              {LAYER_LABELS[layer]}
+            </span>
+            {' · '}
+            {LAYER_HINTS[layer]} · ×
+            {scenes.filter((s) => s.storyLayer === layer).length}
+          </p>
+        ))}
+      </div>
+
+      <div
+        className="space-y-1.5 border-t pt-2"
+        style={{ borderColor: 'rgba(20,22,25,0.12)' }}
+      >
+        <p className="text-[11px] font-semibold text-ink">กรองมอง</p>
+        <div className="flex flex-wrap gap-1.5">
+          {STORY_LAYERS.map((layer) => (
+            <label
+              key={layer}
+              className="flex cursor-pointer items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold"
+              style={{
+                background: visible[layer]
+                  ? `${LAYER_COLORS[layer]}18`
+                  : 'rgba(20,22,25,0.06)',
+                color: visible[layer] ? LAYER_COLORS[layer] : 'var(--color-ink-soft)',
+                border: `1px solid ${visible[layer] ? LAYER_COLORS[layer] : 'rgba(20,22,25,0.15)'}`,
+              }}
+            >
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={visible[layer]}
+                onChange={() =>
+                  setVisible((v) => ({ ...v, [layer]: !v[layer] }))
+                }
+              />
+              {LAYER_LABELS[layer]}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div
+        className="space-y-2 border-t pt-2"
+        style={{ borderColor: 'rgba(20,22,25,0.12)' }}
+      >
+        <button
+          type="button"
+          className="w-full rounded px-2 py-1.5 text-[11px] font-semibold text-cream"
+          style={{ background: 'var(--color-ink)' }}
+          onClick={() => setShowSuggest(true)}
+        >
+          แนะนำเลน
+        </button>
+        {showSuggest && toApply.length > 0 && (
+          <ul className="space-y-1">
+            {toApply.map(({ scene, layer, reason }) => (
+              <li
+                key={scene.id}
+                className="rounded px-2 py-1 text-[10px] leading-snug text-ink/75"
+                style={{ background: 'rgba(205,80,66,0.06)' }}
+              >
+                {scene.title} → <strong>{LAYER_LABELS[layer]}</strong>
+                <span className="text-ink/45"> ({reason})</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {showSuggest && (
+          <button
+            type="button"
+            className="w-full rounded px-2 py-1 text-[10px] font-semibold text-cream"
+            style={{ background: 'var(--color-mint-deep)' }}
+            onClick={() => {
+              onApplySuggestions(
+                toApply.map(({ scene, layer }) => ({
+                  id: scene.id,
+                  storyLayer: layer,
+                })),
+              )
+              setShowSuggest(false)
+            }}
+          >
+            ยืนยันทั้งหมด ({toApply.length})
+          </button>
+        )}
+      </div>
+
+      {expanded && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/40 p-4"
+          role="dialog"
+          aria-modal
+          aria-label="ภาพเลนขยาย"
+          onClick={() => setExpanded(false)}
+        >
+          <div
+            className="max-h-[92vh] w-full max-w-4xl overflow-auto rounded-md bg-cream p-4 shadow-lg"
+            style={{ border: '2px solid rgba(20,22,25,0.2)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-2 flex items-baseline justify-between gap-2">
+              <h2 className="font-display text-base font-bold text-ink">
+                ภาพเลนบนกระดาน
+              </h2>
+              <button
+                type="button"
+                className="text-[11px] text-ink/50 hover:text-ink"
+                onClick={() => setExpanded(false)}
+              >
+                ปิด
+              </button>
+            </div>
+            <LayerDiagram scenes={scenes} size="full" visible={visible} />
           </div>
         </div>
       )}

@@ -8,6 +8,15 @@ import {
 } from '../domain/structure'
 import { ARC_RELATION_LABELS, STORY_PHASES } from '../domain/types'
 import type { ArcRelation, StoryScene } from '../domain/types'
+import {
+  isLayeredMemory,
+  LAYER_COLORS,
+  LAYER_HINTS,
+  LAYER_LABELS,
+  LAYER_SNAP_Y,
+  STORY_LAYERS,
+  suggestStoryLayer,
+} from '../domain/layers'
 import { tellingChapters } from '../domain/telling'
 import { validateScene } from '../domain/validation'
 import { useProjectStore } from '../store/projectStore'
@@ -31,11 +40,13 @@ export function SceneEditorDrawer() {
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
   const chapterOrder = useProjectStore((s) => s.project.tellingChapterOrder)
   const roster = useProjectStore((s) => s.project.characters)
+  const backstory = useProjectStore((s) => s.project.backstory)
   const updateScene = useProjectStore((s) => s.updateScene)
   const duplicateScene = useProjectStore((s) => s.duplicateScene)
   const deleteScene = useProjectStore((s) => s.deleteScene)
 
   const template = getStructureTemplate(structureId)
+  const layered = isLayeredMemory(structureId)
   const chapters = tellingChapters(scenes, chapterOrder)
 
   const scene = scenes.find((s) => s.id === editingSceneId) ?? null
@@ -264,6 +275,55 @@ export function SceneEditorDrawer() {
           options={ARC_RELATIONS.map((r) => [r, ARC_RELATION_LABELS[r]])}
           onChange={(v) => set('arcRelation', v as ArcRelation)}
         />
+        {layered && (
+          <div
+            className="space-y-2 rounded px-2.5 py-2"
+            style={{
+              border: '1px solid rgba(61,77,236,0.25)',
+              background: 'rgba(61,77,236,0.05)',
+            }}
+          >
+            <p className="font-display text-[12px] font-bold text-ink">
+              เลนบนกระดาน (layered-memory)
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {STORY_LAYERS.map((layer) => (
+                <button
+                  key={layer}
+                  type="button"
+                  className="rounded px-2 py-1 text-[11px] font-semibold"
+                  style={{
+                    background:
+                      draft.storyLayer === layer ? LAYER_COLORS[layer] : 'white',
+                    color:
+                      draft.storyLayer === layer ? '#f8f6f0' : 'var(--color-ink-soft)',
+                    border: `1px solid ${
+                      draft.storyLayer === layer
+                        ? LAYER_COLORS[layer]
+                        : 'rgba(20,22,25,0.25)'
+                    }`,
+                  }}
+                  onClick={() => {
+                    set('storyLayer', layer)
+                    set('position', {
+                      ...draft.position,
+                      y: LAYER_SNAP_Y[layer],
+                    })
+                  }}
+                >
+                  {LAYER_LABELS[layer]}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] leading-snug text-ink/50">
+              {LAYER_HINTS[draft.storyLayer]} · CHARACTER = ค่าเริ่มต้น (การ์ดไม่โชว์ชิป)
+            </p>
+            <p className="text-[10px] text-ink/45">
+              แนะนำ:{' '}
+              {suggestStoryLayer(draft, backstory, roster).reason}
+            </p>
+          </div>
+        )}
         <Select
           label="บทการเล่า (จัดลำดับด้วยการลากในแผงซ้าย โหมด “ลำดับเล่า”)"
           value={draft.tellingChapter ?? ''}

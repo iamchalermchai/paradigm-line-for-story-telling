@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { DEFAULT_STRUCTURE_ID } from './structure'
 import type { Project } from './types'
 
-export const SCHEMA_VERSION = 4
+export const SCHEMA_VERSION = 5
 
 export const storyPhaseSchema = z.enum([
   'setup',
@@ -17,6 +17,13 @@ export const storyPhaseSchema = z.enum([
  * Kishōtenketsu carries keys the 4-Phase vocabulary never had.
  */
 export const beatKeySchema = z.string()
+
+export const storyLayerSchema = z.enum([
+  'meta',
+  'character',
+  'memory',
+  'ghost',
+])
 
 export const arcRelationSchema = z.enum([
   'ghost',
@@ -56,6 +63,7 @@ export const storySceneSchema = z.object({
   phase: storyPhaseSchema,
   beat: beatKeySchema.optional(),
   arcRelation: arcRelationSchema,
+  storyLayer: storyLayerSchema.default('character'),
   tellingChapter: z.string().optional(),
   position: positionSchema,
   color: z.string().optional(),
@@ -173,6 +181,11 @@ function migrate(raw: unknown): unknown {
     // v4 adds per-character Ghost/Lie/Want/Need; Zod defaults fill empties.
     migrated = { ...migrated, schemaVersion: 4 }
     v = 4
+  }
+  if (v < 5) {
+    // v5 adds storyLayer for layered-memory structure boards.
+    migrated = { ...migrated, schemaVersion: 5 }
+    v = 5
   }
 
   return migrated

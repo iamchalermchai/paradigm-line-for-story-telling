@@ -80,4 +80,15 @@ describe('project schema', () => {
       result.project?.scenes.every((s) => typeof s.internalConflict === 'string'),
     ).toBe(true)
   })
+
+  it('defaults missing storyLayer on older scene payloads', () => {
+    const seed = createSeedProject()
+    const raw = JSON.parse(JSON.stringify(seed))
+    for (const s of raw.scenes) delete s.storyLayer
+    const result = parseProject(raw)
+    expect(result.ok).toBe(true)
+    expect(result.project?.scenes.every((s) => s.storyLayer === 'character')).toBe(
+      true,
+    )
+  })
 })

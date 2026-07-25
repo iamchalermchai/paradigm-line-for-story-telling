@@ -106,7 +106,12 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 | C Checklist dock | ตรวจบีต/แบนด์ว่าง | ลอง · **ยังไม่เลือก** |
 
 ไฟล์ศึกษา: `src/components/prototype/`  
-Logic TUI: `npm run prototype:planning` → `src/domain/prototype/planningTui.ts`
+Logic TUI: `npm run prototype:planning` → `src/domain/prototype/planningTui.ts`  
+Layered board (META/CHAR/MEM/GHOST): `npm run prototype:layers` → `/?layers=A|B|C`  
+Story layer field UX: `npm run prototype:layer` → `/?layerField=A|B|C|AC`  
+Layer rail study: `npm run prototype:layer-rail` → `/?layerRail=open`
+
+**Production (2026-07-25):** โครง **Layered Memory** → แท็บ **เลน** · `storyLayer` บนการ์ด · ดู `memory/2026-07-25-layered-memory.md`
 
 ### สิ่งที่เคยอยู่บนจอแล้วย้าย/ตัด
 - StructurePicker + EdgeLegend **ลอยมุมซ้ายบน** → ย้ายเข้า bookmark **โครง** / **ชนิด**  
@@ -149,6 +154,8 @@ Logic TUI: `npm run prototype:planning` → `src/domain/prototype/planningTui.ts
 npm run dev
 npm test && npm run typecheck
 npm run prototype:planning   # TUI logic helpers
+npm run prototype:layers     # 4-lane layered axis UI study
+npm run prototype:layer      # story layer field + suggest UX
 # PDF regenerate (จาก repo root):
 # Chrome headless → public/user-guide.pdf จาก docs/user-guide.html
 ```

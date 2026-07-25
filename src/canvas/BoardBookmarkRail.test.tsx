@@ -21,6 +21,20 @@ describe('BoardBookmarkRail', () => {
     expect(screen.getByRole('button', { name: 'ชนิดเส้น' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'คู่มือแกนเส้น' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'แผนภาพสอน' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'เลน' })).not.toBeInTheDocument()
+  })
+
+  it('shows the เลน tab when layered-memory structure is active', () => {
+    useProjectStore.getState().setStructureTemplate('layered-memory')
+    render(<BoardBookmarkRail />)
+    const laneTab = screen.getByRole('button', {
+      name: 'เลน META / CHARACTER / MEMORY / GHOST',
+    })
+    expect(laneTab).toBeInTheDocument()
+    fireEvent.click(laneTab)
+    expect(screen.getByText('เลนบนกระดาน')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'ขยายภาพเลน' }).length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'แนะนำเลน' })).toBeInTheDocument()
   })
 
   it('opens axis leaf so line meaning is not on the canvas', () => {

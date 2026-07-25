@@ -17,6 +17,7 @@ import {
   type OnNodeDrag,
 } from '@xyflow/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { isLayeredMemory, snapSceneToLayer } from '../domain/layers'
 import type { StoryScene } from '../domain/types'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
@@ -36,6 +37,9 @@ import { OutcomeNode } from './nodes/OutcomeNode'
 import { PhaseColumns } from './PhaseColumns'
 import { SceneNode } from './nodes/SceneNode'
 import { InternalConflictPrototypeHost } from './prototype/internalConflict/InternalConflictPrototype'
+import { LayeredBoardPrototypeHost } from './prototype/layeredBoard/LayeredBoardPrototype'
+import { LayerRailPrototypeHost } from './prototype/layerRail/LayerRailPrototype'
+import { StoryLayerPrototypeHost } from './prototype/storyLayer/StoryLayerPrototype'
 
 const nodeTypes: NodeTypes = {
   scene: SceneNode,
@@ -56,6 +60,8 @@ const GRID: [number, number] = [16, 16]
 export function Board() {
   const project = useProjectStore((s) => s.project)
   const applyNodeDrag = useProjectStore((s) => s.applyNodeDrag)
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const layered = isLayeredMemory(structureId)
   const setViewport = useProjectStore((s) => s.setViewport)
   const addEdge = useProjectStore((s) => s.addEdge)
   const deleteElements = useProjectStore((s) => s.deleteElements)
@@ -141,29 +147,50 @@ export function Board() {
     isDragging.current = true
   }, [])
 
-  // Keep beat markers gliding along the paradigm line while dragging (x only).
   const onNodeDrag = useCallback<OnNodeDrag>(
     (_event, node) => {
-      if (node.type !== 'beat') return
-      setNodes((nds) =>
-        nds.map((n) =>
-          n.id === node.id
-            ? { ...n, position: { x: n.position.x, y: BEAT_LINE_Y } }
-            : n,
-        ),
-      )
+      if (node.type === 'beat') {
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === node.id
+              ? { ...n, position: { x: n.position.x, y: BEAT_LINE_Y } }
+              : n,
+          ),
+        )
+        return
+      }
+      if (node.type === 'scene' && layered) {
+        const snap = snapSceneToLayer(node.position)
+        setNodes((nds) =>
+          nds.map((n) =>
+            n.id === node.id
+              ? { ...n, position: { x: snap.x, y: snap.y } }
+              : n,
+          ),
+        )
+      }
     },
-    [setNodes],
+    [setNodes, layered],
   )
 
   const onNodeDragStop = useCallback<OnNodeDrag>(
     (_event, _node, dragged: Node[]) => {
       const updates = dragged.map((n) => ({ id: n.id, position: n.position }))
       const { scenes, beats } = reconcileDrag(updates, sceneIds, beatIds)
+      const sceneUpdates = layered
+        ? scenes.map((s) => {
+            const snap = snapSceneToLayer(s.position)
+            return {
+              ...s,
+              position: { x: snap.x, y: snap.y },
+              storyLayer: snap.storyLayer,
+            }
+          })
+        : scenes
       isDragging.current = false
-      applyNodeDrag(scenes, beats)
+      applyNodeDrag(sceneUpdates, beats)
     },
-    [sceneIds, beatIds, applyNodeDrag],
+    [sceneIds, beatIds, applyNodeDrag, layered],
   )
 
   const onConnect = useCallback<OnConnect>(
@@ -197,6 +224,9 @@ export function Board() {
     <div className="relative h-full w-full">
       <BoardBookmarkRail />
       <InternalConflictPrototypeHost />
+      <LayeredBoardPrototypeHost />
+      <StoryLayerPrototypeHost />
+      <LayerRailPrototypeHost />
       <ReactFlow
         nodes={nodes}
         edges={edges}

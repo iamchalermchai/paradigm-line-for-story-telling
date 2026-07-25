@@ -13,12 +13,12 @@ export const PHASE_WIDTH = 700
 
 type SceneSeed = Omit<
   StoryScene,
-  'order' | 'collapsed' | 'locked' | 'notes' | 'internalConflict'
+  'order' | 'collapsed' | 'locked' | 'notes' | 'internalConflict' | 'storyLayer'
 > &
   Partial<
     Pick<
       StoryScene,
-      'order' | 'collapsed' | 'locked' | 'notes' | 'internalConflict'
+      'order' | 'collapsed' | 'locked' | 'notes' | 'internalConflict' | 'storyLayer'
     >
   >
 
@@ -29,6 +29,7 @@ function scene(index: number, s: SceneSeed): StoryScene {
     locked: false,
     notes: '',
     internalConflict: '',
+    storyLayer: 'character',
     ...s,
   }
 }

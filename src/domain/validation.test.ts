@@ -18,6 +18,7 @@ function baseScene(overrides: Partial<StoryScene> = {}): StoryScene {
     changeAfterScene: 'เปลี่ยนแปลง',
     phase: 'setup',
     arcRelation: 'neutral',
+    storyLayer: 'character',
     position: { x: 0, y: 0 },
     order: 0,
     notes: '',

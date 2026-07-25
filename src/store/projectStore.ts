@@ -17,10 +17,12 @@ import type {
   ClimaxOutcome,
   Project,
   StoryEdge,
+  StoryLayer,
   StoryPhase,
   StoryScene,
   Viewport,
 } from '../domain/types'
+import { LAYER_SNAP_Y } from '../domain/layers'
 import {
   applySnapshot,
   HISTORY_LIMIT,
@@ -85,6 +87,7 @@ function newScene(project: Project, partial: Partial<StoryScene>): StoryScene {
     phase: 'setup',
     beat: undefined,
     arcRelation: 'neutral',
+    storyLayer: 'character',
     position: { x: 60, y: PARADIGM_LINE_Y + 160 },
     color: undefined,
     order: maxOrder + 1,
@@ -131,8 +134,13 @@ interface ProjectState {
       id: string
       position: { x: number; y: number }
       phase: StoryPhase
+      storyLayer?: StoryLayer
     }[],
     beats: { id: string; position: { x: number; y: number } }[],
+  ) => void
+  /** Apply suggested layers and snap Y (layered-memory). */
+  applyLayerSuggestions: (
+    patches: { id: string; storyLayer: StoryLayer }[],
   ) => void
   duplicateScene: (id: string) => StoryScene | undefined
   /** Paste copied scenes as new scenes (new ids, offset positions), one commit. */
@@ -314,11 +322,34 @@ export const useProjectStore = create<ProjectState>((set, get) => {
         ...p,
         scenes: p.scenes.map((s) => {
           const u = sceneMap.get(s.id)
-          return u ? { ...s, position: u.position, phase: u.phase } : s
+          if (!u) return s
+          return {
+            ...s,
+            position: u.position,
+            phase: u.phase,
+            ...(u.storyLayer !== undefined ? { storyLayer: u.storyLayer } : {}),
+          }
         }),
         beats: p.beats.map((b) =>
           beatMap.has(b.id) ? { ...b, position: beatMap.get(b.id)! } : b,
         ),
+      }))
+    },
+
+    applyLayerSuggestions: (patches) => {
+      if (patches.length === 0) return
+      const map = new Map(patches.map((p) => [p.id, p.storyLayer]))
+      commit((p) => ({
+        ...p,
+        scenes: p.scenes.map((s) => {
+          const layer = map.get(s.id)
+          if (!layer) return s
+          return {
+            ...s,
+            storyLayer: layer,
+            position: { ...s.position, y: LAYER_SNAP_Y[layer] },
+          }
+        }),
       }))
     },
 

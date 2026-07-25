@@ -249,6 +249,10 @@ function HelpContent() {
               <li>
                 <strong>เส้น</strong> — ความหมายเหนือ/ใต้เส้นของโครงปัจจุบัน
               </li>
+              <li>
+                <strong>ดูภาพ</strong> — แผนภาพสอนตามโครงที่เลือก (4 Phase · Three Act · Save
+                the Cat · Kishōtenketsu · Hero&apos;s Journey) คนละเครื่องยนต์ ไม่ใช่ภาพเดียวทุกโครง
+              </li>
             </ul>
           </li>
           <li>

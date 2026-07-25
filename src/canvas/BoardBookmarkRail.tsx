@@ -1,4 +1,9 @@
 import { useState, type ReactNode } from 'react'
+import {
+  hasStructureDiagram,
+  StructureTeachingDiagram,
+  structureDiagramMeta,
+} from '../components/StructureTeachingDiagram'
 import { StructureBandGuide } from '../components/StructureBandGuide'
 import {
   getStructureTemplate,
@@ -9,7 +14,7 @@ import { useProjectStore } from '../store/projectStore'
 import { useUiStore, type ViewMode } from '../store/uiStore'
 import { EDGE_STYLE } from './edges/StoryEdge'
 
-type RailTab = ViewMode | 'structure' | 'edges' | 'axis'
+export type RailTab = ViewMode | 'structure' | 'edges' | 'axis' | 'diagram'
 
 const VIEW_TABS: {
   id: ViewMode
@@ -32,13 +37,17 @@ const VIEW_TABS: {
 ]
 
 /**
- * Left-edge bookmark tabs (page markers): view, structure, edge type, axis.
- * Folded from chrome prototype A.
+ * Left-edge bookmark tabs (page markers): view, structure, edge type, axis,
+ * and Paradigm teaching diagram (ดูภาพ).
  */
-export function BoardBookmarkRail() {
+export function BoardBookmarkRail({
+  initialOpenTab = null,
+}: {
+  initialOpenTab?: RailTab | null
+} = {}) {
   const viewMode = useUiStore((s) => s.viewMode)
   const setViewMode = useUiStore((s) => s.setViewMode)
-  const [openTab, setOpenTab] = useState<RailTab | null>(null)
+  const [openTab, setOpenTab] = useState<RailTab | null>(initialOpenTab)
 
   function toggle(tab: RailTab) {
     if (tab === 'chronological' || tab === 'telling') setViewMode(tab)
@@ -46,7 +55,8 @@ export function BoardBookmarkRail() {
   }
 
   const viewMeta = VIEW_TABS.find((t) => t.id === openTab)
-  const large = openTab === 'structure' || openTab === 'edges'
+  const large =
+    openTab === 'structure' || openTab === 'edges' || openTab === 'diagram'
 
   return (
     <div
@@ -89,13 +99,22 @@ export function BoardBookmarkRail() {
           accent="teal"
           onClick={() => toggle('axis')}
         />
+        <BookmarkTab
+          label="ดูภาพ"
+          title="แผนภาพสอน"
+          active={openTab === 'diagram'}
+          open={openTab === 'diagram'}
+          accent="teal"
+          onClick={() => toggle('diagram')}
+        />
       </div>
 
       {openTab && (
-        <Leaf size={large ? 'lg' : 'md'}>
+        <Leaf size={openTab === 'diagram' ? 'xl' : large ? 'lg' : 'md'}>
           {openTab === 'structure' && <StructureLeafBody />}
           {openTab === 'edges' && <EdgesLeafBody />}
           {openTab === 'axis' && <AxisLeafBody />}
+          {openTab === 'diagram' && <DiagramLeafBody />}
           {viewMeta && (
             <div>
               <h3 className="font-display text-sm font-bold text-ink">
@@ -132,13 +151,14 @@ function Leaf({
   size = 'md',
 }: {
   children: ReactNode
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
 }) {
+  const width = size === 'xl' ? 372 : size === 'lg' ? 304 : 232
   return (
     <div
       className="pointer-events-auto ml-0.5 flex max-h-[min(78vh,680px)] flex-col overflow-hidden rounded-r-md bg-cream/97 shadow-md"
       style={{
-        width: size === 'lg' ? 304 : 232,
+        width,
         border: '1px solid rgba(20,22,25,0.16)',
         borderLeft: '3px solid var(--color-rust)',
         animation: 'bookmark-leaf 180ms ease-out',
@@ -224,27 +244,27 @@ function StructureLeafBody() {
           </option>
         ))}
       </select>
-      <div className="flex overflow-hidden rounded" aria-label="ช่วงของเรื่อง">
-        {template.bands.map((band, i) => {
-          const end = template.bands[i + 1]?.start ?? 1
-          return (
-            <span
-              key={band.label}
-              className="truncate px-1 py-1.5 text-center text-[9px] leading-tight text-ink/70"
-              style={{
-                flexGrow: end - band.start,
-                flexBasis: 0,
-                background:
-                  i % 2 === 0 ? 'rgba(20,22,25,0.06)' : 'rgba(205,80,66,0.1)',
-                borderLeft:
-                  i === 0 ? undefined : '1px solid rgba(20,22,25,0.18)',
-              }}
-              title={band.job}
-            >
-              {band.label}
-            </span>
-          )
-        })}
+      <div
+        className={
+          template.bands.length <= 3
+            ? 'grid grid-cols-3 gap-px overflow-hidden rounded'
+            : 'grid grid-cols-2 gap-px overflow-hidden rounded'
+        }
+        aria-label="ช่วงของเรื่อง"
+      >
+        {template.bands.map((band, i) => (
+          <span
+            key={band.label}
+            className="px-1.5 py-1.5 text-center text-[10px] font-semibold leading-snug text-ink/75"
+            style={{
+              background:
+                i % 2 === 0 ? 'rgba(20,22,25,0.06)' : 'rgba(205,80,66,0.1)',
+            }}
+            title={`${band.label} — ${band.job}`}
+          >
+            {band.label}
+          </span>
+        ))}
       </div>
       <p className="leading-snug text-ink/65">{template.description}</p>
       <p className="leading-snug text-ink/80">
@@ -255,8 +275,8 @@ function StructureLeafBody() {
         className="space-y-1.5 border-t pt-2"
         style={{ borderColor: 'rgba(20,22,25,0.12)' }}
       >
-        <p className="text-[11px] font-semibold text-ink">
-          แต่ละช่วง · งาน / ควรใส่ / เป้า
+        <p className="text-[11px] font-semibold leading-snug text-ink">
+          แต่ละช่วง — งาน · ควรใส่ · เป้าจบช่วง
         </p>
         <StructureBandGuide template={template} compact />
       </div>
@@ -349,6 +369,73 @@ function AxisLeafBody() {
           <p className="text-[11px] leading-snug text-ink/60">{t.axis.belowHint}</p>
         </div>
       </div>
+    </div>
+  )
+}
+
+/** Teaching diagram for the active structure template. */
+function DiagramLeafBody() {
+  const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const t = getStructureTemplate(structureId)
+  const meta = structureDiagramMeta(structureId)
+  const [expanded, setExpanded] = useState(false)
+
+  if (!hasStructureDiagram(structureId)) {
+    return (
+      <div className="space-y-2 text-xs text-ink">
+        <h3 className="font-display text-sm font-bold">แผนภาพสอน</h3>
+        <p className="leading-snug text-ink/65">{meta.blurb}</p>
+        <p className="leading-snug text-ink/50">
+          โครง <span className="font-semibold text-ink/70">{t.name}</span> —
+          อ่านความหมายเหนือ/ใต้เส้นที่แท็บ <span className="font-semibold">เส้น</span>
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2 text-xs text-ink">
+      <h3 className="font-display text-sm font-bold">{meta.title}</h3>
+      <p className="text-[11px] leading-snug text-ink/60">{meta.blurb}</p>
+      <StructureTeachingDiagram templateId={structureId} compact />
+      <button
+        type="button"
+        className="w-full rounded px-2 py-1.5 text-[11px] font-semibold text-ink hover:bg-sand/25"
+        style={{ border: '1px solid rgba(20,22,25,0.2)' }}
+        onClick={() => setExpanded(true)}
+      >
+        ขยายแผนภาพ
+      </button>
+      {expanded && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/35 p-4"
+          role="dialog"
+          aria-modal
+          aria-label={meta.aria}
+          onClick={() => setExpanded(false)}
+        >
+          <div
+            className="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-md bg-cream p-4 shadow-lg"
+            style={{ border: '2px solid rgba(20,22,25,0.2)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-2 flex items-baseline justify-between gap-2">
+              <h2 className="font-display text-base font-bold text-ink">
+                {meta.title}
+              </h2>
+              <button
+                type="button"
+                className="text-[11px] text-ink/50 hover:text-ink"
+                onClick={() => setExpanded(false)}
+              >
+                ปิด
+              </button>
+            </div>
+            <p className="mb-3 text-[12px] leading-snug text-ink/60">{meta.blurb}</p>
+            <StructureTeachingDiagram templateId={structureId} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

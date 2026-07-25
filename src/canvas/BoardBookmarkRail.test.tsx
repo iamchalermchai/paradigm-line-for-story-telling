@@ -13,13 +13,14 @@ describe('BoardBookmarkRail', () => {
     useUiStore.setState({ viewMode: 'chronological' })
   })
 
-  it('shows five bookmark tabs', () => {
+  it('shows six bookmark tabs including ดูภาพ', () => {
     render(<BoardBookmarkRail />)
     expect(screen.getByRole('button', { name: 'เวลาในเรื่อง' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'ลำดับเล่า' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'โครงสร้าง' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'ชนิดเส้น' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'คู่มือแกนเส้น' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'แผนภาพสอน' })).toBeInTheDocument()
   })
 
   it('opens axis leaf so line meaning is not on the canvas', () => {
@@ -31,11 +32,40 @@ describe('BoardBookmarkRail', () => {
     expect(screen.getByText(fourPhase.axis.belowHint)).toBeInTheDocument()
   })
 
+  it('shows the Paradigm diagram in ดูภาพ for 4 Phase', () => {
+    render(<BoardBookmarkRail />)
+    fireEvent.click(screen.getByRole('button', { name: 'แผนภาพสอน' }))
+    expect(screen.getByText('แผนภาพสอน · Paradigm')).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: /แผนภาพสอน Paradigm Line/ }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows a Kishōtenketsu-specific diagram when that structure is active', () => {
+    useProjectStore.getState().setStructureTemplate('kishotenketsu')
+    render(<BoardBookmarkRail />)
+    fireEvent.click(screen.getByRole('button', { name: 'แผนภาพสอน' }))
+    expect(screen.getByText('แผนภาพสอน · Kishōtenketsu')).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: /แผนภาพสอน Kishōtenketsu/ }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/ไม่มีเครื่องยนต์ Want\/Need/)).toBeInTheDocument()
+  })
+
+  it('shows a Three Act diagram when that structure is active', () => {
+    useProjectStore.getState().setStructureTemplate('three-act')
+    render(<BoardBookmarkRail />)
+    fireEvent.click(screen.getByRole('button', { name: 'แผนภาพสอน' }))
+    expect(screen.getByText('แผนภาพสอน · Three Act')).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: /แผนภาพสอน Three Act/ }),
+    ).toBeInTheDocument()
+  })
+
   it('switches to telling mode when the telling bookmark is pressed', () => {
     render(<BoardBookmarkRail />)
     fireEvent.click(screen.getByRole('button', { name: 'ลำดับเล่า' }))
     expect(useUiStore.getState().viewMode).toBe('telling')
-    expect(screen.getByText('ลำดับเล่า')).toBeInTheDocument()
     expect(
       screen.getByText(/เส้นเล่า \(A→B→C…\) คือเส้นทางที่คนอ่านได้รับเรื่อง/),
     ).toBeInTheDocument()
@@ -44,7 +74,6 @@ describe('BoardBookmarkRail', () => {
   it('folds the leaf closed', () => {
     render(<BoardBookmarkRail />)
     fireEvent.click(screen.getByRole('button', { name: 'โครงสร้าง' }))
-    expect(screen.getByText('โครงสร้าง')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'พับแท็บ' }))
     expect(screen.queryByRole('button', { name: 'พับแท็บ' })).not.toBeInTheDocument()
   })

@@ -1,7 +1,7 @@
 # Plotline Board — project memory
 
 บันทึกบริบทงาน ว่าทำอะไรไปแล้ว ตอนนี้อยู่ตรงไหน และลองแล้วถึงไหน  
-อัปเดตล่าสุด: **2026-07-25** · HEAD `269c81c` · deploy: GitHub Pages จาก `main`
+อัปเดตล่าสุด: **2026-07-25** · แผนภาพสอนแท็บ **ดูภาพ** (5 โครง) · deploy: GitHub Pages จาก `main`
 
 ---
 
@@ -47,6 +47,7 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 | **หลักฐานบนกระดาน** ใต้ climax Want/Need | ✅ shipped `269c81c` |
 | คู่มือช่วงโครง (job / ควรใส่ / เป้า) ใน Help + ใบโครง | ✅ |
 | Offline Scene Bank parser (`localParser`) | ✅ logic · ผ่าน dialog |
+| **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) | ✅ ทั้ง 5 โครง · ภาษาภาพเดียวกับบอร์ด |
 
 ### ยังไม่พับเข้า UI / ยังไม่ทำ
 | รายการ | โน้ต |
@@ -75,9 +76,10 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 12. **Help `?` + PDF** (แล้ว iterate: เลขอาราบิก · ชื่อปุ่มตรง UI)  
 13. **โครงขับกระดานจริง** — สลับโครง = ชุดหมุดใหม่ · ไม่ทำลายการ์ด  
 14. **Hero’s Journey + axis ต่อโครง + StructureChooser กระดานว่าง**  
-15. **Bookmark chrome + climax evidence + Help/PDF sync** ← ปัจจุบัน
+15. **Bookmark chrome + climax evidence + Help/PDF sync**
+16. **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) + ภาษาภาพบอร์ด + แก้ truncate ใบโครง ← ปัจจุบัน
 
-รายละเอียดรอบล่าสุด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md)
+รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md)
 
 ---
 

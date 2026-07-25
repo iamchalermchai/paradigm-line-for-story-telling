@@ -290,7 +290,12 @@ function HelpContent() {
               </li>
               <li>
                 <strong>ดูภาพ</strong> — แผนภาพสอนตามโครงที่เลือก (4 Phase · Three Act · Save
-                the Cat · Kishōtenketsu · Hero&apos;s Journey) คนละเครื่องยนต์ ไม่ใช่ภาพเดียวทุกโครง
+                the Cat · Kishōtenketsu · Hero&apos;s Journey · Layered Memory) คนละเครื่องยนต์
+                ไม่ใช่ภาพเดียวทุกโครง
+              </li>
+              <li>
+                <strong>เลน</strong> — โผล่เมื่อเลือกโครง <strong>Layered Memory · สี่เลน</strong>{' '}
+                (แท็บโครง → ตัวเลือกสุดท้ายใน dropdown) · mini map · แนะนำเลน · กรองมอง
               </li>
             </ul>
           </li>
@@ -324,7 +329,9 @@ function HelpContent() {
         <Tip>
           ยังไม่รู้จะใช้อันไหน? ถ้าเรื่องเดินด้วยความอยากของตัวละคร เริ่มที่ 4 Phase —
           ถ้าเป็นการผจญภัยที่ตัวละครต้องข้ามธรณีแล้วกลับมาคนละคน ลอง Hero&apos;s Journey —
-          ถ้าเดินด้วยบรรยากาศหรือการค่อยๆ เข้าใจอะไรบางอย่าง ลอง Kishōtenketsu
+          ถ้าเดินด้วยบรรยากาศหรือการค่อยๆ เข้าใจอะไรบางอย่าง ลอง Kishōtenketsu —
+          ถ้าเล่นข้ามความจริง ความทรงจำ และแผลซ้อนกัน ลอง{' '}
+          <strong>Layered Memory · สี่เลน</strong> แล้วเปิดแท็บ <strong>เลน</strong>
         </Tip>
       </Section>
 

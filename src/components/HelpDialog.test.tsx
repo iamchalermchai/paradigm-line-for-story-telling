@@ -18,7 +18,9 @@ describe('HelpDialog', () => {
     useUiStore.getState().openDialog('help')
     render(<HelpDialog />)
     for (const template of STRUCTURE_TEMPLATES) {
-      expect(screen.getByText(template.name)).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { name: template.name, level: 4 }),
+      ).toBeInTheDocument()
       expect(screen.getByText(template.startHere)).toBeInTheDocument()
     }
   })

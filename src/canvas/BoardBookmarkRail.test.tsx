@@ -37,6 +37,20 @@ describe('BoardBookmarkRail', () => {
     expect(screen.getByRole('button', { name: 'แนะนำเลน' })).toBeInTheDocument()
   })
 
+  it('shows Layered Memory diagram in ดูภาพ when that structure is active', () => {
+    useProjectStore.getState().setStructureTemplate('layered-memory')
+    render(<BoardBookmarkRail />)
+    fireEvent.click(screen.getByRole('button', { name: 'แผนภาพสอน' }))
+    expect(screen.getByText('แผนภาพสอน · Layered Memory')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'ภาพเลนสี่ชั้น' })).toBeInTheDocument()
+  })
+
+  it('hints Layered Memory in the structure leaf when using 4 Phase', () => {
+    render(<BoardBookmarkRail />)
+    fireEvent.click(screen.getByRole('button', { name: 'โครงสร้าง' }))
+    expect(screen.getAllByText(/Layered Memory · สี่เลน/).length).toBeGreaterThan(0)
+  })
+
   it('opens axis leaf so line meaning is not on the canvas', () => {
     render(<BoardBookmarkRail />)
     fireEvent.click(screen.getByRole('button', { name: 'คู่มือแกนเส้น' }))

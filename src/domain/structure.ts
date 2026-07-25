@@ -691,7 +691,7 @@ export const STRUCTURE_TEMPLATES: StructureTemplate[] = [
   },
   {
     id: 'layered-memory',
-    name: 'Layered Memory',
+    name: 'Layered Memory · สี่เลน',
     description:
       'สี่เลน META / CHARACTER / MEMORY / GHOST — เหมาะกับเรื่องที่เล่าข้ามชั้นความจริง ความทรงจำ และแผล',
     startHere:

@@ -261,6 +261,7 @@ function StructureLeafBody() {
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
   const setStructureTemplate = useProjectStore((s) => s.setStructureTemplate)
   const template = getStructureTemplate(structureId)
+  const layered = isLayeredMemory(structureId)
 
   return (
     <div className="space-y-2.5 text-xs text-ink">
@@ -281,6 +282,24 @@ function StructureLeafBody() {
           </option>
         ))}
       </select>
+      {layered ? (
+        <p
+          className="rounded px-2 py-1.5 text-[11px] leading-snug text-ink/80"
+          style={{
+            background: 'rgba(43,122,140,0.12)',
+            border: '1px solid rgba(43,122,140,0.35)',
+          }}
+        >
+          โครงนี้ใช้<strong className="text-ink"> สี่เลน</strong> บนกระดาน — เปิดแท็บคั่นหน้า{' '}
+          <strong className="text-ink">เลน</strong> (ถัดจาก ดูภาพ) เพื่อ mini map · แนะนำเลน
+        </p>
+      ) : (
+        <p className="text-[10px] leading-snug text-ink/45">
+          เรื่องเล่นข้ามความจริง/ความทรงจำ? เลือก{' '}
+          <strong className="text-ink/70">Layered Memory · สี่เลน</strong> ในรายการด้านบน
+          (ตัวเลือกสุดท้าย)
+        </p>
+      )}
       <div
         className={
           template.bands.length <= 3
@@ -413,9 +432,57 @@ function AxisLeafBody() {
 /** Teaching diagram for the active structure template. */
 function DiagramLeafBody() {
   const structureId = useProjectStore((s) => s.project.structureTemplateId)
+  const scenes = useProjectStore((s) => s.project.scenes)
   const t = getStructureTemplate(structureId)
   const meta = structureDiagramMeta(structureId)
+  const layered = isLayeredMemory(structureId)
   const [expanded, setExpanded] = useState(false)
+
+  if (layered) {
+    return (
+      <div className="space-y-2 text-xs text-ink">
+        <h3 className="font-display text-sm font-bold">แผนภาพสอน · Layered Memory</h3>
+        <p className="text-[11px] leading-snug text-ink/60">
+          สี่เลน META / CHARACTER / MEMORY / GHOST — วง = meta/character · เพชร =
+          memory/ghost
+        </p>
+        <LayerDiagram scenes={scenes} size="mini" onExpand={() => setExpanded(true)} />
+        <p className="text-[10px] leading-snug text-ink/50">
+          แท็บ <span className="font-semibold text-ink/70">เลน</span> มีแนะนำเลน · กรองมอง ·
+          ขยายภาพเต็ม
+        </p>
+        {expanded && (
+          <div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/35 p-4"
+            role="dialog"
+            aria-modal
+            aria-label="ภาพเลนขยาย"
+            onClick={() => setExpanded(false)}
+          >
+            <div
+              className="max-h-[90vh] w-full max-w-3xl overflow-auto rounded-md bg-cream p-4 shadow-lg"
+              style={{ border: '2px solid rgba(20,22,25,0.2)' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-2 flex items-baseline justify-between gap-2">
+                <h2 className="font-display text-base font-bold text-ink">
+                  ภาพเลนบนกระดาน
+                </h2>
+                <button
+                  type="button"
+                  className="text-[11px] text-ink/50 hover:text-ink"
+                  onClick={() => setExpanded(false)}
+                >
+                  ปิด
+                </button>
+              </div>
+              <LayerDiagram scenes={scenes} size="full" />
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   if (!hasStructureDiagram(structureId)) {
     return (

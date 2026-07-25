@@ -6,6 +6,7 @@ import { HelpDialog } from './components/HelpDialog'
 import { ImportSceneBankDialog } from './components/ImportSceneBankDialog'
 import { LeftPanel } from './components/LeftPanel'
 import { SceneEditorDrawer } from './components/SceneEditorDrawer'
+import { StructureChooser } from './components/StructureChooser'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <ExportPngDialog />
         <ImportSceneBankDialog />
         <HelpDialog />
+        <StructureChooser />
       </div>
     </ReactFlowProvider>
   )

@@ -14,14 +14,40 @@ import {
 } from './structure'
 
 describe('structure templates', () => {
-  it('offers 4 Phase, Three Act, Save the Cat and Kishōtenketsu', () => {
+  it('offers 4 Phase, Three Act, Save the Cat, Kishōtenketsu and Hero’s Journey', () => {
     const ids = STRUCTURE_TEMPLATES.map((t) => t.id)
     expect(ids).toEqual([
       'four-phase',
       'three-act',
       'save-the-cat',
       'kishotenketsu',
+      'heros-journey',
     ])
+  })
+
+  it('every template declares axis labels for the board', () => {
+    for (const t of STRUCTURE_TEMPLATES) {
+      expect(t.axis.lineTitle.length).toBeGreaterThan(0)
+      expect(t.axis.aboveHint.length).toBeGreaterThan(0)
+      expect(t.axis.belowHint.length).toBeGreaterThan(0)
+    }
+  })
+
+  it("Hero's Journey has 12 Vogler beats with threshold / ordeal / resurrection ticks", () => {
+    const hj = getStructureTemplate('heros-journey')
+    expect(hj.bands.map((b) => b.label)).toEqual([
+      'Departure',
+      'Initiation',
+      'Return',
+    ])
+    expect(hj.beats).toHaveLength(12)
+    const ticks = hj.beats.filter((b) => b.shape === 'tick')
+    expect(ticks.map((b) => b.key)).toEqual([
+      'threshold',
+      'ordeal',
+      'resurrection',
+    ])
+    expect(templateBeat(hj, 'reward')?.shape).toBe('square')
   })
 
   it('board width matches the four phase columns the canvas draws', () => {

@@ -28,5 +28,6 @@ describe('HelpDialog', () => {
     render(<HelpDialog />)
     expect(screen.getByText('転 จุดพลิก')).toBeInTheDocument()
     expect(screen.getByText('All Is Lost')).toBeInTheDocument()
+    expect(screen.getByText('Ordeal')).toBeInTheDocument()
   })
 })

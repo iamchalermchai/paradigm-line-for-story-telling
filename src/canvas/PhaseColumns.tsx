@@ -130,7 +130,7 @@ export function PhaseColumns() {
             color: INK_MUTED,
           }}
         >
-          Paradigm Line
+          {template.axis.lineTitle}
         </div>
         <div
           style={{
@@ -147,7 +147,7 @@ export function PhaseColumns() {
             ↑ เหนือเส้น
           </div>
           <div style={{ fontSize: 13, color: INK_MUTED }}>
-            สิ่งที่ตัวละครไล่ตาม — Lie · Want
+            {template.axis.aboveHint}
           </div>
         </div>
         <div
@@ -165,7 +165,7 @@ export function PhaseColumns() {
             ↓ ใต้เส้น
           </div>
           <div style={{ fontSize: 13, color: INK_MUTED }}>
-            ความจริงที่ต้องเรียนรู้ — Ghost · Need
+            {template.axis.belowHint}
           </div>
         </div>
       </div>

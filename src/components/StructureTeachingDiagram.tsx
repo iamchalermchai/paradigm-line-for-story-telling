@@ -9,7 +9,6 @@ import {
   AMBER,
   AxisLine,
   BeatCircle,
-  BeatDotted,
   BeatSquare,
   BeatTick,
   DiagramCanvas,

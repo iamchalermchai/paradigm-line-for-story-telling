@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { createSeedProject } from '../domain/seed'
+import { projectToJson } from '../export/json'
 import { useProjectStore } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
 import { ImportSceneBankDialog } from './ImportSceneBankDialog'
@@ -25,10 +27,10 @@ describe('ImportSceneBankDialog', () => {
   it('parses pasted text into reviewable scenes and imports the selected ones', async () => {
     render(<ImportSceneBankDialog />)
 
-    fireEvent.change(screen.getByLabelText('ข้อความ Scene Bank'), {
+    fireEvent.change(screen.getByLabelText('ข้อความหรือ JSON ที่จะนำเข้า'), {
       target: { value: SAMPLE },
     })
-    fireEvent.click(screen.getByText('วิเคราะห์'))
+    fireEvent.click(screen.getByText('วิเคราะห์ / แมป'))
 
     await waitFor(() => expect(screen.getByText(/พบ 2 ฉาก/)).toBeInTheDocument())
 
@@ -43,10 +45,10 @@ describe('ImportSceneBankDialog', () => {
     store().updateBackstory({ ghost: 'ผีเดิมที่ห้ามทับ' })
 
     render(<ImportSceneBankDialog />)
-    fireEvent.change(screen.getByLabelText('ข้อความ Scene Bank'), {
+    fireEvent.change(screen.getByLabelText('ข้อความหรือ JSON ที่จะนำเข้า'), {
       target: { value: SAMPLE },
     })
-    fireEvent.click(screen.getByText('วิเคราะห์'))
+    fireEvent.click(screen.getByText('วิเคราะห์ / แมป'))
     await waitFor(() => expect(screen.getByText(/พบ 2 ฉาก/)).toBeInTheDocument())
     fireEvent.click(screen.getByText(/เพิ่ม 2 ฉากลงกระดาน/))
 
@@ -55,10 +57,10 @@ describe('ImportSceneBankDialog', () => {
 
   it('lets the user deselect a scene before importing', async () => {
     render(<ImportSceneBankDialog />)
-    fireEvent.change(screen.getByLabelText('ข้อความ Scene Bank'), {
+    fireEvent.change(screen.getByLabelText('ข้อความหรือ JSON ที่จะนำเข้า'), {
       target: { value: SAMPLE },
     })
-    fireEvent.click(screen.getByText('วิเคราะห์'))
+    fireEvent.click(screen.getByText('วิเคราะห์ / แมป'))
     await waitFor(() => expect(screen.getByText(/พบ 2 ฉาก/)).toBeInTheDocument())
 
     const checkboxes = screen.getAllByRole('checkbox')
@@ -66,5 +68,39 @@ describe('ImportSceneBankDialog', () => {
 
     fireEvent.click(screen.getByText(/เพิ่ม 1 ฉากลงกระดาน/))
     expect(store().project.scenes).toHaveLength(1)
+  })
+
+  it('maps loose JSON scenes onto the board', async () => {
+    render(<ImportSceneBankDialog />)
+    fireEvent.change(screen.getByLabelText('ข้อความหรือ JSON ที่จะนำเข้า'), {
+      target: {
+        value: JSON.stringify([
+          { title: 'เปิด', action: 'เริ่มต้น' },
+          { title: 'จบ', summary: 'ปิดเรื่อง' },
+        ]),
+      },
+    })
+    fireEvent.click(screen.getByText('วิเคราะห์ / แมป'))
+    await waitFor(() => expect(screen.getByText(/แมปจาก JSON/)).toBeInTheDocument())
+    fireEvent.click(screen.getByText(/เพิ่ม 2 ฉากลงกระดาน/))
+    expect(store().project.scenes).toHaveLength(2)
+    expect(store().project.scenes.map((s) => s.title)).toEqual(
+      expect.arrayContaining(['เปิด', 'จบ']),
+    )
+  })
+
+  it('offers full project replace for Plotline JSON', async () => {
+    const seed = createSeedProject()
+    render(<ImportSceneBankDialog />)
+    fireEvent.change(screen.getByLabelText('ข้อความหรือ JSON ที่จะนำเข้า'), {
+      target: { value: projectToJson(seed) },
+    })
+    fireEvent.click(screen.getByText('วิเคราะห์ / แมป'))
+    await waitFor(() =>
+      expect(screen.getByText('แทนที่โปรเจกต์')).toBeInTheDocument(),
+    )
+    fireEvent.click(screen.getByText('แทนที่โปรเจกต์'))
+    expect(store().project.title).toBe(seed.title)
+    expect(store().project.scenes.length).toBe(seed.scenes.length)
   })
 })

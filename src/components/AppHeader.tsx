@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { PARADIGM_LINE_Y } from '../domain/types'
-import { downloadProjectJson, readProjectFile } from '../export/json'
+import { downloadProjectJson } from '../export/json'
 import { useProjectStore } from '../store/projectStore'
 import type { SaveStatus } from '../store/projectStore'
 import { useUiStore } from '../store/uiStore'
@@ -29,32 +29,14 @@ export function AppHeader() {
   const canUndo = useProjectStore((s) => s.past.length > 0)
   const canRedo = useProjectStore((s) => s.future.length > 0)
   const exportProject = useProjectStore((s) => s.exportProject)
-  const importProject = useProjectStore((s) => s.importProject)
   const openSceneEditor = useUiStore((s) => s.openSceneEditor)
   const openDialog = useUiStore((s) => s.openDialog)
-  const fileInput = useRef<HTMLInputElement>(null)
   const [menuOpen, setMenuOpen] = useState(false)
 
-  async function handleImportFile(file: File) {
-    const result = await readProjectFile(file)
-    if (!result.ok || !result.project) {
-      window.alert(`นำเข้าไม่สำเร็จ: ${result.error ?? 'ไฟล์ไม่ถูกต้อง'}`)
-      return
-    }
-    if (
-      window.confirm(
-        'การนำเข้าจะแทนที่โปรเจกต์ปัจจุบันทั้งหมด ต้องการดำเนินการต่อหรือไม่?',
-      )
-    ) {
-      importProject(result.project)
-    }
-  }
-
   const menuItems: [string, () => void][] = [
-    ['Import Scene Bank', () => openDialog('import-scene-bank')],
-    ['Export PNG', () => openDialog('export-png')],
-    ['Export JSON', () => downloadProjectJson(exportProject())],
-    ['Import JSON', () => fileInput.current?.click()],
+    ['ส่งออก JSON', () => downloadProjectJson(exportProject())],
+    ['นำเข้า (ข้อความ / JSON)', () => openDialog('import-scene-bank')],
+    ['ส่งออก PNG', () => openDialog('export-png')],
   ]
 
   return (
@@ -131,18 +113,6 @@ export function AppHeader() {
           </div>
         )}
       </div>
-
-      <input
-        ref={fileInput}
-        type="file"
-        accept="application/json,.json"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          if (file) void handleImportFile(file)
-          e.target.value = ''
-        }}
-      />
 
       <span className={`ml-auto text-sm ${SAVE_COLOR[saveStatus]}`}>
         {SAVE_LABEL[saveStatus]}

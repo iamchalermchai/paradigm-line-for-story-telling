@@ -47,6 +47,7 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 | **หลักฐานบนกระดาน** ใต้ climax Want/Need | ✅ shipped `269c81c` |
 | คู่มือช่วงโครง (job / ควรใส่ / เป้า) ใน Help + ใบโครง | ✅ |
 | Offline Scene Bank parser (`localParser`) | ✅ logic · ผ่าน dialog |
+| **ส่งออก JSON / นำเข้าข้อความ·JSON แมปกระดาน** | ✅ เมนู ⋯ · `mapToBoard` (โปรเจกต์เต็มหรือฉาก) |
 | **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) | ✅ ทั้ง 5 โครง · ภาษาภาพเดียวกับบอร์ด |
 
 ### ยังไม่พับเข้า UI / ยังไม่ทำ
@@ -79,7 +80,7 @@ Pages deploy อัตโนมัติเมื่อ push `main`
 15. **Bookmark chrome + climax evidence + Help/PDF sync**
 16. **แผนภาพสอนต่อโครง** (แท็บ **ดูภาพ**) + ภาษาภาพบอร์ด + แก้ truncate ใบโครง ← ปัจจุบัน
 
-รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md)
+รายละเอียด: [2026-07-25-bookmark-chrome-and-climax-evidence.md](./2026-07-25-bookmark-chrome-and-climax-evidence.md) · [2026-07-25-paradigm-teaching-diagram.md](./2026-07-25-paradigm-teaching-diagram.md) · [2026-07-25-import-export-map.md](./2026-07-25-import-export-map.md)
 
 ---
 
